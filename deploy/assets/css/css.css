@@ -131,8 +131,18 @@ header {
 
 .ver-cuenta .tabla td {
 	padding: 7px;
+	font-size: 8pt;
 }
 
 .ver-cuenta .tabla tr.dark {
 	background: #eee;
+}
+
+#dialogPageRubrado .rubrar-container {
+	border: 1px solid red;
+	height: 500px;
+}
+
+#dialogPageRubrado .rubrar-container.loading {
+	background-image: url();
 }

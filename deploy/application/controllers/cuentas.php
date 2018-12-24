@@ -61,4 +61,34 @@ class Cuentas extends MY_Controller {
 		
 		$this->load->view('_json',	$this->data);
 	}
+	
+	public function rubrar()
+	{
+		$json = array(
+					'error'		=> false,
+					'html'		=> false
+				);
+
+		$movimientoId = $this->input->post('movimientoId');
+
+		// Models
+		$rubroModel	= new rubro_model();
+		
+		$rubroArray = array();
+		
+		foreach ( $rubroModel->getPersona() as $personaKey => $personasObj )
+		{
+			$rubroArray[$personaKey]['object']	= $personasObj;
+			$rubroArray[$personaKey]['cuentas'] = $rubroModel->getCuentas( $personasObj->id );
+		}
+		
+		$this->data['rubroArray']	= $rubroArray;
+
+		$html = $this->load->view('_rubrar', $this->data, true);
+		$json['html']	= $html;
+		
+		$this->data['json'] = $json;
+		
+		$this->load->view('_json',	$this->data);
+	}
 }
