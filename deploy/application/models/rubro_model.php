@@ -7,7 +7,7 @@ class rubro_model extends MY_Model {
 	
 		$this->db->from('rubro_cuenta');
 		
-		$this->db->join('rubro_persona', 'rubro_cuenta.id = rubro_persona.id');
+		$this->db->join('rubro_persona', 'rubro_cuenta.rubro_persona_id = rubro_persona.id');
 		
 		// If
 		$this->db->where('rubro_cuenta.status = ' . 1);

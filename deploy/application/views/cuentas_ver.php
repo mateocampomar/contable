@@ -77,7 +77,10 @@
 			data: { movimientoId: $( this ).data('movimientoid') }
 		})
 		.done(function( msg ) {
-			alert( "Data Saved: " + msg );
+			
+			var jsonObj = jQuery.parseJSON( msg );
+
+			$("#rubrar-container").html( jsonObj.html );
 		});
 	});
 
@@ -86,6 +89,7 @@
 <div data-role="page" id="dialogPage">
   <div role="main" class="ui-content">
 	<h2>Importar Cuenta</h2>
+	<div class="dialog-msg"></div>
     <textarea id="inputTxt" style="height: 300px; width: 100%" data-role="none"></textarea>
     <br/><br/>
     <a href="javascript:sendToParser();" data-role="button" data-theme="b">Importar Datos</a>
@@ -95,8 +99,10 @@
 
 <div data-role="page" id="dialogPageRubrado">
   <div role="main" class="ui-content">
-	<h2>Rubrar Movimiento</h2>
-    <div class="rubrar-container loading"></div>
+	<h2>...</h2>
+	<div class="dialog-msg"></div>
+    <div class="rubrar-container loading" id="rubrar-container"></div>
+    <a href="javascript:sendRubrado();" data-role="button" data-theme="b">Asignar Rubro a Movimiento</a>
     <a href="" data-role="button" data-rel="back" data-theme="a">Not!</a>
   </div>
 </div>

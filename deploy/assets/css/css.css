@@ -139,10 +139,75 @@ header {
 }
 
 #dialogPageRubrado .rubrar-container {
-	border: 1px solid red;
 	height: 500px;
 }
 
 #dialogPageRubrado .rubrar-container.loading {
 	background-image: url();
+}
+
+.selectPersona, .selectCuenta {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.selectPersona {
+	height: 165px;
+	border-bottom: 4px solid #eee;
+	margin-bottom: 20px;
+}
+
+.selectPersona li, .selectCuenta li {
+	border: 1px solid #ccc;
+	font-size: 9pt;
+	padding: 8px;
+	text-align: center;
+	margin: 5px;
+	color: #666;
+	width: 128px;
+	float: left;
+}
+
+.selectPersona li {
+	font-size: 10pt;
+	padding: 15px 8px;
+	padding-bottom: 0;
+	font-weight: bold;
+	border-bottom-width: 3px;
+}
+
+.selectPersona li.blue	{	border-bottom-color: #003366;	}
+.selectPersona li.green	{	border-bottom-color: #006600;	}
+.selectPersona li.black	{	border-bottom-color: black;	}
+
+.selectCuenta li {
+
+}
+
+.selectPersona li img {
+
+	width: 100px;
+	height: 100px;
+}
+
+.selectPersona li span {
+	position: relative;
+	top: -15px;
+}
+
+.selectPersona li.blue:hover,.selectPersona li.blue.selectedPersona	{	background-color: #ecf0ff; border-color: #003366; color: #003366;	}
+.selectPersona li.green:hover,.selectPersona li.green.selectedPersona	{	background-color: #e8ffe0; border-color: #006600; color: #006600;	}
+.selectPersona li.black:hover,.selectPersona li.black.selectedPersona	{	background-color: #eeeeee; border-color: black; color: black;	}
+
+
+.selectPersona li:hover, .selectCuenta li:hover {
+	cursor: pointer;
+	background-color: #eee;
+}
+
+.selectCuenta li.selectedCuenta {
+	background-color: #eee;
+	border: 1px solid #333;
+	color: #333;
 }
