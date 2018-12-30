@@ -99,8 +99,6 @@
 
 <div data-role="page" id="dialogPageRubrado">
   <div role="main" class="ui-content">
-	<h2>...</h2>
-	<div class="dialog-msg"></div>
     <div class="rubrar-container loading" id="rubrar-container"></div>
     <a href="javascript:sendRubrado();" data-role="button" data-theme="b">Asignar Rubro a Movimiento</a>
     <a href="" data-role="button" data-rel="back" data-theme="a">Not!</a>

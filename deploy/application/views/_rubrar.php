@@ -1,3 +1,24 @@
+<h2>
+	<?
+		
+	echo $movimientoObj->nombre?> <strong style="font-weight: normal;">(<?=$movimientoObj->moneda?>)</strong><?
+	
+	if ( $movimientoObj->debito )
+	{
+		?><span style="color:red;"><?=$movimientoObj->debito?></span><?
+	}
+	else
+	{
+		?><span style="color:green;"><?=$movimientoObj->creito?></span><?
+	}
+	
+	?>	
+</h2>
+
+<p><?=$movimientoObj->concepto?></p>
+
+<div class="dialog-msg"></div>
+
 <script type="text/javascript">
 
 	$(".persona").click(function()

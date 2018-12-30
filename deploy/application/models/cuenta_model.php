@@ -70,4 +70,23 @@ class cuenta_model extends MY_Model {
 		
 		return $query->result();
 	}
+
+	public function getMovimiento( $movimientoId )
+	{
+		$this->db->select('*');
+	
+		$this->db->from('movimientos_cuentas');
+		
+		$this->db->join('cuentas', 'cuentas.id = movimientos_cuentas.cuentaId');
+		
+		$this->db->where('movimientos_cuentas.id = ' . $movimientoId );
+		
+		$this->db->limit(1);
+
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		return $result[0];;
+	}
 }

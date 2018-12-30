@@ -73,6 +73,8 @@ class Cuentas extends MY_Controller {
 
 		// Models
 		$rubroModel	= new rubro_model();
+		$cuentaModel	= new Cuenta_model();
+		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
 		
 		$rubroArray = array();
 		
@@ -82,7 +84,8 @@ class Cuentas extends MY_Controller {
 			$rubroArray[$personaKey]['cuentas'] = $rubroModel->getCuentas( $personasObj->id );
 		}
 		
-		$this->data['rubroArray']	= $rubroArray;
+		$this->data['movimientoObj']	= $movimientoObj;
+		$this->data['rubroArray']		= $rubroArray;
 
 		$html = $this->load->view('_rubrar', $this->data, true);
 		$json['html']	= $html;

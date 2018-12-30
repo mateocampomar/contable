@@ -211,3 +211,20 @@ header {
 	border: 1px solid #333;
 	color: #333;
 }
+
+#rubrar-container h2 {
+	font-size: 14pt;
+}
+
+#rubrar-container span {
+	float: right;
+	font-size: 16pt;
+}
+
+#rubrar-container p {
+	text-align: center;
+	font-size: 11pt;
+	padding: 30px 0;
+	background-color: #eee;
+	border-radius: 10px;
+}
