@@ -57,14 +57,17 @@ class cuenta_model extends MY_Model {
 	
 	public function getMovimientos( $cuentaId )
 	{
-		$this->db->select('*');
+		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id');
 	
 		$this->db->from('movimientos_cuentas');
+
+		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left');
+		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
 		
-		$this->db->where('status = ' . 1);
+		$this->db->where('movimientos_cuentas.status = ' . 1);
 		$this->db->where('cuentaId = ' . $cuentaId );
 		
-		$this->db->order_by('id', 'ASC');
+		$this->db->order_by('movimientos_cuentas.id', 'ASC');
 
 		$query = $this->db->get();
 		
@@ -73,11 +76,12 @@ class cuenta_model extends MY_Model {
 
 	public function getMovimiento( $movimientoId )
 	{
-		$this->db->select('*');
+		$this->db->select('*, movimientos_cuentas.id as id');
 	
 		$this->db->from('movimientos_cuentas');
 		
 		$this->db->join('cuentas', 'cuentas.id = movimientos_cuentas.cuentaId');
+		$this->db->join('moneda', 'moneda.moneda = cuentas.moneda');
 		
 		$this->db->where('movimientos_cuentas.id = ' . $movimientoId );
 		

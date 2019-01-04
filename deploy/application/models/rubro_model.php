@@ -3,7 +3,7 @@ class rubro_model extends MY_Model {
 	
 	public function getCuentas( $cuentaId=false )
 	{
-		$this->db->select('*, rubro_cuenta.nombre as nombre');
+		$this->db->select('*, rubro_cuenta.nombre as nombre, rubro_cuenta.id as rubro_id');
 	
 		$this->db->from('rubro_cuenta');
 		
@@ -36,5 +36,19 @@ class rubro_model extends MY_Model {
 		$query = $this->db->get();
 		
 		return $query->result();
+	}
+	
+	public function setRubrado( $movimientoId, $personaId, $rubroId )
+	{
+
+		$data = array(
+			'persona_id'=> $personaId,
+			'rubro_id'	=> $rubroId
+		);
+		
+		$this->db->where('id', $movimientoId);
+
+		return $this->db->update('movimientos_cuentas', $data);
+
 	}
 }

@@ -94,4 +94,15 @@ class Cuentas extends MY_Controller {
 		
 		$this->load->view('_json',	$this->data);
 	}
+	
+	public function setRubro()
+	{
+		$movimientoId	= $this->input->post('movimientoId');
+		$personaId		= $this->input->post('personaId');
+		$rubroId		= $this->input->post('rubroId');
+		
+		$rubroModel	= new rubro_model();
+		
+		print_r( $rubroModel->setRubrado( $movimientoId, $personaId, $rubroId ) );
+	}
 }

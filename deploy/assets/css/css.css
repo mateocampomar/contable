@@ -10,6 +10,7 @@ html, body {
 	top:0;
 	left:0;
 	right:0;
+	text-shadow: none;
 }
 
 header {
@@ -130,9 +131,35 @@ header {
 }
 
 .ver-cuenta .tabla td {
-	padding: 7px;
+	padding: 10px 7px;
 	font-size: 8pt;
 }
+
+.ver-cuenta .tabla td .tag-rubro {
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	padding: 3px 5px;
+	padding-left: 0;
+}
+
+.ver-cuenta .tabla td .tag-rubro i {
+	padding: 3px 5px;
+	border-radius: 2px;
+	text-shadow: none;
+	font-style: normal;
+}
+
+.ver-cuenta .tabla td .tag-rubro.green	{	border-color: #006600;	}
+.ver-cuenta .tabla td .tag-rubro.blue	{	border-color: #003399;	}
+.ver-cuenta .tabla td .tag-rubro.black	{	border-color: black;	}
+
+.ver-cuenta .tabla td .tag-rubro.green i	{	background-color: #006600; color: #fff	}
+.ver-cuenta .tabla td .tag-rubro.blue i		{	background-color: #003399; color: #fff	}
+.ver-cuenta .tabla td .tag-rubro.black i	{	background-color: #000000; color: #fff	}
+
+.ver-cuenta .tabla td .tag-rubro.green a	{	color: #006600; text-decoration: none; }
+.ver-cuenta .tabla td .tag-rubro.blue a		{	color: #003399; text-decoration: none; }
+.ver-cuenta .tabla td .tag-rubro.black a	{	color: #000000; text-decoration: none; }
 
 .ver-cuenta .tabla tr.dark {
 	background: #eee;
@@ -155,11 +182,10 @@ header {
 .selectPersona {
 	height: 165px;
 	border-bottom: 4px solid #eee;
-	margin-bottom: 20px;
+	margin-bottom: 15px;
 }
 
 .selectPersona li, .selectCuenta li {
-	border: 1px solid #ccc;
 	font-size: 9pt;
 	padding: 8px;
 	text-align: center;
@@ -172,7 +198,7 @@ header {
 .selectPersona li {
 	font-size: 10pt;
 	padding: 15px 8px;
-	padding-bottom: 0;
+	padding-bottom: 4px;
 	font-weight: bold;
 	border-bottom-width: 3px;
 }
@@ -186,20 +212,39 @@ header {
 }
 
 .selectPersona li img {
-
-	width: 100px;
-	height: 100px;
+	position: relative;
+	top: -6px;
+	width: 110px;
+	height: 110px;
 }
 
 .selectPersona li span {
 	position: relative;
-	top: -15px;
+	top: -4px;
+	font-size: 11px;
+	color: #333;
+	background-color: #eee;
+	font-weight: normal;
+	padding: 2px 10px;
+	border-radius: 3px;
+	text-shadow: none;
 }
 
-.selectPersona li.blue:hover,.selectPersona li.blue.selectedPersona	{	background-color: #ecf0ff; border-color: #003366; color: #003366;	}
-.selectPersona li.green:hover,.selectPersona li.green.selectedPersona	{	background-color: #e8ffe0; border-color: #006600; color: #006600;	}
-.selectPersona li.black:hover,.selectPersona li.black.selectedPersona	{	background-color: #eeeeee; border-color: black; color: black;	}
+.selectPersona li.blue.selectedPersona span		{	background-color: #003366 !important; color: #fff;	}
+.selectPersona li.green.selectedPersona span	{	background-color: #006600 !important; color: #fff;	}
+.selectPersona li.black.selectedPersona span	{	background-color: black !important; color: #fff;	}
 
+.selectPersona li.blue:hover,.selectPersona li.blue.selectedPersona	{	background-color: #ecf0ff; border-color: #003366; 	}
+.selectPersona li.green:hover,.selectPersona li.green.selectedPersona	{	background-color: #e8ffe0; border-color: #006600;	}
+.selectPersona li.black:hover,.selectPersona li.black.selectedPersona	{	background-color: #eeeeee; border-color: black;	}
+
+.selectPersona li.blue:hover span	{	background-color: #dde1f0; 	}
+.selectPersona li.green:hover span	{	background-color: #d8edd0;	}
+.selectPersona li.black:hover span	{	background-color: #cccccc;	}
+
+.selectCuenta li {
+	border: 1px solid #eee;
+}
 
 .selectPersona li:hover, .selectCuenta li:hover {
 	cursor: pointer;
@@ -216,9 +261,14 @@ header {
 	font-size: 14pt;
 }
 
-#rubrar-container span {
+#rubrar-container h2 span {
 	float: right;
 	font-size: 16pt;
+}
+
+#rubrar-container h2 span i {
+	font-size: 10pt;
+	font-weight: normal;
 }
 
 #rubrar-container p {
@@ -227,4 +277,10 @@ header {
 	padding: 30px 0;
 	background-color: #eee;
 	border-radius: 10px;
+}
+
+#rubrar-container p span {
+	position: relative;
+	top: 10px;
+	font-size: 8pt;
 }

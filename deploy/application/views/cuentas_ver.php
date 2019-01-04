@@ -8,7 +8,7 @@
 		</ul>
 		<h1><?=$cuentaObj->nombre?> <span style="font-weight: normal;">(<?=$cuentaObj->moneda?>)</span></h1>
 		<div class="ver-cuenta">
-			<table border="0" cellpadding="0" cellspacing="2" class="tabla">
+			<table border="0" cellpadding="0" cellspacing="1" class="tabla">
 				<tr class="header">
 					<td>Fecha</td>
 					<td>Movimiento</td>
@@ -21,29 +21,35 @@
 					$trClass = "dark";
 					
 					foreach ( $movimientosArray as $movimientosObj )
-					{
+					{		
 						if ( $trClass == 'dark' )	$trClass = '';
 						else						$trClass = 'dark';
 						
 						?>
 						<tr class="<?=$trClass?>">
 							<td><?=$movimientosObj->fecha?></td>
-							<td><?=$movimientosObj->concepto?></td>
-							<td align="center">
-								<?
-									if ( $movimientosObj->rubro_id )
+							<td style="font-weight: bold;"><?=$movimientosObj->concepto?></td>
+							<td>
+								<?									
+									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
 									{
-										
+										?>
+										<span class="tag-rubro <?=$movimientosObj->color?>">
+											<a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">
+												<i><?=$movimientosObj->caracter_unico?></i> <?=$movimientosObj->nombre?>
+											</a>
+										</span>
+										<?
 									}
 									else
 									{
-										?><a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->id?>" class="rubradoLink">+</a><?
+										?><a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">?</a><?
 									}
 								?>
 							</td>
-							<td align="right"><?=$movimientosObj->debito?></td>
-							<td align="right"><?=$movimientosObj->credito?></td>
-							<td align="right"><strong><?=$movimientosObj->saldo?></strong></td>
+							<td align="right"><?=formatNumberCustom( $movimientosObj->debito )?></td>
+							<td align="right"><?=formatNumberCustom( $movimientosObj->credito )?></td>
+							<td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo )?></strong></td>
 						</tr>
 						<?
 					}
@@ -69,8 +75,6 @@
 	
 	$(".rubradoLink").click(function()
 	{
-		//alert(  );//.data('movimientoId') );
-		
 		$.ajax({
 			method: "POST",
 			url: "<?=base_url('index.php/cuentas/rubrar/')?>",
