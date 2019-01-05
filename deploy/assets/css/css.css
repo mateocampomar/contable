@@ -103,13 +103,26 @@ header {
 
 .cuenta-menu {
 	position: relative;
-	left: -20px;
+	left: 2px;
+	top: 16px;
+	float: right;
+	list-style: none;
+}
+
+.cuenta-menu li img {
+	position: relative;
+	width: 32px;
+	height: 32px;
+}
+
+.cuenta-menu li {
 	float: right;
 }
 
 .ver-cuenta {
 	border: 1px solid #eee;
 	background-color: #fff;
+	margin-top: 60px;
 }
 
 .ver-cuenta .tabla {
@@ -136,10 +149,12 @@ header {
 }
 
 .ver-cuenta .tabla td .tag-rubro {
-	border: 1px solid #ccc;
+	border: 0px solid #ccc;
 	border-radius: 3px;
 	padding: 3px 5px;
 	padding-left: 0;
+	position: relative;
+	left: 3px;
 }
 
 .ver-cuenta .tabla td .tag-rubro i {
@@ -149,24 +164,37 @@ header {
 	font-style: normal;
 }
 
-.ver-cuenta .tabla td .tag-rubro.green	{	border-color: #006600;	}
-.ver-cuenta .tabla td .tag-rubro.blue	{	border-color: #003399;	}
-.ver-cuenta .tabla td .tag-rubro.black	{	border-color: black;	}
+.ver-cuenta .tabla td .tag-rubro img {
+	height: 23px;
+	width: 23px;
+	position: absolute;
+	left: -5px;
+	top: -3px;
+}
+
+.ver-cuenta .tabla td .tag-rubro.green	{	border-color: #006600; background-color: #e8ffe0;	}
+.ver-cuenta .tabla td .tag-rubro.blue	{	border-color: #003399; background-color: #ecf0ff;	}
+.ver-cuenta .tabla td .tag-rubro.black	{	border-color: #999; background-color: #eee;	}
 
 .ver-cuenta .tabla td .tag-rubro.green i	{	background-color: #006600; color: #fff	}
 .ver-cuenta .tabla td .tag-rubro.blue i		{	background-color: #003399; color: #fff	}
-.ver-cuenta .tabla td .tag-rubro.black i	{	background-color: #000000; color: #fff	}
+.ver-cuenta .tabla td .tag-rubro.black i	{	background-color: #999; color: #fff	}
 
-.ver-cuenta .tabla td .tag-rubro.green a	{	color: #006600; text-decoration: none; }
-.ver-cuenta .tabla td .tag-rubro.blue a		{	color: #003399; text-decoration: none; }
-.ver-cuenta .tabla td .tag-rubro.black a	{	color: #000000; text-decoration: none; }
+.ver-cuenta .tabla td .tag-rubro a {
+	padding-left: 25px;
+	font-size: 7pt;
+}
+
+.ver-cuenta .tabla td .tag-rubro.green a	{	color: #006600; text-decoration: none; font-weight: normal; }
+.ver-cuenta .tabla td .tag-rubro.blue a		{	color: #003399; text-decoration: none; font-weight: normal; }
+.ver-cuenta .tabla td .tag-rubro.black a	{	color: #000000; text-decoration: none; font-weight: normal; }
 
 .ver-cuenta .tabla tr.dark {
 	background: #eee;
 }
 
 #dialogPageRubrado .rubrar-container {
-	height: 500px;
+	height: 600px;
 }
 
 #dialogPageRubrado .rubrar-container.loading {
@@ -283,4 +311,12 @@ header {
 	position: relative;
 	top: 10px;
 	font-size: 8pt;
+}
+
+#inputTxt.statusok {
+	background-image: url("../img/icon_thumbsup.png");
+	border: none;
+	background-size: 300px 300px;
+	background-repeat: no-repeat;
+	background-position: center center;
 }

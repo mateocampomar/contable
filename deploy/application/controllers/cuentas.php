@@ -27,49 +27,62 @@ class Cuentas extends MY_Controller {
 		// Post
 		$cuentaId = $this->input->post('cuentaId');
 		$inputTxt = $this->input->post('inputTxt');
-
-		// Models
-		$cuentaModel	= new Cuenta_model();
-		$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
-
-		$parserModel	= new Parser_model();
 		
-
-		switch ( $cuentaObj->parser )
+		// Valudación
+		if ( !$inputTxt )
 		{
-		    case 'itau-web':
-
-				if ( $parserModel->itauWeb( $cuentaId, $inputTxt ) )
-				{
-					$json['okTxt']		= 'Nuevos movimientos ingresados ok';
-					$json['action']		= 'reload';
-				}
-				else
-				{
-					$json['error']		= true;
-					$json['errorTxt']	= 'Ups! No se pudo parsear el texto ingresado.';
-				}
-
-				break;
-
-			default:
-				$json['error']		= true;
-				$json['errorTxt']	= 'No se encontró el parser.';
+			$json['error']		= true;
+			$json['errorTxt']	= 'No hay texto que ingresar.';
 		}
-		
+		else
+		{
+			// Models
+			$cuentaModel	= new Cuenta_model();
+			$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
+	
+			$parserModel	= new Parser_model();
+			
+	
+			switch ( $cuentaObj->parser )
+			{
+			    case 'itau-web':
+			    
+			    	$parserResult = $parserModel->itauWeb( $cuentaId, $inputTxt );
+	
+					if ( $parserResult === true )
+					{
+						$json['okTxt']		= 'Nuevos movimientos ingresados ok';
+						$json['action']		= 'reload';
+					}
+					else
+					{
+						$json['error']		= true;
+						$json['errorTxt']	= $parserResult['error'];
+					}
+	
+					break;
+	
+				default:
+					$json['error']		= true;
+					$json['errorTxt']	= 'No se encontró el parser.';
+			}
+		}
+
+
 		$this->data['json'] = $json;
 		
 		$this->load->view('_json',	$this->data);
+
 	}
 	
-	public function rubrar()
+	public function rubrar( $movimientoId )
 	{
 		$json = array(
 					'error'		=> false,
 					'html'		=> false
 				);
 
-		$movimientoId = $this->input->post('movimientoId');
+		//$movimientoId = $this->input->post('movimientoId');
 
 		// Models
 		$rubroModel	= new rubro_model();
@@ -97,12 +110,30 @@ class Cuentas extends MY_Controller {
 	
 	public function setRubro()
 	{
+		$json = array(
+					'error'		=> false,
+					'action'	=> false
+				);
+	
 		$movimientoId	= $this->input->post('movimientoId');
 		$personaId		= $this->input->post('personaId');
 		$rubroId		= $this->input->post('rubroId');
 		
 		$rubroModel	= new rubro_model();
 		
-		print_r( $rubroModel->setRubrado( $movimientoId, $personaId, $rubroId ) );
+		if ( $rubroModel->setRubrado( $movimientoId, $personaId, $rubroId ) )
+		{
+			$json['error']		= false;
+			$json['nextId']		= $movimientoId + 1;
+		}
+		else
+		{
+			$json['error']		= true;
+			$json['errorTxt']	= 'Error';
+		}
+		
+		$this->data['json'] = $json;
+		
+		$this->load->view('_json',	$this->data);
 	}
 }

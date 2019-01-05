@@ -50,9 +50,17 @@ class cuenta_model extends MY_Model {
 			'status'		=> 1
 		);
 		
-		$this->db->insert('movimientos_cuentas', $data);
+		if ( $this->db->insert('movimientos_cuentas', $data) )
+		{
+			$insertId = $this->db->insert_id();
+			
+			if ( $this->actualizarSaldo( $cuentaId, $saldo ) )
+			{	
+				return $insertId;
+			}
+		}
 		
-		return $this->db->insert_id();
+		return false;
 	}
 	
 	public function getMovimientos( $cuentaId )
@@ -92,5 +100,16 @@ class cuenta_model extends MY_Model {
 		$result = $query->result();
 		
 		return $result[0];;
+	}
+	
+	public function actualizarSaldo( $cuentaId, $saldo )
+	{
+		$data = array(
+			'saldo'=> $saldo,
+		);
+		
+		$this->db->where('id', $cuentaId);
+
+		return $this->db->update('cuentas', $data);
 	}
 }

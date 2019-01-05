@@ -2,14 +2,15 @@
 	<?
 		
 	echo $movimientoObj->nombre?> <strong style="font-weight: normal;">(<?=$movimientoObj->moneda?>)</strong><?
+
 	
-	if ( $movimientoObj->debito >= 0 )
+	if ( round( $movimientoObj->debito, 2 ) != 0 )
 	{
-		?><span style="color:red;"><i><?=$movimientoObj->simbolo?></i> -<?=$movimientoObj->debito?></span><?
+		?><span style="color:red;"><i><?=$movimientoObj->simbolo?></i> -<?=formatNumberCustom( $movimientoObj->debito )?></span><?
 	}
 	else
 	{
-		?><span style="color:green;"><i><?=$movimientoObj->simbolo?></i> <?=$movimientoObj->credito?></span><?
+		?><span style="color:green;"><i><?=$movimientoObj->simbolo?></i> <?=formatNumberCustom( $movimientoObj->credito )?></span><?
 	}
 	
 	?>	
@@ -65,7 +66,17 @@
 				data: { movimientoId: <?=$movimientoObj->id?>, personaId: selectedPersona, rubroId: selectedRubro }
 			})
 			.done(function( msg ) {
-				alert( "Data Saved: " + msg );
+
+				var jsonObj = jQuery.parseJSON( msg );
+				
+				if ( jsonObj.error == false )
+				{
+					sendToRubrar( jsonObj.nextId );
+				}
+				else
+				{
+					alert( jsonObj.errorTxt );
+				}
 			});
 		}
 		else
