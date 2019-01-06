@@ -99,7 +99,7 @@ class cuenta_model extends MY_Model {
 		
 		$result = $query->result();
 		
-		return $result[0];;
+		return $result[0];
 	}
 	
 	public function actualizarSaldo( $cuentaId, $saldo )
@@ -111,5 +111,72 @@ class cuenta_model extends MY_Model {
 		$this->db->where('id', $cuentaId);
 
 		return $this->db->update('cuentas', $data);
+	}
+
+
+	public function getSaldoPersona( $cuentaId, $personaId )
+	{
+		$this->db->select('*');
+
+		$this->db->from('cuentas_saldos_persona');
+
+		$this->db->where('cuenta_id = ' . $cuentaId );
+		$this->db->where('persona_id = ' . $personaId );
+
+		$this->db->limit(1);
+
+		$query = $this->db->get();
+
+		$result = $query->result();
+		
+		// Ya existe el registro. Devuelvo el resultado.
+		if ( count( $result ) )
+		{
+			return $result[0];
+		}
+
+		// No existe el registro. Lo creo.
+		$data = array(
+			'cuenta_id'		=> $cuentaId,
+			'persona_id'	=> $personaId,
+			'saldo'			=> 0,
+		);
+		
+		if ( $this->db->insert('cuentas_saldos_persona', $data) )
+		{
+			return $this->getSaldoPersona( $cuentaId, $personaId );
+		}
+		
+		// Error
+		return false;
+	}
+
+	public function getSaldosByCuenta( $cuentaId )
+	{
+		$this->db->select('*, cuentas_saldos_persona.saldo as saldo');
+
+		$this->db->from('cuentas_saldos_persona');
+
+		$this->db->join('rubro_persona', 'rubro_persona.id = cuentas_saldos_persona.persona_id');
+		$this->db->join('cuentas', 'cuentas.id = cuentas_saldos_persona.cuenta_id');
+		$this->db->join('moneda', 'moneda.moneda = cuentas.moneda');
+
+		$this->db->where('cuenta_id = ' . $cuentaId );
+
+		$query = $this->db->get();
+
+		return $query->result();
+	}
+
+	public function setSaldoPersona( $id, $saldo )
+	{
+		// Update de movimiento_cuentas
+		$data = array(
+			'saldo'	=> $saldo,
+		);
+
+		$this->db->where('id', $id);
+
+		return $this->db->update('cuentas_saldos_persona', $data);
 	}
 }

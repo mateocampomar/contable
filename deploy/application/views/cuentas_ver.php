@@ -1,4 +1,34 @@
 	<div class="bdy-container">
+		<ul class="saldos-menu">
+		<?
+			$totalSaldosPersona = 0;
+			
+			foreach ( $saldosArray as $saldoObj )
+			{
+				$totalSaldosPersona += $saldoObj->saldo;
+				
+				?>
+				<li><img src="<? echo base_url( "assets/img/" . $saldoObj->unique_name )?>.png" /><span><i><?=$saldoObj->simbolo?> </i><?=formatNumberCustom( $saldoObj->saldo )?></span></li>
+				<?
+			}
+
+			if ( $saldoSinRubrar->total )
+			{
+				?>
+				<li><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>"/><span><i><?=$cuentaObj->simbolo?> </i><?=formatNumberCustom( $saldoSinRubrar->total )?></span></li>
+				<?
+			}
+			
+			$bugSaldo = round( $totalSaldosPersona + $saldoSinRubrar->total - $cuentaObj->saldo, 2 );
+
+			if ( $bugSaldo || true )
+			{
+				?>
+				<li><img src="<?=base_url( 'assets/img/icon_bug.png' )?>"/><span><i><?=$cuentaObj->simbolo?> </i><?=formatNumberCustom( $bugSaldo )?></span></li>
+				<?
+			}
+		?>
+		</ul>
 		<ul class="cuenta-menu">
 			<li>
 				<div role="main" class="ui-content">
@@ -6,13 +36,13 @@
 				</div>
 			</li>
 		</ul>
-		<h1><?=$cuentaObj->nombre?> <span style="font-weight: normal;">(<?=$cuentaObj->moneda?>)</span></h1>
+		<h1><?=$cuentaObj->nombre?> <span style="font-weight: normal;">(<?=$cuentaObj->moneda?>): <span style="font-size: 15pt;"><?=formatNumberCustom( $cuentaObj->saldo )?></span></span></h1>
 		<div class="ver-cuenta">
 			<table border="0" cellpadding="0" cellspacing="1" class="tabla">
 				<tr class="header">
 					<td>Fecha</td>
 					<td>Movimiento</td>
-					<td align="center">Rubro</td>
+					<td>Rubro</td>
 					<td align="right">Crédito</td>
 					<td align="right">Débito</td>
 					<td align="right"><strong>Subtotal</strong></td>
@@ -43,7 +73,7 @@
 									}
 									else
 									{
-										?><a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">?</a><?
+										?><a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink" style="color: red">?</a><?
 									}
 								?>
 							</td>
@@ -121,7 +151,7 @@
 
 <div data-role="page" id="dialogPage">
   <div role="main" class="ui-content">
-	<h2>Importar Cuenta</h2>
+	<h2 class="importar_cuenta"><img src="<?=base_url('assets/img/icon_plus.png')?>" /> Importar Cuenta</h2>
 	<div class="dialog-msg"></div>
     <textarea id="inputTxt" style="height: 300px; width: 100%" data-role="none"></textarea>
     <br/><br/>

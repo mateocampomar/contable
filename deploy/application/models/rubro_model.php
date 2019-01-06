@@ -41,14 +41,45 @@ class rubro_model extends MY_Model {
 	public function setRubrado( $movimientoId, $personaId, $rubroId )
 	{
 
-		$data = array(
-			'persona_id'=> $personaId,
-			'rubro_id'	=> $rubroId
-		);
+		$cuentaModel	= new Cuenta_model();
+		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
+
+		$saldoObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $personaId );
+
+		$saldo = $saldoObj->saldo + $movimientoObj->credito - $movimientoObj->debito;
+
+
+		if ( $cuentaModel->setSaldoPersona( $saldoObj->id, $saldo ) )
+		{
+			// Update de movimiento_cuentas
+			$data = array(
+				'persona_id'=> $personaId,
+				'rubro_id'	=> $rubroId
+			);
+
+			$this->db->where('id', $movimientoId);
+
+			return $this->db->update('movimientos_cuentas', $data);
+		}
 		
-		$this->db->where('id', $movimientoId);
+		return false;
+	}
+	
+	public function getTotalSinRubrar( $cuentaId )
+	{
+		$this->db->select('SUM(credito) as total_credito, SUM(debito) as total_debito, SUM(credito) - SUM(debito) as total');
+	
+		$this->db->from('movimientos_cuentas');
+		
+		$this->db->where('status = ' . 1);
+		$this->db->where('cuentaId = ' . $cuentaId);
+		$this->db->where('persona_id', NULL);
+		$this->db->where('rubro_id', NULL);
 
-		return $this->db->update('movimientos_cuentas', $data);
-
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		return $result[0];
 	}
 }

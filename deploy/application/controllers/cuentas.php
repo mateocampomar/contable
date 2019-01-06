@@ -5,12 +5,19 @@ class Cuentas extends MY_Controller {
 	public function ver( $cuentaId )
 	{
 		$cuentaModel	= new Cuenta_model();
+		$rubroModel		= new Rubro_model();
 		
 		$cuentaObj			= $cuentaModel->getCuenta( $cuentaId );
 		$movimientosArray	= $cuentaModel->getMovimientos( $cuentaId );
+		$saldosArray		= $cuentaModel->getSaldosByCuenta( $cuentaId );
+		
+		$saldoSinRubrar = $rubroModel->getTotalSinRubrar( $cuentaId );
+
 		
 		$this->data['cuentaObj']		= $cuentaObj;
 		$this->data['movimientosArray']	= $movimientosArray;
+		$this->data['saldosArray']		= $saldosArray;
+		$this->data['saldoSinRubrar']	= $saldoSinRubrar;
 		
 		$this->load->view('templates/html_open',	$this->data);
 		$this->load->view('cuentas_ver',			$this->data);
