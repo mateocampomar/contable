@@ -40,10 +40,21 @@ class parser_model extends MY_Model {
 			}
 
 			// Ingresar Movimiento.
-			if ( !$cuentaModel->ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo) )
+			$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo);
+			
+			if ( !$movimiento )
 			{
 				$return['error'] = "No se pudo ingresar el movimiento en la db.";
 				return $return;
+			}
+			
+			$rubroModel		= new Rubro_model();
+			
+			$rubroArray = $rubroModel->rubradoAutomatico( $concepto );
+			
+			if ( $rubroArray )
+			{
+				$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'] );
 			}
 		}
 

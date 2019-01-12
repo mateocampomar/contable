@@ -21,7 +21,7 @@
 			
 			$bugSaldo = round( $totalSaldosPersona + $saldoSinRubrar->total - $cuentaObj->saldo, 2 );
 
-			if ( $bugSaldo || true )
+			if ( $bugSaldo )
 			{
 				?>
 				<li><img src="<?=base_url( 'assets/img/icon_bug.png' )?>"/><span><i><?=$cuentaObj->simbolo?> </i><?=formatNumberCustom( $bugSaldo )?></span></li>
@@ -113,7 +113,7 @@
 				
 				window.setTimeout(function(){
 
-					window.location.replace("<?=base_url('index.php/cuentas/ver/' . $cuentaObj->id )?>");
+					refrescar();
 
                 }, 1500);
 
@@ -146,6 +146,11 @@
 	{
 		sendToRubrar( $( this ).data('movimientoid') );
 	});
+	
+	function refrescar()
+	{
+		window.location.replace("<?=base_url('index.php/cuentas/ver/' . $cuentaObj->id )?>");
+	}
 
 </script>
 
@@ -164,7 +169,7 @@
   <div role="main" class="ui-content">
     <div class="rubrar-container loading" id="rubrar-container"></div>
     <a href="javascript:sendRubrado();" data-role="button" data-theme="b">Asignar Rubro a Movimiento</a>
-    <a href="" data-role="button" data-rel="back" data-theme="a" class="btn_not">Not!</a>
+    <a href="javascript:refrescar();" data-role="button" data-theme="a" class="btn_not">Not!</a>
   </div>
 </div>
 

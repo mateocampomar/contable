@@ -179,4 +179,37 @@ class cuenta_model extends MY_Model {
 
 		return $this->db->update('cuentas_saldos_persona', $data);
 	}
+	
+	public function nextMovimientoSinRubrar( $movimientoId, $cuentaId=false )
+	{
+		$this->db->select('*');
+		
+		$this->db->from('movimientos_cuentas');
+		
+		// Where
+		$this->db->where('status = ' . 1);
+		$this->db->where('persona_id', NULL);
+		$this->db->where('rubro_id', NULL);
+		
+		if ( $cuentaId )
+			$this->db->where('cuentaId = ' . $cuentaId );
+
+
+
+		$this->db->order_by('id', 'ASC');
+		
+		$this->db->limit(1);
+
+		// Ejecutar Query
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		if ( count($result) )
+		{
+			return $result[0]->id;
+		}
+		
+		return false;
+	}
 }

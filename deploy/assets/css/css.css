@@ -47,6 +47,15 @@ header {
 	cursor: pointer;
 }
 
+#left_header ol li img.icon {
+	float: right;
+	height: 25px;
+	width: 25px;
+	position: relative;
+	left: -18px;
+	top: 19px;
+}
+
 #left_header ol li h2 {
 	margin: 20px;
 	background-color: #eee;

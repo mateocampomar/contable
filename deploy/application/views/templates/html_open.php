@@ -21,6 +21,8 @@
 			<div id="left_header">
 				<ol>
 					<?
+					//print_r($saldoSinRubrarArray);
+						
 					foreach( $listCuentas as $cuenta )
 					{
 						
@@ -29,8 +31,16 @@
 						
 						$saldo_parts = explode( "," , number_format($cuenta->saldo, 2, "," , ".") );
 						
+						$sinRubrarAlert = ( $saldoSinRubrarArray[$cuenta->id]->total_credito || $saldoSinRubrarArray[$cuenta->id]->total_debito )	? true : false;
+						
 						?>
 						<li class="<?=$cssClass?>" onclick="window.location.href='<?=base_url( 'index.php/cuentas/ver/' . $cuenta->id )?>'">
+							<?
+								if ( $sinRubrarAlert )
+								{
+									?><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="icon"/><?
+								}
+							?>
 							<h2><?=$cuenta->nombre?> <strong>(<?=$cuenta->moneda?>)</strong></h2>
 							<div class="total">
 								<small><?=$cuenta->simbolo?> </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small>

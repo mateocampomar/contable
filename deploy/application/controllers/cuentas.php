@@ -126,12 +126,15 @@ class Cuentas extends MY_Controller {
 		$personaId		= $this->input->post('personaId');
 		$rubroId		= $this->input->post('rubroId');
 		
-		$rubroModel	= new rubro_model();
+		$rubroModel	= new Rubro_Model();
+		$cuentaModel= new Cuenta_model();
+		
+		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
 		
 		if ( $rubroModel->setRubrado( $movimientoId, $personaId, $rubroId ) )
 		{
 			$json['error']		= false;
-			$json['nextId']		= $movimientoId + 1;
+			$json['nextId']		= $cuentaModel->nextMovimientoSinRubrar( $movimientoId, $movimientoObj->cuentaId );
 		}
 		else
 		{

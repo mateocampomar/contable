@@ -45,7 +45,22 @@ class rubro_model extends MY_Model {
 		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
 
 		$saldoObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $personaId );
+		
+		// Si el movimiento ya estaba rubrado entonces vuelvo el saldo para atrás.
+		if ( $movimientoObj->persona_id )
+		{
+			$saldoExObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $movimientoObj->persona_id );
+			
+			// El movimiento pero revertido.
+			$saldoEx = $saldoExObj->saldo - $movimientoObj->credito + $movimientoObj->debito;
+			
+			if ( !$cuentaModel->setSaldoPersona( $saldoExObj->id, $saldoEx ) )
+			{
+				return false;
+			}
+		}
 
+		$saldoObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $personaId );
 		$saldo = $saldoObj->saldo + $movimientoObj->credito - $movimientoObj->debito;
 
 
@@ -81,5 +96,23 @@ class rubro_model extends MY_Model {
 		$result = $query->result();
 		
 		return $result[0];
+	}
+	
+	public function rubradoAutomatico( $concepto )
+	{
+		
+		$concepto = substr( $concepto , 0 , 12 );
+		
+		if ( $concepto == 'REDIVA 19210' )
+		{
+			$returnArray = array(
+								"persona_id"	=> 3,
+								"rubro_id"		=> 12
+								);
+								
+			return $returnArray;
+		}
+		
+		return false;
 	}
 }

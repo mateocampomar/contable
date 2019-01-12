@@ -1,4 +1,14 @@
-<h2>
+<?
+	if ( round( $movimientoObj->debito, 2 ) != 0 )
+	{
+		$style = "color:red;";
+	}
+	else
+	{
+		$style = "color:green;";
+	}
+?>
+<h2 style="<?=$style?>">
 	<?
 		
 	echo $movimientoObj->nombre?> <strong style="font-weight: normal;">(<?=$movimientoObj->moneda?>)</strong><?
@@ -6,11 +16,11 @@
 	
 	if ( round( $movimientoObj->debito, 2 ) != 0 )
 	{
-		?><span style="color:red;"><i><?=$movimientoObj->simbolo?></i> -<?=formatNumberCustom( $movimientoObj->debito )?></span><?
+		?><span><i><?=$movimientoObj->simbolo?></i> -<?=formatNumberCustom( $movimientoObj->debito )?></span><?
 	}
 	else
 	{
-		?><span style="color:green;"><i><?=$movimientoObj->simbolo?></i> <?=formatNumberCustom( $movimientoObj->credito )?></span><?
+		?><span><i><?=$movimientoObj->simbolo?></i> <?=formatNumberCustom( $movimientoObj->credito )?></span><?
 	}
 	
 	?>	
@@ -71,7 +81,14 @@
 				
 				if ( jsonObj.error == false )
 				{
-					sendToRubrar( jsonObj.nextId );
+					if ( jsonObj.nextId )
+					{
+						sendToRubrar( jsonObj.nextId );
+					}
+					else
+					{
+						window.location.replace("<?=base_url('index.php/cuentas/ver/' . $movimientoObj->cuentaId )?>");
+					}
 				}
 				else
 				{
