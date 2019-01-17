@@ -55,23 +55,62 @@ class Cuentas extends MY_Controller {
 			    case 'itau-web':
 			    
 			    	$parserResult = $parserModel->itauWeb( $cuentaId, $inputTxt );
-	
-					if ( $parserResult === true )
-					{
-						$json['okTxt']		= 'Nuevos movimientos ingresados ok';
-						$json['action']		= 'reload';
-					}
-					else
-					{
-						$json['error']		= true;
-						$json['errorTxt']	= $parserResult['error'];
-					}
-	
-					break;
+			    	
+			    	break;
 	
 				default:
 					$json['error']		= true;
 					$json['errorTxt']	= 'No se encontró el parser.';
+			}
+
+			// Ingresar Movimientos Array		
+			if ( is_array( $parserResult ) && !isset( $parserResult['error'] ) )
+			{
+				$saldosPersonaArray = array();
+				
+				$rubroModel = new Rubro_Model();
+				
+				$personasArray = $rubroModel->getPersona();
+				
+				// Listo todas las cuentas y pongo los saldos en cero.
+				foreach ( $personasArray as $personaObj )
+				{
+					$saldosPersonaArray[ $personaObj->id ] = $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
+				}
+				
+				foreach ( $parserResult as $rowArray )
+				{
+					// Ingresar Movimiento.
+					$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $rowArray['fecha'], $rowArray['concepto'], $rowArray['credito'], $rowArray['debito'], $rowArray['saldo'], $saldosPersonaArray);
+	
+					if ( !$movimiento )
+					{
+						$json['error']		= true;
+						$json['errorTxt']	= "No se pudo ingresar el movimiento en la db.";
+
+						break;
+					}
+					
+					// Rubrado Automático
+					$rubroModel		= new Rubro_model();
+					
+					$rubroArray = $rubroModel->rubradoAutomatico( $rowArray['concepto'] );
+					
+					if ( $rubroArray )
+					{
+						//$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'] );
+					}
+
+				}
+
+				$json['okTxt']		= 'Nuevos movimientos ingresados ok';
+				$json['action']		= 'reload';
+
+			}
+			else
+			{
+				$json['error']		= true;
+				$json['errorTxt']	= $parserResult['error'];
 			}
 		}
 

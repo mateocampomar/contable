@@ -5,11 +5,14 @@
 			
 			foreach ( $saldosArray as $saldoObj )
 			{
-				$totalSaldosPersona += $saldoObj->saldo;
-				
-				?>
-				<li><img src="<? echo base_url( "assets/img/" . $saldoObj->unique_name )?>.png" /><span><i><?=$saldoObj->simbolo?> </i><?=formatNumberCustom( $saldoObj->saldo )?></span></li>
-				<?
+				if ( round($saldoObj->saldo,2) )
+				{
+					$totalSaldosPersona += $saldoObj->saldo;
+					
+					?>
+					<li><img src="<? echo base_url( "assets/img/" . $saldoObj->unique_name )?>.png" /><span><i><?=$saldoObj->simbolo?> </i><?=formatNumberCustom( $saldoObj->saldo )?></span></li>
+					<?
+				}
 			}
 
 			if ( $saldoSinRubrar->total )

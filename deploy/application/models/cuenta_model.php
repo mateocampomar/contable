@@ -38,8 +38,11 @@ class cuenta_model extends MY_Model {
 		return $result[0];
 	}
 
-	public function ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo )
+	public function ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo, $saldosPersonaArray )
 	{
+		//$ultimoMovimientoObj = $this->getUltimoMovimientoPorCuenta( $cuentaId );
+		//$ReqVars = get_object_vars( $ultimoMovimientoObj );
+		
 		$data = array(
 			'cuentaId'		=> $cuentaId,
 			'fecha'			=> $fecha,
@@ -50,6 +53,11 @@ class cuenta_model extends MY_Model {
 			'status'		=> 1
 		);
 		
+		foreach ( $saldosPersonaArray as $saldosPersonaObj )
+		{
+			$data[ 'saldo_cta' . $saldosPersonaObj->persona_id ] = $saldosPersonaObj->saldo;
+		}		
+
 		if ( $this->db->insert('movimientos_cuentas', $data) )
 		{
 			$insertId = $this->db->insert_id();
@@ -61,6 +69,26 @@ class cuenta_model extends MY_Model {
 		}
 		
 		return false;
+	}
+	
+	public function getUltimoMovimientoPorCuenta( $cuentaId )
+	{
+		$this->db->select('*');
+	
+		$this->db->from('cuentas');
+		
+		$this->db->where('status = ' . 1);
+		$this->db->where('id = ' . $cuentaId );
+		
+		$this->db->order_by('id', 'DESC');
+		
+		$this->db->limit(1);
+
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		return $result[0];
 	}
 	
 	public function getMovimientos( $cuentaId )

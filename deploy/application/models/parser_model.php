@@ -4,6 +4,9 @@ class parser_model extends MY_Model {
 	public function itauWeb( $cuentaId, $inputTxt )
 	{
 		$cuentaModel	= new Cuenta_model();
+		
+		$fisrtRow	= true;
+		$return		= array();
 
 
 		$rowsArray = explode("\n", $inputTxt);
@@ -27,39 +30,28 @@ class parser_model extends MY_Model {
 			// Validación del saldo para saber si es efectivamente el próximo movimiento.
 			$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
 			
-			//echo $saldo . " != " . ( $cuentaObj->saldo + $credito - $debito) . "\n" ;
+			//echo round($saldo, 2) . " != " . round( $cuentaObj->saldo + $credito - $debito, 2 ) . "/";
 			
-			//echo $saldo - $cuentaObj->saldo - $credito;
-			
-			if ( round($saldo, 2) != round( $cuentaObj->saldo + $credito - $debito, 2 ) )
+			if ( $fisrtRow )
 			{
-				//echo floatval($saldo) . " != " . floatval( $cuentaObj->saldo + $credito - $debito );
+				if ( round($saldo, 2) != round( $cuentaObj->saldo + $credito - $debito, 2 ) )
+				{
+					$return['error'] = "Hay diferencia de saldo.";
+					return $return;
+				}
 				
-				$return['error'] = "Hay diferencia de saldo.";
-				return $return;
+				$fisrtRow = false;
 			}
 
-			// Ingresar Movimiento.
-			$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo);
-			
-			if ( !$movimiento )
-			{
-				$return['error'] = "No se pudo ingresar el movimiento en la db.";
-				return $return;
-			}
-			
-			$rubroModel		= new Rubro_model();
-			
-			$rubroArray = $rubroModel->rubradoAutomatico( $concepto );
-			
-			if ( $rubroArray )
-			{
-				$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'] );
-			}
+			$return[] = array(
+							'fecha'		=> $fecha,
+							'concepto'	=> $concepto,
+							'debito'	=> $debito,
+							'credito'	=> $credito,
+							'saldo'		=> $saldo,
+					);
 		}
-
-
-		return true;
+		
+		return $return;
 	}
-
 }

@@ -58,6 +58,8 @@ class rubro_model extends MY_Model {
 			{
 				return false;
 			}
+			
+			$this->sumSaldoDesdeMovimiento( $movimientoId, $movimientoObj->persona_id, - $movimientoObj->credito + $movimientoObj->debito );
 		}
 
 		$saldoObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $personaId );
@@ -68,16 +70,40 @@ class rubro_model extends MY_Model {
 		{
 			// Update de movimiento_cuentas
 			$data = array(
-				'persona_id'=> $personaId,
-				'rubro_id'	=> $rubroId
+				'persona_id'							=> $personaId,
+				'rubro_id'								=> $rubroId,
+			//	'saldo_cta' . $movimientoObj->cuentaId	=> "saldo_cta" . $movimientoObj->cuentaId . "+" . $movimientoObj->credito - $movimientoObj->debito
 			);
 
 			$this->db->where('id', $movimientoId);
 
-			return $this->db->update('movimientos_cuentas', $data);
+			$return = $this->db->update('movimientos_cuentas', $data);
+			
+			$this->sumSaldoDesdeMovimiento( $movimientoId, $personaId, $movimientoObj->credito - $movimientoObj->debito );
+			
+			return $return;
 		}
 		
 		return false;
+	}
+
+	public function sumSaldoDesdeMovimiento( $movimientoId, $personaId, $aSumar )
+	{
+		$cuentaModel	= new Cuenta_model();
+		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
+
+		$this->db->set('saldo_cta' . $personaId, "saldo_cta" . $personaId . " +" . $aSumar, FALSE);
+		
+		//'saldo_cta' . $movimientoObj->cuentaId	=> "saldo_cta" . $movimientoObj->cuentaId . "+" . $movimientoObj->credito - $movimientoObj->debito
+
+		$this->db->where('id >=' . $movimientoId);
+		$this->db->where('cuentaId', $movimientoObj->cuentaId );
+
+		$return = $this->db->update('movimientos_cuentas');
+		
+		//print_r($this->db->last_query());
+		
+		return $return;
 	}
 	
 	public function getTotalSinRubrar( $cuentaId )
