@@ -240,4 +240,22 @@ class cuenta_model extends MY_Model {
 		
 		return false;
 	}
+	
+	public function getSaldosPorIntervalo( $cuentaId )
+	{
+		$this->db->select('*');
+	
+		$this->db->from('movimientos_cuentas');
+		
+		$this->db->where('cuentaId = ' . $cuentaId );
+		$this->db->where('status = ' . 1);
+		
+		$this->db->group_by('DATE(fecha)');
+		
+		$this->db->order_by('id', 'ASC');
+
+		$query = $this->db->get();
+		
+		return $query->result();
+	}
 }

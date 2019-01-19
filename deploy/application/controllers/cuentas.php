@@ -19,9 +19,49 @@ class Cuentas extends MY_Controller {
 		$this->data['saldosArray']		= $saldosArray;
 		$this->data['saldoSinRubrar']	= $saldoSinRubrar;
 		
-		$this->load->view('templates/html_open',	$this->data);
-		$this->load->view('cuentas_ver',			$this->data);
-		$this->load->view('templates/html_close',	$this->data);
+		$this->data['viewHeader'] = $this->load->view('templates/cuentas_header',	$this->data, true);
+		
+		$this->load->view('templates/html_open',		$this->data);
+		$this->load->view('cuentas_ver',				$this->data);
+		$this->load->view('templates/cuentas_popups',	$this->data);
+		$this->load->view('templates/html_close',		$this->data);
+	}
+	
+	public function stats( $cuentaId )
+	{
+		$cuentaModel	= new Cuenta_model();
+		$rubroModel		= new Rubro_model();
+
+		// Para el menu
+		$cuentaObj				= $cuentaModel->getCuenta( $cuentaId );
+		$movimientosArray		= $cuentaModel->getMovimientos( $cuentaId );
+		$saldosArray			= $cuentaModel->getSaldosByCuenta( $cuentaId );
+		$saldoSinRubrar			= $rubroModel->getTotalSinRubrar( $cuentaId );
+
+		$this->data['cuentaObj']		= $cuentaObj;
+		$this->data['movimientosArray']	= $movimientosArray;
+		$this->data['saldosArray']		= $saldosArray;
+		$this->data['saldoSinRubrar']	= $saldoSinRubrar;
+
+		$this->data['viewHeader'] = $this->load->view('templates/cuentas_header',	$this->data, true);
+		// Fin Menu
+
+
+		$saldosPorIntervalo		= $cuentaModel->getSaldosPorIntervalo( $cuentaId );
+		$personasArray			= $rubroModel->getPersona();
+		
+		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentaId );
+
+		
+		$this->data['saldosPorIntervalo']	= $saldosPorIntervalo;
+		$this->data['personasArray']		= $personasArray;
+		$this->data['totalesPorRubro']		= $totalesPorRubro;
+
+
+		$this->load->view('templates/html_open',		$this->data);
+		$this->load->view('cuentas_stats',				$this->data);
+		$this->load->view('templates/cuentas_popups',	$this->data);
+		$this->load->view('templates/html_close',		$this->data);
 	}
 	
 	public function parser()
@@ -98,7 +138,7 @@ class Cuentas extends MY_Controller {
 					
 					if ( $rubroArray )
 					{
-						//$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'] );
+						$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'] );
 					}
 
 				}

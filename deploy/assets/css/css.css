@@ -113,7 +113,7 @@ header {
 .cuenta-menu {
 	position: relative;
 	left: 2px;
-	top: 24px;
+	top: 28px;
 	float: right;
 	list-style: none;
 }
@@ -122,16 +122,33 @@ header {
 	position: relative;
 	width: 32px;
 	height: 32px;
+	top: -7px;
+	left: -4px;
 }
 
 .cuenta-menu li {
 	float: right;
+	height: 50px;
+	width: 56px;
+}
+
+.cuenta-menu li:hover {
+	background-color: #f0f0f0;
+	border-radius: 3px;
 }
 
 .ver-cuenta {
 	border: 1px solid #eee;
 	background-color: #fff;
 	margin-top: 60px;
+}
+
+.ver-cuenta h2 {
+	margin: 25px 20px;
+	margin-bottom: 25px;
+	border-bottom: 1px solid #eee;
+	padding: 0;
+	font-size: 13pt;
 }
 
 .ver-cuenta .tabla {
@@ -181,20 +198,17 @@ header {
 	top: -3px;
 }
 
-.ver-cuenta .tabla td .tag-rubro.green	{	border-color: #006600; background-color: #e8ffe0;	}
-.ver-cuenta .tabla td .tag-rubro.blue	{	border-color: #003399; background-color: #ecf0ff;	}
-.ver-cuenta .tabla td .tag-rubro.black	{	border-color: #999; background-color: #eee;	}
+.ver-cuenta .tabla td .tag-rubro.orange	{	background-color: #ffefcc;	}
+.ver-cuenta .tabla td .tag-rubro.blue	{	background-color: #ecf0ff;	}
+.ver-cuenta .tabla td .tag-rubro.black	{	background-color: #eeeeee;	}
 
-.ver-cuenta .tabla td .tag-rubro.green i	{	background-color: #006600; color: #fff	}
-.ver-cuenta .tabla td .tag-rubro.blue i		{	background-color: #003399; color: #fff	}
-.ver-cuenta .tabla td .tag-rubro.black i	{	background-color: #999; color: #fff	}
 
 .ver-cuenta .tabla td .tag-rubro a {
 	padding-left: 25px;
 	font-size: 7pt;
 }
 
-.ver-cuenta .tabla td .tag-rubro.green a	{	color: #006600; text-decoration: none; font-weight: normal; }
+.ver-cuenta .tabla td .tag-rubro.orange a	{	color: #b37a00; text-decoration: none; font-weight: normal; }
 .ver-cuenta .tabla td .tag-rubro.blue a		{	color: #003399; text-decoration: none; font-weight: normal; }
 .ver-cuenta .tabla td .tag-rubro.black a	{	color: #000000; text-decoration: none; font-weight: normal; }
 
@@ -335,7 +349,7 @@ header {
 	float: left;
 	position: absolute;
 	padding: 0;
-	top: 36px;
+	top: 33px;
 	left: 10px;
 }
 
@@ -347,6 +361,12 @@ header {
 .saldos-menu li img {
 	width: 40px;
 	height: 40px;
+	border: 2px solid #f9f9f9;;
+	border-radius: 25px;
+}
+
+.saldos-menu li img.border {
+
 }
 
 .saldos-menu li span {

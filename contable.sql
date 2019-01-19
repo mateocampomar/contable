@@ -258,6 +258,7 @@ CREATE TABLE `rubro_persona` (
   `unique_name` varchar(10) NOT NULL,
   `nombre` varchar(120) NOT NULL,
   `color` varchar(10) NOT NULL DEFAULT 'black',
+  `color_light` varchar(10) NOT NULL,
   `caracter_unico` varchar(1) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
@@ -266,14 +267,11 @@ CREATE TABLE `rubro_persona` (
 -- Dumping data for table `rubro_persona`
 --
 
-INSERT INTO `rubro_persona` (`id`, `unique_name`, `nombre`, `color`, `caracter_unico`, `status`) VALUES
-(1, 'cta_pow', 'Pow', 'blue', 'P', 1),
-(2, 'cta_matt', 'Matt', 'green', 'M', 1),
-(3, 'cta_comun', 'Común', 'black', 'C', 1);
+INSERT INTO `rubro_persona` (`id`, `unique_name`, `nombre`, `color`, `color_light`, `caracter_unico`, `status`) VALUES
+(1, 'cta_pow', 'Pow', 'blue', '#99ccff', 'P', 1),
+(2, 'cta_matt', 'Matt', 'orange', '#ffdb99', 'M', 1),
+(3, 'cta_comun', 'Común', 'black', '#999999', 'C', 1);
 
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `cuentas`

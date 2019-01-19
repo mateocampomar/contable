@@ -124,6 +124,30 @@ class rubro_model extends MY_Model {
 		return $result[0];
 	}
 	
+	public function getTotalesPorRubro( $cuentaId )
+	{
+		$this->db->select('*, SUM(credito) - SUM(debito) as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre');
+
+		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id');
+		$this->db->join('rubro_persona',	'rubro_cuenta.rubro_persona_id = rubro_persona.id');
+	
+		$this->db->from('movimientos_cuentas');
+		
+		$this->db->where('movimientos_cuentas.status = ' . 1);
+		$this->db->where('cuentaId = ' . $cuentaId);
+
+		$this->db->group_by('rubro_id');
+		
+		$this->db->order_by('persona_id', 'ASC');
+		$this->db->order_by('total', 'ASC');
+
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		return $result;
+	}
+	
 	public function rubradoAutomatico( $concepto )
 	{
 		
