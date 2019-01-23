@@ -27,7 +27,7 @@
 </h2>
 
 <p>
-	<?=$movimientoObj->concepto?><br/>
+	<input type="text" id="inputConcepto" name="inputConcepto" required minlength="4" maxlength="100" value="<?=$movimientoObj->concepto?>" /><br/>
 	<span><?=$movimientoObj->fecha?></span>
 </p>
 
@@ -70,35 +70,49 @@
 	{
 		if ( selectedPersona &&  selectedRubro )
 		{
-			$.ajax({
-				method: "POST",
-				url: "<?=base_url('index.php/cuentas/setRubro/')?>",
-				data: { movimientoId: <?=$movimientoObj->id?>, personaId: selectedPersona, rubroId: selectedRubro }
-			})
-			.done(function( msg ) {
-
-				var jsonObj = jQuery.parseJSON( msg );
-				
-				if ( jsonObj.error == false )
-				{
-					if ( jsonObj.nextId )
+			var concepto = $('#inputConcepto').val();
+			
+			if ( concepto )
+			{
+				$.ajax({
+					method: "POST",
+					url: "<?=base_url('index.php/cuentas/setRubro/')?>",
+					data: {
+						movimientoId: <?=$movimientoObj->id?>,
+						personaId: selectedPersona,
+						rubroId: selectedRubro,
+						concepto: concepto
+					}
+				})
+				.done(function( msg ) {
+	
+					var jsonObj = jQuery.parseJSON( msg );
+					
+					if ( jsonObj.error == false )
 					{
-						sendToRubrar( jsonObj.nextId );
+						if ( jsonObj.nextId )
+						{
+							sendToRubrar( jsonObj.nextId );
+						}
+						else
+						{
+							window.location.replace("<?=base_url('index.php/cuentas/ver/' . $movimientoObj->cuentaId )?>");
+						}
 					}
 					else
 					{
-						window.location.replace("<?=base_url('index.php/cuentas/ver/' . $movimientoObj->cuentaId )?>");
+						alert( jsonObj.errorTxt );
 					}
-				}
-				else
-				{
-					alert( jsonObj.errorTxt );
-				}
-			});
+				});
+			}
+			else
+			{
+				alert( 'El concepto no puede quedar vacío.' );
+			}
 		}
 		else
 		{
-			alert( 'Seleccioná una cuenta y una persona' );
+			alert( 'Seleccioná una cuenta y una persona.' );
 		}
 	}
 

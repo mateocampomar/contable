@@ -331,6 +331,13 @@ header {
 	border-radius: 10px;
 }
 
+#rubrar-container p input {
+	background-color: #eee;
+	width: 400px;
+	border: none;
+	text-align: center;
+}
+
 #rubrar-container p span {
 	position: relative;
 	top: 10px;

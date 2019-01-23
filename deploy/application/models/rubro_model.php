@@ -38,7 +38,7 @@ class rubro_model extends MY_Model {
 		return $query->result();
 	}
 	
-	public function setRubrado( $movimientoId, $personaId, $rubroId )
+	public function setRubrado( $movimientoId, $personaId, $rubroId, $concepto=false )
 	{
 
 		$cuentaModel	= new Cuenta_model();
@@ -73,8 +73,12 @@ class rubro_model extends MY_Model {
 			$data = array(
 				'persona_id'							=> $personaId,
 				'rubro_id'								=> $rubroId,
-			//	'saldo_cta' . $movimientoObj->cuentaId	=> "saldo_cta" . $movimientoObj->cuentaId . "+" . $movimientoObj->credito - $movimientoObj->debito
 			);
+			
+			if ( $concepto )
+			{
+				$data['concepto']	= $concepto;
+			}
 
 			$this->db->where('id', $movimientoId);
 
