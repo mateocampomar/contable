@@ -26,6 +26,21 @@ class Cuentas extends MY_Controller {
 		$this->load->view('templates/cuentas_popups',	$this->data);
 		$this->load->view('templates/html_close',		$this->data);
 	}
+
+	public function check( $cuentaId )
+	{
+		$cuentaModel	= new Cuenta_model();
+		$rubroModel		= new Rubro_model();
+		
+		$cuentaObj			= $cuentaModel->getCuenta( $cuentaId );
+		$movimientosArray	= $cuentaModel->getMovimientos( $cuentaId );
+
+
+		print_r($movimientosArray);
+
+
+		
+	}
 	
 	public function stats( $cuentaId )
 	{
@@ -111,15 +126,16 @@ class Cuentas extends MY_Controller {
 				$rubroModel = new Rubro_Model();
 				
 				$personasArray = $rubroModel->getPersona();
-				
-				// Listo todas las cuentas y pongo los saldos en cero.
-				foreach ( $personasArray as $personaObj )
-				{
-					$saldosPersonaArray[ $personaObj->id ] = $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
-				}
+
 				
 				foreach ( $parserResult as $rowArray )
 				{
+					// Listo todas las cuentas y pongo los saldos en cero.
+					foreach ( $personasArray as $personaObj )
+					{
+						$saldosPersonaArray[ $personaObj->id ] = $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
+					}
+
 					// Ingresar Movimiento.
 					$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $rowArray['fecha'], $rowArray['concepto'], $rowArray['credito'], $rowArray['debito'], $rowArray['saldo'], $saldosPersonaArray);
 	

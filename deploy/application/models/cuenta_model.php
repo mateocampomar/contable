@@ -53,13 +53,16 @@ class cuenta_model extends MY_Model {
 			'status'		=> 1
 		);
 		
+ 
 		foreach ( $saldosPersonaArray as $saldosPersonaObj )
 		{
 			$data[ 'saldo_cta' . $saldosPersonaObj->persona_id ] = $saldosPersonaObj->saldo;
-		}		
+		}
 
 		if ( $this->db->insert('movimientos_cuentas', $data) )
 		{
+			//echo $this->db->last_query() . ";\n";
+			
 			$insertId = $this->db->insert_id();
 			
 			if ( $this->actualizarSaldo( $cuentaId, $saldo ) )
@@ -205,7 +208,9 @@ class cuenta_model extends MY_Model {
 
 		$this->db->where('id', $id);
 
-		return $this->db->update('cuentas_saldos_persona', $data);
+		$return = $this->db->update('cuentas_saldos_persona', $data);
+		
+		return $return;
 	}
 	
 	public function nextMovimientoSinRubrar( $movimientoId, $cuentaId=false )

@@ -47,20 +47,21 @@ class rubro_model extends MY_Model {
 		$saldoObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $personaId );
 		
 		// Si el movimiento ya estaba rubrado entonces vuelvo el saldo para atrás.
-		if ( $movimientoObj->persona_id )
-		{
-			$saldoExObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $movimientoObj->persona_id );
-			
-			// El movimiento pero revertido.
-			$saldoEx = $saldoExObj->saldo - $movimientoObj->credito + $movimientoObj->debito;
-			
-			if ( !$cuentaModel->setSaldoPersona( $saldoExObj->id, $saldoEx ) )
+			if ( $movimientoObj->persona_id )
 			{
-				return false;
+				$saldoExObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $movimientoObj->persona_id );
+				
+				// El movimiento pero revertido.
+				$saldoEx = $saldoExObj->saldo - $movimientoObj->credito + $movimientoObj->debito;
+				
+				if ( !$cuentaModel->setSaldoPersona( $saldoExObj->id, $saldoEx ) )
+				{
+					return false;
+				}
+				
+				$this->sumSaldoDesdeMovimiento( $movimientoId, $movimientoObj->persona_id, - $movimientoObj->credito + $movimientoObj->debito );
 			}
-			
-			$this->sumSaldoDesdeMovimiento( $movimientoId, $movimientoObj->persona_id, - $movimientoObj->credito + $movimientoObj->debito );
-		}
+		//
 
 		$saldoObj = $cuentaModel->getSaldoPersona( $movimientoObj->cuentaId, $personaId );
 		$saldo = $saldoObj->saldo + $movimientoObj->credito - $movimientoObj->debito;
@@ -93,15 +94,13 @@ class rubro_model extends MY_Model {
 		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
 
 		$this->db->set('saldo_cta' . $personaId, "saldo_cta" . $personaId . " +" . $aSumar, FALSE);
-		
-		//'saldo_cta' . $movimientoObj->cuentaId	=> "saldo_cta" . $movimientoObj->cuentaId . "+" . $movimientoObj->credito - $movimientoObj->debito
 
 		$this->db->where('id >=' . $movimientoId);
 		$this->db->where('cuentaId', $movimientoObj->cuentaId );
 
 		$return = $this->db->update('movimientos_cuentas');
 		
-		//print_r($this->db->last_query());
+		//echo $this->db->last_query() . ";\n";
 		
 		return $return;
 	}

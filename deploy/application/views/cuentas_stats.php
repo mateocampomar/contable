@@ -101,7 +101,7 @@ function drawMultSeries() {
 				        echo "['', 0, ''],\n";
 			        }
 		  
-			  		echo "['". $row->persona_nombre ."___________', 0, ''],\n";
+			  		echo "['-------> ". strtoupper( $row->persona_nombre ) . "', 0, ''],\n";
 			        
 			        $lastPersona	= $row->persona_id;
 			        $primeraVez		= false;
@@ -119,8 +119,10 @@ function drawMultSeries() {
       var options = {
 		chartArea: {
 			height: '100%',
-			width: '75%',
+			width: '100%',
 			top: 25,
+			left: 150,
+			right: 50,
 			bottom: 50,
 		},
 		hAxis: {
@@ -134,9 +136,6 @@ function drawMultSeries() {
 				fontSize:11,
 			}
         },
-		series: {
-			0: { fontStyle: "bold" },
-		},
         legend: { position: 'none' }
       };
 
