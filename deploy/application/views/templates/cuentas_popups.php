@@ -2,8 +2,8 @@
 	
 	function sendToParser()
 	{
-		$('#importar_datos').button('disable');
-		$('#btn_parsernot').button('disable');
+		//$('#importar_datos').button('disable');
+		//$('#btn_parsernot').button('disable');
 
 			
 		$.ajax({

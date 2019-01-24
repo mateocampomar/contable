@@ -19,6 +19,7 @@
 	          {
 		          $toEcho				= "";
 		          $sumSaldoSinRubrar	= $movimientoObj->saldo;
+		          $ultimoSaldo			= $movimientoObj->saldo;
 		          
 		          $movimientoArray = (array) $movimientoObj;
 		          
@@ -39,10 +40,6 @@
         ]);
 
         var options = {
-			chart: {
-				title: 'Box Office Earnings in First Two Weeks of Opening',
-				subtitle: 'in millions of dollars (USD)'
-			},
 			isStacked: false,
 			lineWidth: 2,
 			curveType: 'none',
@@ -67,7 +64,7 @@
 				1: { lineWidth: 8, type:'area' },
 			},
           legend: { position: 'none' },
-          colors: ['red', 'green', <?
+          colors: ['red', '<?=( $ultimoSaldo >= 0 ) ? 'green' : '#C0392B'?>', <?
 	          
 	        foreach ( $personasArray as $personaObj )
 		    {

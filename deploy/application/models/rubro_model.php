@@ -153,19 +153,15 @@ class rubro_model extends MY_Model {
 	
 	public function rubradoAutomatico( $concepto )
 	{
+		$return = false;
 		
 		$concepto = substr( $concepto , 0 , 12 );
 		
 		if ( $concepto == 'REDIVA 19210' )
 		{
-			$returnArray = array(
-								"persona_id"	=> 3,
-								"rubro_id"		=> 12
-								);
-								
-			return $returnArray;
+			$return = array(	"persona_id"	=> 3,	"rubro_id"		=> 12 );
 		}
 		
-		return false;
+		return $return;
 	}
 }

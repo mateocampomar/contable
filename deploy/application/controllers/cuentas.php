@@ -112,6 +112,12 @@ class Cuentas extends MY_Controller {
 			    	$parserResult = $parserModel->itauWeb( $cuentaId, $inputTxt );
 			    	
 			    	break;
+
+			    case 'acsa-web':
+			    
+			    	$parserResult = $parserModel->acsaWeb( $cuentaId, $inputTxt );
+			    	
+			    	break;
 	
 				default:
 					$json['error']		= true;

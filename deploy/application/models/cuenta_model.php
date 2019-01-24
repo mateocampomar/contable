@@ -11,6 +11,7 @@ class cuenta_model extends MY_Model {
 		
 		$this->db->where('status = ' . 1);
 		
+		$this->db->order_by('cuentas.moneda', 'ASC');
 		$this->db->order_by('nombre', 'ASC');
 
 		$query = $this->db->get();
