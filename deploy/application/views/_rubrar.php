@@ -27,6 +27,7 @@
 </h2>
 
 <p>
+	<span class="txt_otros"><?=$movimientoObj->txt_otros?></span><br/>
 	<input type="text" id="inputConcepto" name="inputConcepto" required minlength="4" maxlength="100" value="<?=$movimientoObj->concepto?>" /><br/>
 	<span><?=$movimientoObj->fecha?></span>
 </p>

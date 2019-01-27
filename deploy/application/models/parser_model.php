@@ -122,4 +122,68 @@ class parser_model extends MY_Model {
 
 		return $return;
 	}
+
+	public function visaIatu ( $cuentaId, $inputTxt )
+	{
+		$cuentaModel	= new Cuenta_model();
+		$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
+
+		$return		= array();
+
+		$rowsArray = explode("\n", $inputTxt);
+
+
+		list($cta1, $cta2)	= explode(",", $cuentaObj->parser_asoc );
+
+
+		foreach($rowsArray as $row ) 
+		{
+			$columnArray = explode("	", $row );
+
+			
+			//Validación
+			// [todo] Esto anda mal.
+
+			//if ( count($columnArray) == 6 || count($columnArray) == 7 )
+			//{
+			//	$return['error'] = "Deben de ser 6 o 7 columnas.";
+			//	return $return;
+			//}
+
+			list($dia, $mes, $ano)	= explode("/", $columnArray[3]);
+			$fecha 		= "20" . $ano . "-" . $mes . "-" . $dia;
+			
+			$concepto	= $columnArray[1];
+
+			$movimiento	= str_replace(",", ".", str_replace(".", "", $columnArray[5] ));
+			if ( $movimiento < 0 ) {
+				$credito	= -$movimiento;
+				$debito		= 0;
+			} else  {
+				$credito	=	0;
+				$debito		= $movimiento;
+			}
+			
+			$txt_otros	= $columnArray[0];
+			
+			$cuentaId = ( $columnArray[4] == 'Pesos' )	? $cta1 : $cta2;
+
+
+			/*
+				[todo] Validación de la fecha de los movimientos.
+			*/
+
+			$return[] = array(
+							'fecha'		=> $fecha,
+							'concepto'	=> $concepto,
+							'debito'	=> $debito,
+							'credito'	=> $credito,
+							'saldo'		=> null,
+							'txt_otros'	=> $txt_otros,
+							'cuenta_id'	=> $cuentaId
+					);
+		}
+
+		return $return;
+	}
 }

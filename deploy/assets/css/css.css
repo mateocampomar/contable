@@ -344,6 +344,10 @@ header {
 	font-size: 8pt;
 }
 
+#rubrar-container p span.txt_otros {
+	top: 0px;
+}
+
 #inputTxt.statusok {
 	background-image: url("../img/icon_thumbsup.png");
 	border: none;

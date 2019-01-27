@@ -53,6 +53,7 @@ class Cuentas extends MY_Controller {
 		$saldosArray			= $cuentaModel->getSaldosByCuenta( $cuentaId );
 		$saldoSinRubrar			= $rubroModel->getTotalSinRubrar( $cuentaId );
 
+
 		$this->data['cuentaObj']		= $cuentaObj;
 		$this->data['movimientosArray']	= $movimientosArray;
 		$this->data['saldosArray']		= $saldosArray;
@@ -63,6 +64,9 @@ class Cuentas extends MY_Controller {
 
 
 		$saldosPorIntervalo		= $cuentaModel->getSaldosPorIntervalo( $cuentaId );
+		
+		print_r($saldosPorIntervalo);
+		
 		$personasArray			= $rubroModel->getPersona();
 		
 		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentaId );
@@ -118,6 +122,12 @@ class Cuentas extends MY_Controller {
 			    	$parserResult = $parserModel->acsaWeb( $cuentaId, $inputTxt );
 			    	
 			    	break;
+
+			    case 'visa-itau':
+			    
+			    	$parserResult = $parserModel->visaIatu( $cuentaId, $inputTxt );
+			    	
+			    	break;
 	
 				default:
 					$json['error']		= true;
@@ -136,14 +146,27 @@ class Cuentas extends MY_Controller {
 				
 				foreach ( $parserResult as $rowArray )
 				{
+					// Cuenta Id
+					$cuentaId = ( isset( $rowArray['cuenta_id'] ) ) ? $rowArray['cuenta_id'] : $cuentaId;
+
 					// Listo todas las cuentas y pongo los saldos en cero.
 					foreach ( $personasArray as $personaObj )
 					{
 						$saldosPersonaArray[ $personaObj->id ] = $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
 					}
+					
+
+					$saldo = $rowArray['saldo'];
+					if ( $saldo === null )
+					{
+						$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
+						
+						$saldo = $cuentaObj->saldo + $rowArray['credito'] - $rowArray['debito'];
+					}
+
 
 					// Ingresar Movimiento.
-					$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $rowArray['fecha'], $rowArray['concepto'], $rowArray['credito'], $rowArray['debito'], $rowArray['saldo'], $saldosPersonaArray);
+					$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $rowArray['fecha'], $rowArray['concepto'], $rowArray['credito'], $rowArray['debito'], $saldo, $saldosPersonaArray, $rowArray['txt_otros']);
 	
 					if ( !$movimiento )
 					{

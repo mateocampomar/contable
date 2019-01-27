@@ -39,11 +39,8 @@ class cuenta_model extends MY_Model {
 		return $result[0];
 	}
 
-	public function ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo, $saldosPersonaArray )
-	{
-		//$ultimoMovimientoObj = $this->getUltimoMovimientoPorCuenta( $cuentaId );
-		//$ReqVars = get_object_vars( $ultimoMovimientoObj );
-		
+	public function ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo, $saldosPersonaArray, $txt_otros=false )
+	{		
 		$data = array(
 			'cuentaId'		=> $cuentaId,
 			'fecha'			=> $fecha,
@@ -53,6 +50,11 @@ class cuenta_model extends MY_Model {
 			'saldo'			=> $saldo,
 			'status'		=> 1
 		);
+		
+		if ( $txt_otros )
+		{
+			$data['txt_otros']	= $txt_otros;
+		}
 		
  
 		foreach ( $saldosPersonaArray as $saldosPersonaObj )

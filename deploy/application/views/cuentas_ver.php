@@ -4,6 +4,12 @@
 			<table border="0" cellpadding="0" cellspacing="1" class="tabla">
 				<tr class="header">
 					<td>Fecha</td>
+					<?
+					if ( $cuentaObj->show_txt_otros )
+					{
+						?><td><?=$cuentaObj->show_txt_otros?></td><?
+					}
+					?>
 					<td>Movimiento</td>
 					<td>Rubro</td>
 					<td align="right">Crédito</td>
@@ -21,6 +27,12 @@
 						?>
 						<tr class="<?=$trClass?>">
 							<td><?=$movimientosObj->fecha?></td>
+							<?
+							if ( $cuentaObj->show_txt_otros )
+							{
+								?><td><?=$movimientosObj->txt_otros?></td><?
+							}
+							?>
 							<td style="font-weight: bold;"><?=$movimientosObj->concepto?></td>
 							<td>
 								<?									
