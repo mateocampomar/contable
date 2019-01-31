@@ -3,11 +3,11 @@
 		<div class="ver-cuenta">
 			<table border="0" cellpadding="0" cellspacing="1" class="tabla">
 				<tr class="header">
-					<td>Fecha</td>
+					<td align="center">Fecha</td>
 					<?
-					if ( $cuentaObj->show_txt_otros )
+					if ( count( $headerData['txt_otros'] ) )
 					{
-						?><td><?=$cuentaObj->show_txt_otros?></td><?
+						?><td><?=implode(",", $headerData['txt_otros']) ?></td><?
 					}
 					?>
 					<td>Movimiento</td>
@@ -26,9 +26,9 @@
 						
 						?>
 						<tr class="<?=$trClass?>">
-							<td><?=$movimientosObj->fecha?></td>
+							<td align="center"><?=$movimientosObj->fecha?></td>
 							<?
-							if ( $cuentaObj->show_txt_otros )
+							if ( count( $headerData['txt_otros'] ) )
 							{
 								?><td><?=$movimientosObj->txt_otros?></td><?
 							}

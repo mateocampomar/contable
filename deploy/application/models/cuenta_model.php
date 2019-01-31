@@ -185,21 +185,47 @@ class cuenta_model extends MY_Model {
 		return false;
 	}
 
-	public function getSaldosByCuenta( $cuentaId )
+	public function getSaldosByCuenta( $cuentaId, $fecha=false )
 	{
-		$this->db->select('*, cuentas_saldos_persona.saldo as saldo');
-
-		$this->db->from('cuentas_saldos_persona');
-
-		$this->db->join('rubro_persona', 'rubro_persona.id = cuentas_saldos_persona.persona_id');
-		$this->db->join('cuentas', 'cuentas.id = cuentas_saldos_persona.cuenta_id');
-		$this->db->join('moneda', 'moneda.moneda = cuentas.moneda');
-
-		$this->db->where('cuenta_id = ' . $cuentaId );
-
-		$query = $this->db->get();
-
-		return $query->result();
+		if ( !$fecha )
+		{
+			$this->db->select('*, cuentas_saldos_persona.saldo as saldo');
+	
+			$this->db->from('cuentas_saldos_persona');
+	
+			$this->db->join('rubro_persona', 'rubro_persona.id = cuentas_saldos_persona.persona_id');
+			$this->db->join('cuentas', 'cuentas.id = cuentas_saldos_persona.cuenta_id');
+			$this->db->join('moneda', 'moneda.moneda = cuentas.moneda');
+	
+			$this->db->where('cuenta_id = ' . $cuentaId );
+	
+			$query = $this->db->get();
+	
+			return $query->result();
+		}
+		else
+		{
+			$this->db->select('*');
+			
+			$this->db->from('movimientos_cuentas');
+			
+			// Where
+			$this->db->where('status = ' . 1);
+			
+			$this->db->where('cuentaId = ' . $cuentaId );
+			$this->db->where('fecha >= ' . $fecha );
+	
+			$this->db->order_by('id', 'ASC');
+			
+			$this->db->limit(1);
+	
+			// Ejecutar Query
+			$query = $this->db->get();
+			
+			$result = $query->result();
+			
+			return $result[0];
+		}
 	}
 
 	public function setSaldoPersona( $id, $saldo )
@@ -249,18 +275,27 @@ class cuenta_model extends MY_Model {
 		return false;
 	}
 	
-	public function getSaldosPorIntervalo( $cuentaId )
+	public function getSaldosPorIntervalo( $cuentasArray )
 	{
-		$this->db->select('*');
+		$this->db->select('*, SUM(debito) as total_debito, SUM(credito) as total_credito');
 	
 		$this->db->from('movimientos_cuentas');
 		
-		$this->db->where('cuentaId = ' . $cuentaId );
+		$where = '(';
+		foreach ( $cuentasArray as $cuenta )
+		{
+			$where .= "cuentaId = " . $cuenta . " OR ";
+		}
+		$where = substr($where, 0, -4);
+		$where .= ')';
+
+
+		$this->db->where($where, NULL, FALSE);
 		$this->db->where('status = ' . 1);
 		
 		$this->db->group_by('DATE(fecha)');
 		
-		$this->db->order_by('id', 'ASC');
+		$this->db->order_by('fecha', 'ASC');
 
 		$query = $this->db->get();
 		

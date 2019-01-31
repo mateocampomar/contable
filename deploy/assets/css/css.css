@@ -34,10 +34,36 @@ header {
 }
 
 #left_header ol li {
-	height: 100px;
+	height: 80px;
 	border-top: 2px solid #f9f9f9;
 	border-bottom: 2px solid #f9f9f9;
 	position: relative;
+}
+
+#left_header ol li.total-moneda, #left_header ol li.total-moneda:hover {
+	height: 44px;
+	background: green;
+	border: none;
+	color: white;
+	text-shadow: none;
+}
+
+#left_header ol li.total-moneda div {
+	position: absolute;
+	text-align: right;
+	font-size: 15pt;
+	right: 20px;
+	top: 10px;
+}
+
+#left_header ol li.total-moneda div.simbolo
+{
+	left: 20px;
+	text-align: left;
+}
+
+#left_header ol li.total-moneda div small {
+	font-size: 10pt;
 }
 
 #left_header ol li:hover {
@@ -57,7 +83,7 @@ header {
 }
 
 #left_header ol li h2 {
-	margin: 20px;
+	margin: 10px;
 	background-color: #eee;
 	position: absolute;
 	font-size: 9pt;
@@ -74,9 +100,9 @@ header {
 #left_header ol li div.total {
 	position: absolute;
 	text-align: right;
-	font-size: 19pt;
+	font-size: 15pt;
 	right: 20px;
-	top: 55px;
+	top: 40px;
 }
 
 #left_header ol li:hover div.total {
