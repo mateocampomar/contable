@@ -77,9 +77,19 @@ class Cuentas extends MY_Controller {
 		
 		$this->data['headerData']	= $this->headerData;
 		
+		$this->data['multicuenta'] = $this->headerData['multicuenta'];
+		
+		if ( !$this->data['multicuenta'] )
+		{
+			$cuentaObj				= $cuentaModel->getCuenta( $cuentasArray[0] );
+			$this->data['cuentaObj']	= $cuentaObj;
+		}
+
+		
 		$this->load->view('templates/html_open',		$this->data);
 		$this->load->view('cuentas_ver',				$this->data);
-		$this->load->view('templates/cuentas_popups',	$this->data);
+		if ( !$this->data['multicuenta'] )
+			$this->load->view('templates/cuentas_popups',	$this->data);
 		$this->load->view('templates/html_close',		$this->data);
 	}
 
@@ -167,35 +177,61 @@ class Cuentas extends MY_Controller {
 		
 		$personasObj = $rubroModel->getPersona();
 		
+		$saldosInicialPorPersonaArray	= array();
+		$saldoInicial					= 0;
+		$sinRubro						= 0;
+
+		$date			= '2019-01-01';
+		//$end_date		= '2019-02-28';
+		$end_date 		= date('Y-m-d', time());
 		
+		// [TODO] Esto tiene que ser una función.
 		foreach ( $cuentasArray as $cuentaId )
 		{
-			$saldos		= $cuentaModel->getSaldosByCuenta( $cuentaId, '2018-01-01' );
-			print_r($saldos);
+			$saldos		= $cuentaModel->getSaldosByCuenta( $cuentaId, $date );
 			
-			$saldos = (array) $saldos;
+			$saldoInicial += $saldos['saldo'];
 			
+			//print_r($saldos);
+
 			foreach ($personasObj as $persona )
 			{
-				echo $saldos['saldo_cta' . $persona->id ];
+				if ( !isset( $saldosInicialPorPersonaArray[$persona->id] ) )
+				{
+					$saldosInicialPorPersonaArray[$persona->id]	= $saldos['saldo_cta' . $persona->id ];
+				}
+				else
+				{
+					$saldosInicialPorPersonaArray[$persona->id] += $saldos['saldo_cta' . $persona->id ];
+				}
 			} 
 		}
-
-
-		$saldosPorIntervalo		= $cuentaModel->getSaldosPorIntervalo( $cuentasArray );
 		
-		//print_r($saldosPorIntervalo);
+		//$movimientos = $cuentaModel->getMovimientos( $cuentasArray );
+		
+		//print_r($movimientos);
+		
+		$saldosPorDia	= array();
+		
+		// Para cada uno de los días del intervalo.
+		while (strtotime($date) <= strtotime($end_date))
+		{
+			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date );
+			
+			$movimientosPorDia[$date] = $movimientos;
+
+			$date = date ("Y-m-d", strtotime("+1 day", strtotime($date)));
+		}
+
 		
 		$personasArray			= $rubroModel->getPersona();
-		
-		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentaId );
-		
-		//print_r($saldosPorIntervalo);
 
-		
-		$this->data['saldosPorIntervalo']	= $saldosPorIntervalo;
-		$this->data['personasArray']		= $personasArray;
-		$this->data['totalesPorRubro']		= $totalesPorRubro;
+
+		$this->data['personasArray']			= $personasArray;
+		$this->data['saldoPorPersonaArray']		= $saldosInicialPorPersonaArray;
+		$this->data['saldoInicial']				= $saldoInicial;
+		$this->data['sinRubro']					= $sinRubro;
+		$this->data['movimientosPorDia']		= $movimientosPorDia;
 
 
 		$this->load->view('templates/html_open',		$this->data);
@@ -283,6 +319,11 @@ class Cuentas extends MY_Controller {
 						$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
 						
 						$saldo = $cuentaObj->saldo + $rowArray['credito'] - $rowArray['debito'];
+					}
+					
+					if ( !isset($rowArray['txt_otros']) )
+					{
+						$rowArray['txt_otros'] = NULL;
 					}
 
 

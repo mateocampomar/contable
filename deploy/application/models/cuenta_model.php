@@ -97,7 +97,7 @@ class cuenta_model extends MY_Model {
 		return $result[0];
 	}
 	
-	public function getMovimientos( $cuentaId )
+	public function getMovimientos( $cuentaId, $fecha=false )
 	{
 		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id');
 	
@@ -106,12 +106,36 @@ class cuenta_model extends MY_Model {
 		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left');
 		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
 		
+		if ( is_array($cuentaId) )
+		{
+			$where = "";
+
+			foreach( $cuentaId as $cuentaIdParaWhere )
+			{
+				$where .= 'cuentaId = ' . $cuentaIdParaWhere . " OR ";
+			}
+			
+			$where = substr( $where, 0, -4 );
+			
+			$this->db->where("(" . $where . ")");
+		}
+		else
+		{
+			$this->db->where('cuentaId = ' . $cuentaId );
+		}
+
 		$this->db->where('movimientos_cuentas.status = ' . 1);
-		$this->db->where('cuentaId = ' . $cuentaId );
+		
+		if ( $fecha )
+		{
+			$this->db->where("movimientos_cuentas.fecha = '" . $fecha . "'");
+		}
 		
 		$this->db->order_by('movimientos_cuentas.id', 'ASC');
 
 		$query = $this->db->get();
+		
+		//echo $this->db->last_query();
 		
 		return $query->result();
 	}
@@ -222,9 +246,22 @@ class cuenta_model extends MY_Model {
 			// Ejecutar Query
 			$query = $this->db->get();
 			
+			//echo $this->db->last_query() . ";\n";
+			
 			$result = $query->result();
 			
-			return $result[0];
+			if ( !isset($result[0]) )
+				return false;
+			
+			$result = (array) $result[0];
+			
+			// Corrección de Saldo Persona
+			$result['saldo_cta' . $result['persona_id'] ] = $result['saldo_cta' . $result['persona_id'] ] + $result['debito'] - $result['credito'];
+			
+			// Corrección de Saldo.
+			$result['saldo'] = $result['saldo'] + $result['debito'] - $result['credito'];
+			
+			return $result;
 		}
 	}
 

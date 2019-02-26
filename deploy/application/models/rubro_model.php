@@ -159,7 +159,7 @@ class rubro_model extends MY_Model {
 		
 		if ( $concepto == 'REDIVA 19210' )
 		{
-			$return = array(	"persona_id"	=> 3,	"rubro_id"		=> 12 );
+			$return = array(	"persona_id"	=> 4,	"rubro_id"		=> 12 );
 		}
 		
 		return $return;

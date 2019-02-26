@@ -12,29 +12,38 @@
 		          echo ", '" . $personaObj->nombre . "'";//, 'Matt', 'Comun'
 	          }
 	          
+	          //print_r($saldoPorPersonaArray);
+	          
 	          
 	          ?>],
           <?
-	          foreach ( $saldosPorIntervalo as $movimientoObj )
+	          foreach ( $movimientosPorDia as $fecha => $diaArray )
 	          {
 		          $toEcho				= "";
-		          $sumSaldoSinRubrar	= $movimientoObj->saldo;
-		          $ultimoSaldo			= $movimientoObj->saldo;
-		          
-		          $movimientoArray = (array) $movimientoObj;
-		          
-		          //print_r($movimientoArray);
 
-		          foreach ( $personasArray as $personaObj )
+				  // Suma los movimientos del día.
+		          foreach ( $diaArray as $movimiento )
 		          {
-			          $toEcho .= ", " . $movimientoArray['saldo_cta' . $personaObj->id];
+			          if ( $movimiento->rubro_persona_id )
+					  		$saldoPorPersonaArray[$movimiento->rubro_persona_id]	+= ($movimiento->credito - $movimiento->debito );
+					  else
+					  	$sinRubro	+= ($movimiento->credito - $movimiento->debito );
 			          
-			          $sumSaldoSinRubrar -= round( $movimientoArray['saldo_cta' . $personaObj->id], 2 );
+			          //print_r($movimiento);
+			          
+			          $saldoInicial			+= ($movimiento->credito - $movimiento->debito );
 		          }
 		          
-		          echo "['" . $movimientoObj->fecha . "', " . round( $sumSaldoSinRubrar, 2 ) . ", " . $movimientoObj->saldo . "" . $toEcho;
-
-		          echo "],\n";
+		          //echo $fecha . " - ";
+		          //print_r($saldoPorPersonaArray);
+		          
+		          // Lista cada uno de los saldos.
+		          foreach ( $personasArray as $personaObj )
+		          {
+				  		$toEcho .= ", " . round( $saldoPorPersonaArray[$personaObj->id], 2 );
+		          }
+		          
+		          echo "['" . $fecha . "', " . round( $sinRubro, 2 ) . ", " . round( $saldoInicial, 2 ) . $toEcho . "],\n";
 	          }
 	       ?>
         ]);
@@ -64,7 +73,7 @@
 				1: { lineWidth: 8, type:'area' },
 			},
           legend: { position: 'none' },
-          colors: ['red', '<?=( $ultimoSaldo >= 0 ) ? 'green' : '#C0392B'?>', <?
+          colors: ['red', '<?=( $saldoInicial >= 0 ) ? 'green' : '#C0392B'?>', <?
 	          
 	        foreach ( $personasArray as $personaObj )
 		    {
@@ -79,66 +88,6 @@
         chart.draw(data, options);
       }
 
-google.charts.load('current', {packages: ['corechart', 'bar']});
-google.charts.setOnLoadCallback(drawMultSeries);
-
-function drawMultSeries() {
-      var data = google.visualization.arrayToDataTable([
-        ['Rubro', '', { role: 'style' }],
-        <?
-	        $lastPersona	= false;
-	        $primeraVez		= true;
-	        
-	        foreach( $totalesPorRubro as $row )
-	        {	        
-		        if ( $lastPersona != $row->persona_id )
-		        {
-			        if ( !$primeraVez )
-			        {
-				        echo "['', 0, ''],\n";
-			        }
-		  
-			  		echo "['-------> ". strtoupper( $row->persona_nombre ) . "', 0, ''],\n";
-			        
-			        $lastPersona	= $row->persona_id;
-			        $primeraVez		= false;
-		        }
-
-		        $barColor = ( $row->total >= 0 ) ? $row->color : $row->color_light;
-		        
-		        echo "['". $row->nombre."', " . $row->total . ", '" . $barColor . "'],\n";
-		        
-
-		    }
-		?>
-      ]);
-
-      var options = {
-		chartArea: {
-			height: '100%',
-			width: '100%',
-			top: 25,
-			left: 150,
-			right: 50,
-			bottom: 50,
-		},
-		hAxis: {
-			textStyle: {
-				fontSize:11,
-				color: '#000'
-			}
-		},
-        vAxis: {
-			textStyle: {
-				fontSize:11,
-			}
-        },
-        legend: { position: 'none' }
-      };
-
-      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
-    }
     </script>
 
 	<div class="bdy-container">

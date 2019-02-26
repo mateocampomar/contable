@@ -228,6 +228,7 @@ header {
 .ver-cuenta .tabla td .tag-rubro.orange	{	background-color: #ffefcc;	}
 .ver-cuenta .tabla td .tag-rubro.blue	{	background-color: #ecf0ff;	}
 .ver-cuenta .tabla td .tag-rubro.black	{	background-color: #eeeeee;	}
+.ver-cuenta .tabla td .tag-rubro.violet{	background-color: #fcdfff;	}
 
 
 .ver-cuenta .tabla td .tag-rubro a {
@@ -238,13 +239,14 @@ header {
 .ver-cuenta .tabla td .tag-rubro.orange a	{	color: #b37a00; text-decoration: none; font-weight: normal; }
 .ver-cuenta .tabla td .tag-rubro.blue a		{	color: #003399; text-decoration: none; font-weight: normal; }
 .ver-cuenta .tabla td .tag-rubro.black a	{	color: #000000; text-decoration: none; font-weight: normal; }
+.ver-cuenta .tabla td .tag-rubro.violet a	{	color: #330033; text-decoration: none; font-weight: normal; }
 
 .ver-cuenta .tabla tr.dark {
 	background: #eee;
 }
 
 #dialogPageRubrado .rubrar-container {
-	height: 700px;
+	height: 500px;
 }
 
 #dialogPageRubrado .rubrar-container.loading {
@@ -258,7 +260,7 @@ header {
 }
 
 .selectPersona {
-	height: 165px;
+	height: 115px;
 	border-bottom: 4px solid #eee;
 	margin-bottom: 15px;
 }
@@ -275,15 +277,19 @@ header {
 
 .selectPersona li {
 	font-size: 10pt;
-	padding: 15px 8px;
+	padding: 10px 0;
 	padding-bottom: 4px;
 	font-weight: bold;
 	border-bottom-width: 3px;
+	margin: 0;
+	width: 116px;
+	border-radius: 5px;
 }
 
-.selectPersona li.blue	{	border-bottom-color: #003366;	}
-.selectPersona li.green	{	border-bottom-color: #006600;	}
-.selectPersona li.black	{	border-bottom-color: black;	}
+.selectPersona li.blue		{	border-bottom-color: #003366;	}
+.selectPersona li.green		{	border-bottom-color: #006600;	}
+.selectPersona li.black		{	border-bottom-color: black;	}
+.selectPersona li.violet	{	border-bottom-color: #660066;	}
 
 .selectCuenta li {
 
@@ -292,8 +298,8 @@ header {
 .selectPersona li img {
 	position: relative;
 	top: -6px;
-	width: 110px;
-	height: 110px;
+	width: 70px;
+	height: 70px;
 }
 
 .selectPersona li span {
@@ -309,16 +315,19 @@ header {
 }
 
 .selectPersona li.blue.selectedPersona span		{	background-color: #003366 !important; color: #fff;	}
-.selectPersona li.green.selectedPersona span	{	background-color: #006600 !important; color: #fff;	}
+.selectPersona li.orange.selectedPersona span	{	background-color: #ff9900 !important; color: #fff;	}
 .selectPersona li.black.selectedPersona span	{	background-color: black !important; color: #fff;	}
+.selectPersona li.violet.selectedPersona span	{	background-color: #990099 !important; color: #fff;	}
 
-.selectPersona li.blue:hover,.selectPersona li.blue.selectedPersona	{	background-color: #ecf0ff; border-color: #003366; 	}
-.selectPersona li.green:hover,.selectPersona li.green.selectedPersona	{	background-color: #e8ffe0; border-color: #006600;	}
+.selectPersona li.blue:hover,.selectPersona li.blue.selectedPersona		{	background-color: #ecf0ff; border-color: #003366; 	}
+.selectPersona li.orange:hover,.selectPersona li.orange.selectedPersona	{	background-color: #fffae5;	}
 .selectPersona li.black:hover,.selectPersona li.black.selectedPersona	{	background-color: #eeeeee; border-color: black;	}
+.selectPersona li.violet:hover,.selectPersona li.violet.selectedPersona	{	background-color: #fdefff;	}
 
-.selectPersona li.blue:hover span	{	background-color: #dde1f0; 	}
-.selectPersona li.green:hover span	{	background-color: #d8edd0;	}
+.selectPersona li.blue:hover span	{	background-color: #cccccc; 	}
+.selectPersona li.green:hover span	{	background-color: #cccccc;	}
 .selectPersona li.black:hover span	{	background-color: #cccccc;	}
+.selectPersona li.violet:hover span	{	background-color: #cccccc;	}
 
 .selectCuenta li {
 	border: 1px solid #eee;
@@ -352,7 +361,7 @@ header {
 #rubrar-container p {
 	text-align: center;
 	font-size: 11pt;
-	padding: 30px 0;
+	padding: 20px 0;
 	background-color: #eee;
 	border-radius: 10px;
 }
@@ -362,16 +371,18 @@ header {
 	width: 400px;
 	border: none;
 	text-align: center;
+	position: relative;
+	top: -4px;
 }
 
 #rubrar-container p span {
 	position: relative;
-	top: 10px;
+	top: 0px;
 	font-size: 8pt;
 }
 
 #rubrar-container p span.txt_otros {
-	top: 0px;
+	top: -4px;
 }
 
 #inputTxt.statusok {

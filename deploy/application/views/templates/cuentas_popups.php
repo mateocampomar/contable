@@ -4,6 +4,10 @@
 	{
 		//$('#importar_datos').button('disable');
 		//$('#btn_parsernot').button('disable');
+		
+		<?
+			//print_r($cuentaObj);
+			?>
 
 			
 		$.ajax({
