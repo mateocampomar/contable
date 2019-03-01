@@ -14,7 +14,7 @@ class Cuentas extends MY_Controller {
 		
 		$this->headerData['cuentas_nombres']	= array();
 		$this->headerData['moneda']				= null;
-		$this->headerData['saldoTotal']			= 1;
+		$this->headerData['saldoTotal']			= 0;
 		$this->headerData['personas']			= array();
 		$this->headerData['saldoSinRubrar']		= 0;
 		
@@ -120,7 +120,7 @@ class Cuentas extends MY_Controller {
 		
 		$this->headerData['cuentas_nombres']	= array();
 		$this->headerData['moneda']				= null;
-		$this->headerData['saldoTotal']			= 1;
+		$this->headerData['saldoTotal']			= 0;
 		$this->headerData['personas']			= array();
 		$this->headerData['saldoSinRubrar']		= 0;
 		
@@ -181,7 +181,7 @@ class Cuentas extends MY_Controller {
 		$saldoInicial					= 0;
 		$sinRubro						= 0;
 
-		$date			= '2019-02-17';
+		$date			= '2019-01-01';
 		//$end_date		= '2019-02-28';
 		$end_date 		= date('Y-m-d', time());
 
