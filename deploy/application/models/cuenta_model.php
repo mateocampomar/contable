@@ -237,7 +237,7 @@ class cuenta_model extends MY_Model {
 			$this->db->where('status = ' . 1);
 			
 			$this->db->where('cuentaId = ' . $cuentaId );
-			$this->db->where('fecha >= ' . $fecha );
+			$this->db->where("fecha >= '" . $fecha . "'" );
 	
 			$this->db->order_by('id', 'ASC');
 			
@@ -254,9 +254,13 @@ class cuenta_model extends MY_Model {
 				return false;
 			
 			$result = (array) $result[0];
+
 			
 			// Corrección de Saldo Persona
-			$result['saldo_cta' . $result['persona_id'] ] = $result['saldo_cta' . $result['persona_id'] ] + $result['debito'] - $result['credito'];
+			if ( $result['persona_id'] )
+			{
+				$result['saldo_cta' . $result['persona_id'] ] = $result['saldo_cta' . $result['persona_id'] ] + $result['debito'] - $result['credito'];
+			}
 			
 			// Corrección de Saldo.
 			$result['saldo'] = $result['saldo'] + $result['debito'] - $result['credito'];

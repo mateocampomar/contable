@@ -172,19 +172,19 @@ class Cuentas extends MY_Controller {
 
 		$this->data['viewHeader'] = $this->load->view('templates/cuentas_header',	$this->headerData, true);
 		// Fin Menu
-		
+
 		$rubroModel		= new Rubro_model();
-		
+
 		$personasObj = $rubroModel->getPersona();
-		
+
 		$saldosInicialPorPersonaArray	= array();
 		$saldoInicial					= 0;
 		$sinRubro						= 0;
 
-		$date			= '2019-01-01';
+		$date			= '2019-02-17';
 		//$end_date		= '2019-02-28';
 		$end_date 		= date('Y-m-d', time());
-		
+
 		// [TODO] Esto tiene que ser una función.
 		foreach ( $cuentasArray as $cuentaId )
 		{
@@ -192,7 +192,8 @@ class Cuentas extends MY_Controller {
 			
 			$saldoInicial += $saldos['saldo'];
 			
-			//print_r($saldos);
+			$sinRubro = $saldos['saldo'];
+
 
 			foreach ($personasObj as $persona )
 			{
@@ -204,12 +205,10 @@ class Cuentas extends MY_Controller {
 				{
 					$saldosInicialPorPersonaArray[$persona->id] += $saldos['saldo_cta' . $persona->id ];
 				}
+				
+				$sinRubro -= $saldos['saldo_cta' . $persona->id ];
 			} 
 		}
-		
-		//$movimientos = $cuentaModel->getMovimientos( $cuentasArray );
-		
-		//print_r($movimientos);
 		
 		$saldosPorDia	= array();
 		

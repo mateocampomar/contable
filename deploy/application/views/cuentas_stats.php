@@ -10,10 +10,7 @@
 	          foreach ( $personasArray as $personaObj )
 	          {
 		          echo ", '" . $personaObj->nombre . "'";//, 'Matt', 'Comun'
-	          }
-	          
-	          //print_r($saldoPorPersonaArray);
-	          
+	          }	          
 	          
 	          ?>],
           <?
@@ -28,14 +25,10 @@
 					  		$saldoPorPersonaArray[$movimiento->rubro_persona_id]	+= ($movimiento->credito - $movimiento->debito );
 					  else
 					  	$sinRubro	+= ($movimiento->credito - $movimiento->debito );
-			          
-			          //print_r($movimiento);
+
 			          
 			          $saldoInicial			+= ($movimiento->credito - $movimiento->debito );
 		          }
-		          
-		          //echo $fecha . " - ";
-		          //print_r($saldoPorPersonaArray);
 		          
 		          // Lista cada uno de los saldos.
 		          foreach ( $personasArray as $personaObj )
