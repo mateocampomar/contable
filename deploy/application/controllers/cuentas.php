@@ -231,11 +231,18 @@ class Cuentas extends MY_Controller {
 		$this->data['saldoInicial']				= $saldoInicial;
 		$this->data['sinRubro']					= $sinRubro;
 		$this->data['movimientosPorDia']		= $movimientosPorDia;
+		
+		
+		// Para Totales por Rubro.
+		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentasArray );
+		
+		
+		$this->data['totalesPorRubro']		= $totalesPorRubro;
 
 
 		$this->load->view('templates/html_open',		$this->data);
 		$this->load->view('cuentas_stats',				$this->data);
-		$this->load->view('templates/cuentas_popups',	$this->data);
+		$this->load->view('templates/cuentas_popups',	$this->headerData);
 		$this->load->view('templates/html_close',		$this->data);
 	}
 	

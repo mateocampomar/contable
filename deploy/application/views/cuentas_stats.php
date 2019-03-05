@@ -81,6 +81,68 @@
         chart.draw(data, options);
       }
 
+	  // Por Rubro
+	google.charts.load('current', {packages: ['corechart', 'bar']});
+	google.charts.setOnLoadCallback(drawMultSeries);
+
+	function drawMultSeries() {
+      var data = google.visualization.arrayToDataTable([
+        ['Rubro', '', { role: 'style' }],
+        <?
+	        $lastPersona	= false;
+	        $primeraVez		= true;
+	        
+	        foreach( $totalesPorRubro as $row )
+	        {	        
+		        if ( $lastPersona != $row->persona_id )
+		        {
+			        if ( !$primeraVez )
+			        {
+				        echo "['', 0, ''],\n";
+			        }
+		  
+			  		echo "['-------> ". strtoupper( $row->persona_nombre ) . "', 0, ''],\n";
+			        
+			        $lastPersona	= $row->persona_id;
+			        $primeraVez		= false;
+		        }
+
+		        $barColor = ( $row->total >= 0 ) ? $row->color : $row->color_light;
+		        
+		        echo "['". $row->nombre."', " . $row->total . ", '" . $barColor . "'],\n";
+		        
+
+		    }
+		?>
+      ]);
+
+      var options = {
+		chartArea: {
+			height: '100%',
+			width: '100%',
+			top: 25,
+			left: 150,
+			right: 50,
+			bottom: 50,
+		},
+		hAxis: {
+			textStyle: {
+				fontSize:11,
+				color: '#000'
+			}
+		},
+        vAxis: {
+			textStyle: {
+				fontSize:11,
+			}
+        },
+        legend: { position: 'none' }
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+
     </script>
 
 	<div class="bdy-container">

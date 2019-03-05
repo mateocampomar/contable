@@ -17,7 +17,7 @@
 		$saldo_parts = explode( "," , formatNumberCustom( $saldoSinRubrar ) );
 		
 		?>
-		<li><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>"/><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . ",<i>" . $saldo_parts[1] . "</i>"?></span></li>
+		<li><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="border" style="border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . ",<i>" . $saldo_parts[1] . "</i>"?></span></li>
 		<?
 	}
 
@@ -70,4 +70,7 @@
 <?
 	$saldo_parts = explode( "," , formatNumberCustom( $saldoTotal ) );
 ?>
-<h1><?=implode(", ", $cuentas_nombres)?> <span style="font-weight: normal;">(<?=$moneda?>): <span style="font-size: 15pt;"><?=$saldo_parts[0] . ",<span>" . $saldo_parts[1] . "</span>"?></span></span></h1>
+<h1>
+	<div class="saldo"><span><?=$monedaSimbolo?></span> <?=$saldo_parts[0] . ",<span>" . $saldo_parts[1] . "</span>"?></div>
+	<div><?=implode(", ", $cuentas_nombres)?> <span style="font-weight: normal;">(<?=$moneda?>)</span></div>
+</h1>

@@ -1,70 +1,71 @@
 <script type="text/javascript">
-	
-	function sendToParser()
-	{
-		//$('#importar_datos').button('disable');
-		//$('#btn_parsernot').button('disable');
-		
-		<?
-			//print_r($cuentaObj);
-			?>
 
-			
-		$.ajax({
-			method: "POST",
-			url: "<?=base_url('index.php/cuentas/parser/')?>",
-			data: { cuentaId: "<?=$cuentaObj->id?>", inputTxt: $('#inputTxt').val() }
-		})
-		.done(function( msg ) {
-			
-			var jsonObj = jQuery.parseJSON( msg );
-			
-			if ( jsonObj.error == false )
-			{
-				$( "#inputTxt" ).val('');
-				$( "#inputTxt" ).addClass( "statusok" );
+	<?
+	if ( !$multicuenta )
+	{
+		?>
+		function sendToParser()
+		{
+			//$('#importar_datos').button('disable');
+			//$('#btn_parsernot').button('disable');
 				
-				window.setTimeout(function(){
-
-					refrescar();
-
-                }, 1500);
-
-			}
-			else
-			{
-				$('#importar_datos').button('enable');
-				$('#btn_parsernot').button('enable');
-
-				alert( "ERROR: " + jsonObj.errorTxt );
-			}
-		});
-	}
-
-	function sendToRubrar( movimientoId )
-	{
-		$.ajax({
-			method: "POST",
-			url: "<?=base_url('index.php/cuentas/rubrar')?>/" + movimientoId,
-		})
-		.done(function( msg ) {
-			
-			var jsonObj = jQuery.parseJSON( msg );
-
-			$("#rubrar-container").html( jsonObj.html );
-		});
-	}
-
-	$(".rubradoLink").click(function()
-	{
-		sendToRubrar( $( this ).data('movimientoid') );
-	});
+			$.ajax({
+				method: "POST",
+				url: "<?=base_url('index.php/cuentas/parser/')?>",
+				data: { cuentaId: "<?=$cuentasArray[0]?>", inputTxt: $('#inputTxt').val() }
+			})
+			.done(function( msg ) {
+				
+				var jsonObj = jQuery.parseJSON( msg );
+				
+				if ( jsonObj.error == false )
+				{
+					$( "#inputTxt" ).val('');
+					$( "#inputTxt" ).addClass( "statusok" );
+					
+					window.setTimeout(function(){
 	
-	function refrescar()
-	{
-		window.location.replace("<?=base_url('index.php/cuentas/ver/' . $cuentaObj->id )?>");
-	}
+						refrescar();
+	
+	                }, 1500);
+	
+				}
+				else
+				{
+					$('#importar_datos').button('enable');
+					$('#btn_parsernot').button('enable');
+	
+					alert( "ERROR: " + jsonObj.errorTxt );
+				}
+			});
+		}
 
+		function sendToRubrar( movimientoId )
+		{
+			$.ajax({
+				method: "POST",
+				url: "<?=base_url('index.php/cuentas/rubrar')?>/" + movimientoId,
+			})
+			.done(function( msg ) {
+				
+				var jsonObj = jQuery.parseJSON( msg );
+	
+				$("#rubrar-container").html( jsonObj.html );
+			});
+		}
+	
+		$(".rubradoLink").click(function()
+		{
+			sendToRubrar( $( this ).data('movimientoid') );
+		});
+		
+		function refrescar()
+		{
+			window.location.replace("<?=base_url('index.php/cuentas/ver/' . $cuentasArray[0] )?>");
+		}
+		<?
+	}
+	?>
 </script>
 
 <div data-role="page" id="dialogPage">

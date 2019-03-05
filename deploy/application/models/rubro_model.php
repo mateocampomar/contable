@@ -135,9 +135,26 @@ class rubro_model extends MY_Model {
 		$this->db->join('rubro_persona',	'rubro_cuenta.rubro_persona_id = rubro_persona.id');
 	
 		$this->db->from('movimientos_cuentas');
-		
+
+		if ( is_array($cuentaId) )
+		{
+			$where = "";
+
+			foreach( $cuentaId as $cuentaIdParaWhere )
+			{
+				$where .= 'cuentaId = ' . $cuentaIdParaWhere . " OR ";
+			}
+			
+			$where = substr( $where, 0, -4 );
+			
+			$this->db->where("(" . $where . ")");
+		}
+		else
+		{
+			$this->db->where('cuentaId = ' . $cuentaId );
+		}		
+
 		$this->db->where('movimientos_cuentas.status = ' . 1);
-		$this->db->where('cuentaId = ' . $cuentaId);
 
 		$this->db->group_by('rubro_id');
 		
