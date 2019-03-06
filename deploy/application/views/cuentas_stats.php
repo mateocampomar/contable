@@ -107,7 +107,7 @@
 			        $primeraVez		= false;
 		        }
 
-		        $barColor = ( $row->total >= 0 ) ? $row->color : $row->color_light;
+		        $barColor = ( $row->total >= 0 ) ? $row->color_dark : $row->color_light;
 		        
 		        echo "['". $row->nombre."', " . $row->total . ", '" . $barColor . "'],\n";
 		        

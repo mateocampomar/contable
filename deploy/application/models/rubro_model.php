@@ -37,6 +37,23 @@ class rubro_model extends MY_Model {
 		
 		return $query->result();
 	}
+
+	public function getUnaPersona( $personaId )
+	{
+		$this->db->select('*');
+	
+		$this->db->from('rubro_persona');
+		
+		$this->db->where('id = ' . $personaId);
+		
+		$this->db->limit(1);
+
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		return $result[0];
+	}
 	
 	public function setRubrado( $movimientoId, $personaId, $rubroId, $concepto=false )
 	{
@@ -95,18 +112,26 @@ class rubro_model extends MY_Model {
 	public function sumSaldoDesdeMovimiento( $movimientoId, $personaId, $aSumar )
 	{
 		$cuentaModel	= new Cuenta_model();
-		$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
-
-		$this->db->set('saldo_cta' . $personaId, "saldo_cta" . $personaId . " +" . $aSumar, FALSE);
-
-		$this->db->where('id >=' . $movimientoId);
-		$this->db->where('cuentaId', $movimientoObj->cuentaId );
-
-		$return = $this->db->update('movimientos_cuentas');
 		
-		//echo $this->db->last_query() . ";\n";
+		$personaObj = $this->getUnaPersona( $personaId );
 		
-		return $return;
+		if ( $personaObj->status != 0 )
+		{
+			$movimientoObj = $cuentaModel->getMovimiento( $movimientoId );
+	
+			$this->db->set('saldo_cta' . $personaId, "saldo_cta" . $personaId . " +" . $aSumar, FALSE);
+	
+			$this->db->where('id >=' . $movimientoId);
+			$this->db->where('cuentaId', $movimientoObj->cuentaId );
+	
+			$return = $this->db->update('movimientos_cuentas');
+			
+			//echo $this->db->last_query() . ";\n";
+			
+			return $return;
+		}
+		
+		return true;
 	}
 	
 	public function getTotalSinRubrar( $cuentaId )
@@ -172,13 +197,26 @@ class rubro_model extends MY_Model {
 	{
 		$return = false;
 		
-		$concepto = substr( $concepto , 0 , 12 );
-		
-		if ( $concepto == 'REDIVA 19210' )
+		if ( substr( $concepto , 0 , 12 ) == 'REDIVA 19210' )
 		{
-			$return = array(	"persona_id"	=> 4,	"rubro_id"		=> 12 );
+			$return = array(	"persona_id"	=> 4,	"rubro_id"		=> 12, "concepto" => $concepto );
 		}
 		
 		return $return;
+		
+		/**
+		
+		TRASPASO A 41109 ILINK - Colegios (British Schools)
+		TRASPASO A 3851304ILINK - Sandra
+		PAGO FACTURAANTEL 262900 - Facturas
+		DEB. VARIOS VISA - Tarjetas
+		PAGO FACTURABPS - BPS
+		PAGO FACTURAIMMT05085591 - Facturas
+		PAGO FACTURAMVGAS 138601 - Facturas
+		TRASPASO A 7954 ILINK - Colegios (Popurrí)
+		TRASPASO A 3429076ILINK - Facturas (Gastos comunes Casonas)
+		DEP 24 HORAS 008859062 - San Quintín
+			
+		*/
 	}
 }

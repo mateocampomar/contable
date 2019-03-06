@@ -16,6 +16,7 @@ class Cuentas extends MY_Controller {
 		$this->headerData['moneda']				= null;
 		$this->headerData['saldoTotal']			= 0;
 		$this->headerData['personas']			= array();
+		$this->headerData['personasArray']		= $rubroModel->getPersona();
 		$this->headerData['saldoSinRubrar']		= 0;
 		
 		$this->headerData['multicuenta']		= ( count( $cuentasArray ) > 1 ) ? true : false;
@@ -46,7 +47,8 @@ class Cuentas extends MY_Controller {
 																				"persona_id"	=> $persona->persona_id,
 																				"saldo"			=> $persona->saldo,
 																				"unique_name"	=> $persona->unique_name,
-																				"color"			=> $persona->color
+																				"color"			=> $persona->color,
+																				"nombre"		=> $persona->nombre
 																			);
 				}
 				else
@@ -122,6 +124,7 @@ class Cuentas extends MY_Controller {
 		$this->headerData['moneda']				= null;
 		$this->headerData['saldoTotal']			= 0;
 		$this->headerData['personas']			= array();
+		$this->headerData['personasArray']		= $rubroModel->getPersona();
 		$this->headerData['saldoSinRubrar']		= 0;
 		
 		$this->headerData['multicuenta']		= ( count( $cuentasArray ) > 1 ) ? true : false;
@@ -152,7 +155,8 @@ class Cuentas extends MY_Controller {
 																				"persona_id"	=> $persona->persona_id,
 																				"saldo"			=> $persona->saldo,
 																				"unique_name"	=> $persona->unique_name,
-																				"color"			=> $persona->color
+																				"color"			=> $persona->color,
+																				"nombre"		=> $persona->nombre
 																			);
 				}
 				else
@@ -182,8 +186,8 @@ class Cuentas extends MY_Controller {
 		$sinRubro						= 0;
 
 		$date			= '2019-01-01';
-		//$end_date		= '2019-02-28';
-		$end_date 		= date('Y-m-d', time());
+		$end_date		= '2019-03-07';
+		//$end_date 		= date('Y-m-d', time()); // [TODO] Esto tiene que ser el ultimo movimiento que tenga la cuenta.
 
 		// [TODO] Esto tiene que ser una función.
 		foreach ( $cuentasArray as $cuentaId )
@@ -435,6 +439,107 @@ class Cuentas extends MY_Controller {
 			$json['errorTxt']	= 'Error';
 		}
 		
+		$this->data['json'] = $json;
+		
+		$this->load->view('_json',	$this->data);
+	}
+	
+	public function transferir_persona()
+	{
+		$json = array(
+					'error'		=> false,
+					'action'	=> false
+				);
+
+		$cuentaId		= $this->input->post('cuentaId');
+		$de_persona		= $this->input->post('de_persona');
+		$para_persona	= $this->input->post('para_persona');
+		$montoNbr		= $this->input->post('montoNbr');
+		$conceptoTxt	= $this->input->post('conceptoTxt');
+		
+		//echo $de_persona . " <--> " . $montoNbr . " <--> " . $conceptoTxt;
+		
+		// Ingresar Movimiento.
+		$saldosPersonaArray = array();
+
+		$cuentaModel= new Cuenta_model();
+		$rubroModel = new Rubro_Model();
+				
+		$personasArray = $rubroModel->getPersona();
+
+
+		// Listo todas las cuentas y pongo los saldos en cero.
+		foreach ( $personasArray as $personaObj )
+		{
+			$saldosPersonaArray[ $personaObj->id ] = (array) $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
+		}
+		
+		$cuentaObj = $cuentaModel->getCuenta( $cuentaId );
+		
+		if ( !$conceptoTxt )
+		{
+			$personaDeObj	= $rubroModel->getUnaPersona( $de_persona );
+			$personaParaObj = $rubroModel->getUnaPersona( $para_persona );
+
+			$conceptoTxt = "Transferencia de '" . $personaDeObj->nombre . "' a '" . $personaParaObj->nombre . "'.";
+		}
+		
+		//echo $de_persona;
+		
+		//print_r($saldosPersonaArray);
+
+
+		// Movimiento DE
+		//$saldosPersonaArray[$de_persona]['saldo'] = $saldosPersonaArray[$de_persona]['saldo'] - $montoNbr;
+		
+		//print_r($saldosPersonaArray);
+
+		$movimiento_de = $cuentaModel->ingresarMovimiento( $cuentaId, date('Y-m-d', time()), $conceptoTxt, 0, $montoNbr, ( $cuentaObj->saldo - $montoNbr ), $saldosPersonaArray);
+		
+		if ( $movimiento_de )
+		{
+			// Rubrado DE
+			if ( $rubroModel->setRubrado( $movimiento_de, $de_persona, 37, $conceptoTxt ) )
+			{
+				// Movimiento PARA
+				$saldosPersonaArray[$de_persona]['saldo'] = $saldosPersonaArray[$de_persona]['saldo'] - $montoNbr;
+				
+				//print_r($saldosPersonaArray);
+				//die;
+
+				$movimiento_para = $cuentaModel->ingresarMovimiento( $cuentaId, date('Y-m-d', time()), $conceptoTxt, $montoNbr, 0, $cuentaObj->saldo, $saldosPersonaArray);
+				
+				if ( $movimiento_para )
+				{
+					// Rubrado PARA
+					if ( $rubroModel->setRubrado( $movimiento_para, $para_persona, 37, $conceptoTxt ) )
+					{
+						$json['error']		= false;
+					}
+					else
+					{
+						$json['error']		= true;
+						$json['errorTxt']	= 'Error: No se pudo rubrar el movimiento PARA:.';
+					}
+				}
+				else
+				{
+					$json['error']		= true;
+					$json['errorTxt']	= 'Error: No se pudo ingresar el movimiento PARA:.';
+				}
+			}
+			else
+			{
+				$json['error']		= true;
+				$json['errorTxt']	= 'Error: No se pudo rubrar el movimiento DE:.';
+			}
+		}
+		else
+		{
+			$json['error']		= true;
+			$json['errorTxt']	= 'Error: No se pudo ingresar el movimiento DE:.';
+		}
+
 		$this->data['json'] = $json;
 		
 		$this->load->view('_json',	$this->data);

@@ -14,7 +14,7 @@ html, body {
 }
 
 header {
-	height: 60px;
+	height: 40px;
 	background-color: #669999;
 }
 
@@ -163,7 +163,7 @@ header {
 .cuenta-menu {
 	position: relative;
 	left: 2px;
-	top: 40px;
+	top: 43px;
 	float: right;
 	list-style: none;
 }
@@ -305,8 +305,8 @@ header {
 	padding-bottom: 4px;
 	font-weight: bold;
 	border-bottom-width: 3px;
-	margin: 0;
-	width: 116px;
+	margin: 0 1px;
+	width: 115px;
 	border-radius: 5px;
 }
 
@@ -460,4 +460,16 @@ header {
 	margin-right: 10px;
 	position: relative;
 	top: 8px;
+}
+
+.transfer-container div {
+	margin: 10px 20px;
+	text-align: center;
+}
+
+.transfer-container div.divimg img {
+	position: relative;
+	left: -15px;
+	top: 3px;
+	margin: 15px;
 }

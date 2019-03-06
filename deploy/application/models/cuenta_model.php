@@ -59,7 +59,7 @@ class cuenta_model extends MY_Model {
  
 		foreach ( $saldosPersonaArray as $saldosPersonaObj )
 		{
-			$data[ 'saldo_cta' . $saldosPersonaObj->persona_id ] = $saldosPersonaObj->saldo;
+			$data[ 'saldo_cta' . $saldosPersonaObj['persona_id'] ] = $saldosPersonaObj['saldo'];
 		}
 
 		if ( $this->db->insert('movimientos_cuentas', $data) )
@@ -213,7 +213,7 @@ class cuenta_model extends MY_Model {
 	{
 		if ( !$fecha )
 		{
-			$this->db->select('*, cuentas_saldos_persona.saldo as saldo');
+			$this->db->select('*, cuentas_saldos_persona.saldo as saldo, rubro_persona.nombre as nombre');
 	
 			$this->db->from('cuentas_saldos_persona');
 	
