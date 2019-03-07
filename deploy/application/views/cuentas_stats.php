@@ -21,13 +21,15 @@
 				  // Suma los movimientos del día.
 		          foreach ( $diaArray as $movimiento )
 		          {
-			          if ( $movimiento->rubro_persona_id )
-					  		$saldoPorPersonaArray[$movimiento->rubro_persona_id]	+= ($movimiento->credito - $movimiento->debito );
+			          if ( $movimiento->persona_id )
+					  		$saldoPorPersonaArray[$movimiento->persona_id]	+= ($movimiento->credito - $movimiento->debito );
 					  else
 					  	$sinRubro	+= ($movimiento->credito - $movimiento->debito );
 
 			          
 			          $saldoInicial			+= ($movimiento->credito - $movimiento->debito );
+			          
+			          //print_r($movimiento);
 		          }
 		          
 		          // Lista cada uno de los saldos.
@@ -92,6 +94,8 @@
 	        $lastPersona	= false;
 	        $primeraVez		= true;
 	        
+	        //print_r($totalesPorRubro);
+	        
 	        foreach( $totalesPorRubro as $row )
 	        {	        
 		        if ( $lastPersona != $row->persona_id )
@@ -109,7 +113,15 @@
 
 		        $barColor = ( $row->total >= 0 ) ? $row->color_dark : $row->color_light;
 		        
-		        echo "['". $row->nombre."', " . $row->total . ", '" . $barColor . "'],\n";
+		        if ( $row->nombre )
+		        {
+		        	echo "['". $row->nombre."', " . $row->total . ", '" . $barColor . "'],\n";
+		        }
+		        else
+		        {
+			        echo "['Sin Rubro', " . $row->total . ", '#cc0000'],\n";
+			        echo "['', 0, ''],\n";
+		        }
 		        
 
 		    }

@@ -156,8 +156,8 @@ class rubro_model extends MY_Model {
 	{
 		$this->db->select('*, SUM(credito) - SUM(debito) as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre');
 
-		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id');
-		$this->db->join('rubro_persona',	'rubro_cuenta.rubro_persona_id = rubro_persona.id');
+		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
+		$this->db->join('rubro_persona',	'rubro_cuenta.rubro_persona_id = rubro_persona.id', 'left');
 	
 		$this->db->from('movimientos_cuentas');
 
@@ -187,6 +187,8 @@ class rubro_model extends MY_Model {
 		$this->db->order_by('total', 'ASC');
 
 		$query = $this->db->get();
+
+		//echo $this->db->last_query() . ";\n";
 		
 		$result = $query->result();
 		
@@ -195,28 +197,69 @@ class rubro_model extends MY_Model {
 	
 	public function rubradoAutomatico( $concepto )
 	{
-		$return = false;
+		$concepto = trim($concepto);
 		
 		if ( substr( $concepto , 0 , 12 ) == 'REDIVA 19210' )
 		{
-			$return = array(	"persona_id"	=> 4,	"rubro_id"		=> 12, "concepto" => $concepto );
+			return array(	"persona_id"	=> 4,	"rubro_id"		=> 12, "concepto" => $concepto );
+		}
+
+		if ( $concepto == 'TRASPASO A 41109 ILINK' )
+		{
+			return array(	"persona_id"	=> 3,	"rubro_id"		=> 8, "concepto" => $concepto . ' (British Schools)' );
+		}
+
+		if ( $concepto == 'TRASPASO A 3851304ILINK' )
+		{
+			return array(	"persona_id"	=> 3,	"rubro_id"		=> 11, "concepto" => $concepto . ' (Sandra)' );
+		}
+
+		if ( $concepto == 'PAGO FACTURAANTEL 262900' || $concepto == 'PAGO FACTURAIMMT05085591' || $concepto == 'PAGO FACTURAMVGAS 138601' || $concepto == 'PAGO FACTURAUTE 795716' )
+		{
+			return array(	"persona_id"	=> 3,	"rubro_id"		=> 20, "concepto" => $concepto );
+		}
+
+		if ( $concepto == 'DEB. VARIOS VISA' || $concepto == 'DEB. VARIOS VISA-ILINK' )
+		{
+			return array(	"persona_id"	=> 4,	"rubro_id"		=> 15, "concepto" => $concepto );
+		}
+
+		if ( $concepto == 'PAGO FACTURABPS' )
+		{
+			return array(	"persona_id"	=> 4,	"rubro_id"		=> 10, "concepto" => $concepto );
+		}
+
+		if ( $concepto == 'PAGO FACTURABPS' )
+		{
+			return array(	"persona_id"	=> 4,	"rubro_id"		=> 10, "concepto" => $concepto );
+		}
+
+		if ( $concepto == 'TRASPASO A 7954 ILINK' )
+		{
+			return array(	"persona_id"	=> 3,	"rubro_id"		=> 8, "concepto" => $concepto . ' (Popurrí)' );
+		}
+
+		if ( $concepto == 'TRASPASO A 3429076ILINK' )
+		{
+			return array(	"persona_id"	=> 3,	"rubro_id"		=> 20, "concepto" => $concepto . " (Gastos comunes Casonas)" );
+		}
+
+		if ( $concepto == 'TRASPASO A 6336322ILINK' )
+		{
+			return array(	"persona_id"	=> 3,	"rubro_id"		=> 4, "concepto" => $concepto . " (Dogclub)" );
+		}
+
+		if ( $concepto == 'DEP 24 HORAS 008859062' )
+		{
+			return array(	"persona_id"	=> 4,	"rubro_id"		=> 23, "concepto" => $concepto . " (Devoto San Quintín)" );
 		}
 		
-		return $return;
+		
+		return false;
 		
 		/**
-		
-		TRASPASO A 41109 ILINK - Colegios (British Schools)
-		TRASPASO A 3851304ILINK - Sandra
-		PAGO FACTURAANTEL 262900 - Facturas
-		DEB. VARIOS VISA - Tarjetas
-		PAGO FACTURABPS - BPS
-		PAGO FACTURAIMMT05085591 - Facturas
-		PAGO FACTURAMVGAS 138601 - Facturas
-		TRASPASO A 7954 ILINK - Colegios (Popurrí)
-		TRASPASO A 3429076ILINK - Facturas (Gastos comunes Casonas)
-		DEP 24 HORAS 008859062 - San Quintín
-			
+			TELEPEAJE - De Viaje
+
 		*/
 	}
 }

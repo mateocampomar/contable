@@ -171,9 +171,9 @@
 			</div>
 			<br/>
 			<br/>
-			<div>Monto a Transferir: <input type="text" id="tp_monto" name="tp_monto" required minlength="4" maxlength="8" size="10"></div>
+			<div>Monto a Transferir: <input type="text" id="tp_monto" name="tp_monto" required minlength="1" maxlength="12"></div>
 			<br/>
-			<div>Concepto: <input type="text" id="tp_concepto" name="tp_concepto" required minlength="4" maxlength="8" size="10"></div>
+			<div>Concepto: <input type="text" id="tp_concepto" name="tp_concepto" maxlength="100"></div>
 			<br/>
 		</div>
 		<a href="javascript:sendToTransferir();" data-role="button" data-theme="b"id="btn_transferir">Transferir</a>

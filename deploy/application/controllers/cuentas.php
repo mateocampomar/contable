@@ -217,7 +217,7 @@ class Cuentas extends MY_Controller {
 		$saldosPorDia	= array();
 		
 		// Para cada uno de los días del intervalo.
-		while (strtotime($date) <= strtotime($end_date))
+		while ( strtotime( $date ) <= strtotime( $end_date ) )
 		{
 			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date );
 			
@@ -355,7 +355,7 @@ class Cuentas extends MY_Controller {
 					
 					if ( $rubroArray )
 					{
-						$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'] );
+						$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'], ( isset( $rubroArray['concepto'] ) ) ? $rubroArray['concepto'] : false );
 					}
 
 				}

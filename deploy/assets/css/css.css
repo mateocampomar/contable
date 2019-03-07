@@ -170,16 +170,16 @@ header {
 
 .cuenta-menu li img {
 	position: relative;
-	width: 32px;
-	height: 32px;
+	width: 30px;
+	height: 30px;
 	top: -7px;
 	left: -4px;
 }
 
 .cuenta-menu li {
 	float: right;
-	height: 50px;
-	width: 56px;
+	height: 48px;
+	width: 54px;
 }
 
 .cuenta-menu li:hover {

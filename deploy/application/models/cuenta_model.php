@@ -59,6 +59,8 @@ class cuenta_model extends MY_Model {
  
 		foreach ( $saldosPersonaArray as $saldosPersonaObj )
 		{
+			$saldosPersonaObj = (array) $saldosPersonaObj;
+
 			$data[ 'saldo_cta' . $saldosPersonaObj['persona_id'] ] = $saldosPersonaObj['saldo'];
 		}
 
