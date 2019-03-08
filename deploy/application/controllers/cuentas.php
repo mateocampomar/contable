@@ -242,8 +242,45 @@ class Cuentas extends MY_Controller {
 		
 		
 		$this->data['totalesPorRubro']		= $totalesPorRubro;
+		
+		// Para Rubros por Mes
+		$rubrosPorMesArray = array();
+		
+		$rubroModel->cuentasArray = $cuentasArray;
+		
+		for ($mes=1; $mes<=12; $mes++ )
+		{
+			$fecha					= date('Y') . '-' . sprintf('%02d', $mes);
+			$rubrosEntreFechasArray	= array();
+			
+			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31" ) as $rubrosEntreFechasObj )
+			{
+				$rubrosEntreFechasArray[$rubrosEntreFechasObj->rubro_id] = $rubrosEntreFechasObj;
+			}
+			
+			$rubrosPorMesArray[$fecha] = $rubrosEntreFechasArray;
+		}
+		
+		
+		
+		$todosLosRubros = array();
+		
+		foreach ( $rubrosPorMesArray as $mesRubros )
+		{
+			foreach( $mesRubros as $rubrosObj )
+			{				
+				$todosLosRubros[$rubrosObj->rubro_id] = $rubrosObj->nombre;
+			}
+		}
+		
+		//print_r($todosLosRubros);
+		//die;
+		
+		$this->data['rubrosPorMesArray']		= $rubrosPorMesArray;
+		$this->data['todosLosRubros']			= $todosLosRubros;
+		
 
-
+		// Views
 		$this->load->view('templates/html_open',		$this->data);
 		$this->load->view('cuentas_stats',				$this->data);
 		$this->load->view('templates/cuentas_popups',	$this->headerData);

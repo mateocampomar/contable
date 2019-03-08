@@ -1,6 +1,8 @@
 <?php
 class rubro_model extends MY_Model {
 	
+	public $cuentasArray;
+	
 	public function getCuentas( $cuentaId=false )
 	{
 		$this->db->select('*, rubro_cuenta.nombre as nombre, rubro_cuenta.id as rubro_id');
@@ -261,5 +263,45 @@ class rubro_model extends MY_Model {
 			TELEPEAJE - De Viaje
 
 		*/
+	}
+	
+	public function getTotalesEntreFechas( $fecha_start, $fecha_end )
+	{
+		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM(debito) as total_debito, SUM(credito) as total_credito, SUM(credito) - SUM(debito) as total');
+	
+		$this->db->from('movimientos_cuentas');
+		
+		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
+
+		if ( count($this->cuentasArray) > 1 )
+		{
+			$where = "";
+
+			foreach( $this->cuentasArray as $cuentaIdParaWhere )
+			{
+				$where .= 'cuentaId = ' . $cuentaIdParaWhere . " OR ";
+			}
+			
+			$where = substr( $where, 0, -4 );
+			
+			$this->db->where("(" . $where . ")");
+		}
+		else
+		{
+			$this->db->where('cuentaId = ' . $this->cuentasArray[0] );
+		}
+		
+		$this->db->where("fecha >= '" . $fecha_start . "'" );
+		$this->db->where("fecha <= '" . $fecha_end . "'" );
+
+		$this->db->group_by('rubro_id');
+
+		$query = $this->db->get();
+
+		echo $this->db->last_query() . ";\n";
+		
+		$result = $query->result();
+		
+		return $result;
 	}
 }

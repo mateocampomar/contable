@@ -154,8 +154,62 @@
       var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
       chart.draw(data, options);
     }
+    
+    <?
+	   // print_r($rubrosPorMesArray);
+	    
+    ?>
+
+    
+    
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart2);
+
+      function drawChart2() {
+        var data = google.visualization.arrayToDataTable([
+	        <?
+				echo "['Mes'";
+				
+				foreach ($todosLosRubros as $rubro )
+				{
+					echo ", '" . $rubro ."'";
+				}
+				echo "],\n";
+				
+				foreach ($rubrosPorMesArray as $mes => $rubrosArray )
+				{
+					echo "[";
+					echo "'" . $mes . "'";
+					
+					foreach ( $todosLosRubros as $rubroId => $rubroNombre )
+					{
+						//print_r($rubrosArray[$rubroId]);
+						
+						if ( isset($rubrosArray[$rubroId]->total) ) 
+						{											echo "," . $rubrosArray[$rubroId]->total;	}
+						else
+						{											echo ",0";									}
+					}
+
+					echo "],\n";
+				}
+			?>
+        ]);
+
+        var options2 = {
+			chartArea:{left:100,top:100,width:'50%',height:'75%'},
+			isStacked: true,
+			legend: { position: 'none' },
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('rubro_por_mes'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options2));
+        
+      }
 
     </script>
+   
 
 	<div class="bdy-container">
 		<?=$viewHeader?>
@@ -166,6 +220,10 @@
 		<div class="ver-cuenta">
 			<h2>Gastos por Rubro</h2>
 			<div id="chart_div" style="height: 700px"></div>
+		</div>
+		<div class="ver-cuenta">
+			<h2>Rubros por mes</h2>
+			<div id="rubro_por_mes" style="height: 625px; margin: 50px;"></div>
 		</div>
 	</div>
 </div>
