@@ -422,13 +422,19 @@ header {
 	float: left;
 	position: absolute;
 	padding: 0;
-	top: 45px;
-	left: 10px;
+	top: 42px;
+	left: 0px;
 }
 
 .saldos-menu li {
 	float: left;
-	margin-right: 30px;
+	padding: 3px 10px;
+	border-radius: 5px;
+}
+
+.saldos-menu li:hover {
+	background-color: #eee;
+	cursor: pointer;
 }
 
 .saldos-menu li img {

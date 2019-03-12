@@ -58,11 +58,7 @@
 		{
 			sendToRubrar( $( this ).data('movimientoid') );
 		});
-		
-		function refrescar()
-		{
-			window.location.replace("<?=base_url('index.php/cuentas/ver/' . $cuentasArray[0] )?>");
-		}
+
 
 		function sendToTransferir()
 		{

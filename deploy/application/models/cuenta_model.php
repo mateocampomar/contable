@@ -99,8 +99,24 @@ class cuenta_model extends MY_Model {
 		return $result[0];
 	}
 	
+	public function setSessionFiltros()
+	{
+		$rubroModel		= new Rubro_model();
+		$personasArray	= $rubroModel->getPersona();
+		
+		foreach( $personasArray as $personaObj )
+		{
+			if ( $this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+			{
+				$this->db->where('persona_id != ' . $personaObj->id );
+			}
+		}
+	}
+	
 	public function getMovimientos( $cuentaId, $fecha=false )
 	{
+		$this->setSessionFiltros();
+		
 		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id');
 	
 		$this->db->from('movimientos_cuentas');

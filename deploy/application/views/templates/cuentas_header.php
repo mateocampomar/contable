@@ -2,12 +2,21 @@
 <?
 	foreach ( $personas as $persona )
 	{
+		$style		= '';
+		$spanStyle	= '';
+		
 		if ( round( $persona['saldo'], 2 ) )
 		{
 			$saldo_parts = explode( "," , formatNumberCustom( $persona['saldo'] ) );
 			
+			if ( $this->session->userdata( 'filter_' . $persona['unique_name'] ) )
+			{
+				$style		= 'filter: grayscale(100%);';
+				$spanStyle	= 'color: grey;';
+			}
+			
 			?>
-			<li><img src="<? echo base_url( "assets/img/" . $persona['unique_name'] )?>.png" class="border" style="border-color: <?=$persona['color']?>" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
+			<li class="filter_btn" name="<?=$persona['unique_name']?>"><img src="<? echo base_url( "assets/img/" . $persona['unique_name'] )?>.png" class="border" style="<?=$style?>border-color: <?=$persona['color']?>" /><span style="<?=$spanStyle?>"><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
 			<?
 		}
 	}
@@ -17,7 +26,7 @@
 		$saldo_parts = explode( "," , formatNumberCustom( $saldoSinRubrar ) );
 		
 		?>
-		<li><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="border" style="border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
+		<li class="filter_btn" name="sinrubrar"><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="border" style="border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
 		<?
 	}
 
@@ -32,6 +41,40 @@
 	}
 ?>
 </ul>
+
+<script type="text/javascript">
+
+
+
+		$(".filter_btn").dblclick(function()
+		{
+			alert('ok dbl');
+		});
+
+		$(".filter_btn").click(function()
+		{
+			//alert();
+			$.ajax({
+				method: "POST",
+				url: "<?=base_url('index.php/filtros')?>/setPersona/" + $(this).attr('name'),
+			})
+			.done(function( msg ) {
+				
+				var jsonObj = jQuery.parseJSON( msg );
+	
+				if ( jsonObj.refresh == true )
+				{
+					refrescar();
+				}
+			});
+		});
+		
+		function refrescar()
+		{
+			window.location.replace("<?=base_url('index.php/cuentas/' . $this->router->fetch_method() . '/' . implode( "-", $cuentasArray ) )?>");
+		}
+
+</script>
 
 
 

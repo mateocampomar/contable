@@ -86,7 +86,6 @@ class Cuentas extends MY_Controller {
 			$cuentaObj				= $cuentaModel->getCuenta( $cuentasArray[0] );
 			$this->data['cuentaObj']	= $cuentaObj;
 		}
-
 		
 		$this->load->view('templates/html_open',		$this->data);
 		$this->load->view('cuentas_ver',				$this->data);
@@ -276,6 +275,7 @@ class Cuentas extends MY_Controller {
 		//print_r($todosLosRubros);
 		//die;
 		
+		$this->data['controller']				= 'stats';	
 		$this->data['rubrosPorMesArray']		= $rubrosPorMesArray;
 		$this->data['todosLosRubros']			= $todosLosRubros;
 		
