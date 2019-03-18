@@ -181,7 +181,7 @@
 					echo "[";
 					echo "'" . $mes . "'";
 					
-					foreach ( $todosLosRubros as $rubroId => $rubroNombre )
+					foreach ( $todosLosRubros as $rubroId => $rubro )
 					{
 						//print_r($rubrosArray[$rubroId]);
 						

@@ -4,73 +4,16 @@ class Cuentas extends MY_Controller {
 
 	public function ver( $cuentas )
 	{
-		// Para el menu
-		$cuentaModel	= new Cuenta_model();
-		$rubroModel		= new Rubro_model();
-		
 		$cuentasArray 	= explode("-", $cuentas);
-		
-		$this->headerData['cuentasArray']		= $cuentasArray;
-		
-		$this->headerData['cuentas_nombres']	= array();
-		$this->headerData['moneda']				= null;
-		$this->headerData['saldoTotal']			= 0;
-		$this->headerData['personas']			= array();
-		$this->headerData['personasArray']		= $rubroModel->getPersona();
-		$this->headerData['saldoSinRubrar']		= 0;
-		
-		$this->headerData['multicuenta']		= ( count( $cuentasArray ) > 1 ) ? true : false;
-		
-		$this->headerData['checkSaldos']		= 0;
-		
-		$this->headerData['txt_otros']			= array();
+		// No es multicuenta	
+		$cuentaId = $cuentas;
 
-		foreach ( $cuentasArray as $cuentaId )
-		{
-			$cuentaObj				= $cuentaModel->getCuenta( $cuentaId );
-			$saldosPersonaObj		= $cuentaModel->getSaldosByCuenta( $cuentaId );
-			
-			$this->headerData['cuentas_nombres'][$cuentaId]	= $cuentaObj->nombre;
-			
-			$this->headerData['moneda']			= $cuentaObj->moneda;
-			$this->headerData['monedaSimbolo']	= $cuentaObj->simbolo;
-			
-			$this->headerData['saldoTotal']	+= $cuentaObj->saldo;
-			
-			$this->headerData['checkSaldos']+= $cuentaObj->saldo;
-			
-			foreach ( $saldosPersonaObj as $persona )
-			{
-				if ( !isset( $this->headerData['personas'][$persona->persona_id] ) )
-				{
-					$this->headerData['personas'][$persona->persona_id]	= array(
-																				"persona_id"	=> $persona->persona_id,
-																				"saldo"			=> $persona->saldo,
-																				"unique_name"	=> $persona->unique_name,
-																				"color"			=> $persona->color,
-																				"nombre"		=> $persona->nombre
-																			);
-				}
-				else
-				{
-					$this->headerData['personas'][$persona->persona_id]['saldo']	+= $persona->saldo;
-				}
-				
-				$this->headerData['checkSaldos']	-= $persona->saldo;
-			}
-			
-			$saldoSinRubrar			= $rubroModel->getTotalSinRubrar( $cuentaId );
-			$this->headerData['saldoSinRubrar']		+= $saldoSinRubrar->total;
-
-			$this->headerData['checkSaldos']	-= $saldoSinRubrar->total;
-			
-			if ( $cuentaObj->show_txt_otros )
-				$this->headerData['txt_otros'][]	= $cuentaObj->show_txt_otros;
-		}
-
-
-		$this->data['viewHeader'] = $this->load->view('templates/cuentas_header',	$this->headerData, true);
+		// Para el menu
+		$this->renderMenu( $cuentasArray );
 		// Fin Menu
+
+		$cuentaModel	= new Cuenta_model();
+		//$rubroModel		= new Rubro_model();
 		
 		
 		$movimientosArray	= $cuentaModel->getMovimientos( $cuentaId );
@@ -111,72 +54,15 @@ class Cuentas extends MY_Controller {
 	
 	public function stats( $cuentas )
 	{
-		// Para el menu
-		$cuentaModel	= new Cuenta_model();
-		$rubroModel		= new Rubro_model();
-		
 		$cuentasArray 	= explode("-", $cuentas);
-		
-		$this->headerData['cuentasArray']		= $cuentasArray;
-		
-		$this->headerData['cuentas_nombres']	= array();
-		$this->headerData['moneda']				= null;
-		$this->headerData['saldoTotal']			= 0;
-		$this->headerData['personas']			= array();
-		$this->headerData['personasArray']		= $rubroModel->getPersona();
-		$this->headerData['saldoSinRubrar']		= 0;
-		
-		$this->headerData['multicuenta']		= ( count( $cuentasArray ) > 1 ) ? true : false;
-		
-		$this->headerData['checkSaldos']		= 0;
 
-		foreach ( $cuentasArray as $cuentaId )
-		{
-			$cuentaObj				= $cuentaModel->getCuenta( $cuentaId );
-			$saldosPersonaObj		= $cuentaModel->getSaldosByCuenta( $cuentaId );
-			
-			//print_r($saldosPersonaObj);
-			
-			$this->headerData['cuentas_nombres'][$cuentaId]	= $cuentaObj->nombre;
-			
-			$this->headerData['moneda']			= $cuentaObj->moneda;
-			$this->headerData['monedaSimbolo']	= $cuentaObj->simbolo;
-			
-			$this->headerData['saldoTotal']	+= $cuentaObj->saldo;
-			
-			$this->headerData['checkSaldos']+= $cuentaObj->saldo;
-			
-			foreach ( $saldosPersonaObj as $persona )
-			{
-				if ( !isset( $this->headerData['personas'][$persona->persona_id] ) )
-				{
-					$this->headerData['personas'][$persona->persona_id]	= array(
-																				"persona_id"	=> $persona->persona_id,
-																				"saldo"			=> $persona->saldo,
-																				"unique_name"	=> $persona->unique_name,
-																				"color"			=> $persona->color,
-																				"nombre"		=> $persona->nombre
-																			);
-				}
-				else
-				{
-					$this->headerData['personas'][$persona->persona_id]['saldo']	+= $persona->saldo;
-				}
-				
-				$this->headerData['checkSaldos']	-= $persona->saldo;
-			}
-			
-			$saldoSinRubrar			= $rubroModel->getTotalSinRubrar( $cuentaId );
-			$this->headerData['saldoSinRubrar']		+= $saldoSinRubrar->total;
-
-			$this->headerData['checkSaldos']	-= $saldoSinRubrar->total;
-		}
-
-
-		$this->data['viewHeader'] = $this->load->view('templates/cuentas_header',	$this->headerData, true);
+		// Para el menu
+		$this->renderMenu( $cuentasArray );
 		// Fin Menu
 
+		$cuentaModel	= new Cuenta_model();
 		$rubroModel		= new Rubro_model();
+
 
 		$personasObj = $rubroModel->getPersona();
 
@@ -184,6 +70,7 @@ class Cuentas extends MY_Controller {
 		$saldoInicial					= 0;
 		$sinRubro						= 0;
 
+		// Todo esto tiene que salir de config.
 		$date			= '2019-01-01';
 		$end_date		= '2019-03-07';
 		//$end_date 		= date('Y-m-d', time()); // [TODO] Esto tiene que ser el ultimo movimiento que tenga la cuenta.
@@ -274,10 +161,10 @@ class Cuentas extends MY_Controller {
 		
 		//print_r($todosLosRubros);
 		//die;
-		
-		$this->data['controller']				= 'stats';	
+
 		$this->data['rubrosPorMesArray']		= $rubrosPorMesArray;
 		$this->data['todosLosRubros']			= $todosLosRubros;
+		
 		
 
 		// Views
@@ -285,6 +172,78 @@ class Cuentas extends MY_Controller {
 		$this->load->view('cuentas_stats',				$this->data);
 		$this->load->view('templates/cuentas_popups',	$this->headerData);
 		$this->load->view('templates/html_close',		$this->data);
+	}
+
+	private function renderMenu( $cuentasArray )
+	{
+		$cuentaModel	= new Cuenta_model();
+		$rubroModel		= new Rubro_model();
+		
+		$this->headerData['cuentasArray']		= $cuentasArray;
+		
+		$this->headerData['cuentas_nombres']	= array();
+		$this->headerData['moneda']				= null;
+		$this->headerData['saldoTotal']			= 0;
+		$this->headerData['personas']			= array();
+		$this->headerData['personasArray']		= $rubroModel->getPersona();
+		$this->headerData['saldoSinRubrar']		= 0;
+		
+		$this->headerData['multicuenta']		= ( count( $cuentasArray ) > 1 ) ? true : false;
+		
+		$this->headerData['checkSaldos']		= 0;
+
+		$this->headerData['txt_otros']			= array();
+
+		foreach ( $cuentasArray as $cuentaId )
+		{
+			$cuentaObj				= $cuentaModel->getCuenta( $cuentaId );
+			$saldosPersonaObj		= $cuentaModel->getSaldosByCuenta( $cuentaId );
+			
+			//print_r($saldosPersonaObj);
+			
+			$this->headerData['cuentas_nombres'][$cuentaId]	= $cuentaObj->nombre;
+			
+			$this->headerData['moneda']			= $cuentaObj->moneda;
+			$this->headerData['monedaSimbolo']	= $cuentaObj->simbolo;
+			
+			$this->headerData['saldoTotal']	+= $cuentaObj->saldo;
+			
+			$this->headerData['checkSaldos']+= $cuentaObj->saldo;
+			
+			foreach ( $saldosPersonaObj as $persona )
+			{
+				if ( !isset( $this->headerData['personas'][$persona->persona_id] ) )
+				{
+					$this->headerData['personas'][$persona->persona_id]	= array(
+																				"persona_id"	=> $persona->persona_id,
+																				"saldo"			=> $persona->saldo,
+																				"unique_name"	=> $persona->unique_name,
+																				"color"			=> $persona->color,
+																				"nombre"		=> $persona->nombre
+																			);
+				}
+				else
+				{
+					$this->headerData['personas'][$persona->persona_id]['saldo']	+= $persona->saldo;
+				}
+				
+				$this->headerData['checkSaldos']	-= $persona->saldo;
+			}
+			
+			$saldoSinRubrar			= $rubroModel->getTotalSinRubrar( $cuentaId );
+			$this->headerData['saldoSinRubrar']		+= $saldoSinRubrar->total;
+
+			$this->headerData['checkSaldos']	-= $saldoSinRubrar->total;
+			
+			if ( $cuentaObj->show_txt_otros )
+				$this->headerData['txt_otros'][]	= $cuentaObj->show_txt_otros;
+		}
+
+		$rubroArrayGrouped = $rubroModel->getRubrosGrouped();
+		$this->headerData['rubroArrayGrouped']		= $rubroArrayGrouped;
+
+
+		$this->data['viewHeader'] = $this->load->view('templates/cuentas_header',	$this->headerData, true);
 	}
 	
 	public function parser()
@@ -488,11 +447,13 @@ class Cuentas extends MY_Controller {
 					'action'	=> false
 				);
 
-		$cuentaId		= $this->input->post('cuentaId');
-		$de_persona		= $this->input->post('de_persona');
-		$para_persona	= $this->input->post('para_persona');
-		$montoNbr		= $this->input->post('montoNbr');
-		$conceptoTxt	= $this->input->post('conceptoTxt');
+		$cuentaId			= $this->input->post('cuentaId');
+		$de_persona			= $this->input->post('de_persona');
+		$de_personaRubro	= $this->input->post('de_persona_rubro');
+		$para_persona		= $this->input->post('para_persona');
+		$para_personaRubro	= $this->input->post('para_persona_rubro');
+		$montoNbr			= $this->input->post('montoNbr');
+		$conceptoTxt		= $this->input->post('conceptoTxt');
 		
 		//echo $de_persona . " <--> " . $montoNbr . " <--> " . $conceptoTxt;
 		
@@ -536,7 +497,7 @@ class Cuentas extends MY_Controller {
 		if ( $movimiento_de )
 		{
 			// Rubrado DE
-			if ( $rubroModel->setRubrado( $movimiento_de, $de_persona, 37, $conceptoTxt ) )
+			if ( $rubroModel->setRubrado( $movimiento_de, $de_persona, $de_personaRubro, $conceptoTxt ) )
 			{
 				// Movimiento PARA
 				$saldosPersonaArray[$de_persona]['saldo'] = $saldosPersonaArray[$de_persona]['saldo'] - $montoNbr;
@@ -549,7 +510,7 @@ class Cuentas extends MY_Controller {
 				if ( $movimiento_para )
 				{
 					// Rubrado PARA
-					if ( $rubroModel->setRubrado( $movimiento_para, $para_persona, 37, $conceptoTxt ) )
+					if ( $rubroModel->setRubrado( $movimiento_para, $para_persona, $para_personaRubro, $conceptoTxt ) )
 					{
 						$json['error']		= false;
 					}

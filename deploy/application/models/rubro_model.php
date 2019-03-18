@@ -24,6 +24,58 @@ class rubro_model extends MY_Model {
 		
 		return $query->result();
 	}
+	
+	public function getRubros()
+	{
+		$this->db->select('*');
+	
+		$this->db->from('rubro_cuenta');
+
+		
+		// If
+		$this->db->where('status = ' . 1);
+
+		// Order
+		$this->db->order_by('nombre', 'ASC');
+		
+		//$this->db->group_by('rubro_persona_id');
+
+		$query = $this->db->get();
+		
+		return $query->result();
+	}
+
+	public function getRubro( $rubroId )
+	{
+		$this->db->select('*');
+	
+		$this->db->from('rubro_cuenta');
+
+		
+		// If
+		$this->db->where('id = ' . $rubroId );
+
+
+		$query = $this->db->get();
+		
+		$result = $query->result();
+		
+		return ( count( $result ) ) ? $result[0] : false;
+	}
+
+
+	public function getRubrosGrouped()
+	{
+		$rubrosGrouped = array();
+		
+		foreach ( $this->getRubros() as $rubroObj )
+		{
+			$rubrosGrouped[$rubroObj->rubro_persona_id][$rubroObj->id]	= $rubroObj;
+		}
+		
+		return $rubrosGrouped;
+	}	
+
 
 	public function getPersona()
 	{
@@ -153,13 +205,28 @@ class rubro_model extends MY_Model {
 		
 		return $result[0];
 	}
+
+	public function setSessionFiltros()
+	{
+		$personasArray	= $this->getPersona();
+		
+		foreach( $personasArray as $personaObj )
+		{
+			if ( $this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+			{
+				$this->db->where('persona_id != ' . $personaObj->id );
+			}
+		}
+	}
 	
 	public function getTotalesPorRubro( $cuentaId )
 	{
+		$this->setSessionFiltros();
+
 		$this->db->select('*, SUM(credito) - SUM(debito) as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre');
 
 		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
-		$this->db->join('rubro_persona',	'rubro_cuenta.rubro_persona_id = rubro_persona.id', 'left');
+		$this->db->join('rubro_persona',	'movimientos_cuentas.persona_id = rubro_persona.id', 'left');
 	
 		$this->db->from('movimientos_cuentas');
 
@@ -190,7 +257,7 @@ class rubro_model extends MY_Model {
 
 		$query = $this->db->get();
 
-		//echo $this->db->last_query() . ";\n";
+		echo $this->db->last_query() . ";\n";
 		
 		$result = $query->result();
 		

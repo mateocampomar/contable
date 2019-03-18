@@ -468,14 +468,28 @@ header {
 	top: 8px;
 }
 
-.transfer-container div {
-	margin: 10px 20px;
+.transfer-container div.divimg {
+	margin: 0;
+	padding: 0;
 	text-align: center;
+	clear: both;
+	height: 20px;
 }
+
+.transfer-container .select-group {
+	border: 0px solid green;
+}
+
+.transfer-container .select-group .select {
+	border: 0px solid red;
+	float: left;
+	width: 222px;
+	padding: 5px;
+}
+
 
 .transfer-container div.divimg img {
 	position: relative;
-	left: -15px;
-	top: 3px;
-	margin: 15px;
+	left: -3px;
+	top: 0px;
 }

@@ -117,8 +117,11 @@
 </ul>
 <?
 	$saldo_parts = explode( "," , formatNumberCustom( $saldoTotal ) );
+	
+	$style = '';
+	if ( $saldoTotal < 0 )	$style = "color:red;";
 ?>
 <h1>
-	<div class="saldo"><span><?=$monedaSimbolo?></span> <?=( isset($saldo_parts[0]) && $saldo_parts[0] ) ? $saldo_parts[0] : '0'?><span>,<?=(isset($saldo_parts[1])) ? $saldo_parts[1] : '00'?></span></div>
+	<div class="saldo" style="<?=$style?>"><span><?=$monedaSimbolo?></span> <?=( isset($saldo_parts[0]) && $saldo_parts[0] ) ? $saldo_parts[0] : '0'?><span>,<?=(isset($saldo_parts[1])) ? $saldo_parts[1] : '00'?></span></div>
 	<div><?=implode(", ", $cuentas_nombres)?> <span style="font-weight: normal;">[<?=$moneda?>]</span></div>
 </h1>
