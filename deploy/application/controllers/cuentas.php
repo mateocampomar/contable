@@ -58,11 +58,16 @@ class Cuentas extends MY_Controller {
 
 		// Para el menu
 		$this->renderMenu( $cuentasArray );
-		// Fin Menu
 
+		// Models
 		$cuentaModel	= new Cuenta_model();
 		$rubroModel		= new Rubro_model();
 
+
+
+		/*/
+		 * Para Evolución de Saldo
+		/*/
 
 		$personasObj = $rubroModel->getPersona();
 
@@ -99,37 +104,47 @@ class Cuentas extends MY_Controller {
 				$sinRubro -= $saldos['saldo_cta' . $persona->id ];
 			} 
 		}
+
 		
 		$saldosPorDia	= array();
 		
 		// Para cada uno de los días del intervalo.
 		while ( strtotime( $date ) <= strtotime( $end_date ) )
 		{
-			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date );
+			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date, false );
 			
 			$movimientosPorDia[$date] = $movimientos;
+			
+			//print_r($movimientos);
 
 			$date = date ("Y-m-d", strtotime("+1 day", strtotime($date)));
 		}
 
-		
-		$personasArray			= $rubroModel->getPersona();
 
-
-		$this->data['personasArray']			= $personasArray;
+		$this->data['personasArray']			= $personasObj;
 		$this->data['saldoPorPersonaArray']		= $saldosInicialPorPersonaArray;
 		$this->data['saldoInicial']				= $saldoInicial;
 		$this->data['sinRubro']					= $sinRubro;
 		$this->data['movimientosPorDia']		= $movimientosPorDia;
 		
+		/** Fin Evolución de Saldo **/
 		
-		// Para Totales por Rubro.
+		
+		/*/
+		 * Para Totales por Rubro.
+		/*/
 		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentasArray );
 		
 		
 		$this->data['totalesPorRubro']		= $totalesPorRubro;
 		
-		// Para Rubros por Mes
+		/** Fin Totales por Rubro **/
+		
+		
+		
+		/*/
+		 * Para Rubros por Mes
+		/*/
 		$rubrosPorMesArray = array();
 		
 		$rubroModel->cuentasArray = $cuentasArray;
@@ -155,15 +170,14 @@ class Cuentas extends MY_Controller {
 		{
 			foreach( $mesRubros as $rubrosObj )
 			{				
-				$todosLosRubros[$rubrosObj->rubro_id] = $rubrosObj->nombre;
+				$todosLosRubros[$rubrosObj->rubro_id] = $rubrosObj;
 			}
 		}
-		
-		//print_r($todosLosRubros);
-		//die;
 
 		$this->data['rubrosPorMesArray']		= $rubrosPorMesArray;
 		$this->data['todosLosRubros']			= $todosLosRubros;
+		
+		/** Fin Rubros por Mes **/
 		
 		
 

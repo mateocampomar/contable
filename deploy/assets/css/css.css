@@ -3,7 +3,6 @@ html, body {
 	padding: 0;
 	font-family: Trebuchet MS;
 	background-color: #f9f9f9;
-	display: block;
 	position:absolute;
 	height:auto;
 	bottom:0;
@@ -14,27 +13,37 @@ html, body {
 }
 
 header {
-	height: 40px;
+	height: 30px;
 	background-color: #669999;
+	position: absolute;
+	width: 100%;
+	z-index: 1000;
+}
+
+#page1 {
+	height: 100%;
 }
 
 #left_header {
 	border-right: 1px solid #ccc ;
 	width: 330px;
+	height: 100%;
 	background-color: white;
 	position:relative;
 	box-shadow: 3px 0px #eee;
 	float: left;
+	bottom: 0;
 }
 
 #left_header ol {
 	list-style: none;
 	padding: 0;
 	margin: 0;
+	margin-top: 30px;
 }
 
 #left_header ol li {
-	height: 80px;
+	height: 60px;
 	border-top: 2px solid #f9f9f9;
 	border-bottom: 2px solid #f9f9f9;
 	position: relative;
@@ -102,7 +111,7 @@ header {
 	text-align: right;
 	font-size: 15pt;
 	right: 20px;
-	top: 40px;
+	top: 28px;
 }
 
 #left_header ol li:hover div.total {
@@ -122,26 +131,40 @@ header {
 }
 
 .bdy-container {
-	margin: 20px auto;
+	margin: 0 auto;
 	margin-left: 350px;
 	position: relative;
 	padding-right: 20px;
+	height: 100%;
+	overflow: scroll;
 }
 
-.bdy-container h1 {
+.bdy-container .fixed-menu {
+	position: fixed;
+	z-index: 999;
+	background-color: #f9f9f9;
+	width: 100%;
+	height: 120px;
+	top: 20px;
+}
+
+.bdy-container .fixed-menu h1 {
 	font-size: 11pt;
 	color: #333;
+	right: 20px;
+	left: 350px;
 	padding-top: 10px;
 	margin-left: 0px;
 	margin-bottom: 20px;
 	background-color: #e6e6e7;
 	position: relative;
-	top: -5px;
+	top: 27px;
 	padding: 15px;
 	border-radius: 5px;
+	position: fixed;
 }
 
-.bdy-container h1 .saldo {
+.bdy-container .fixed-menu h1 .saldo {
 	position: absolute;
 	top: 10px;
 	right: 10px;
@@ -151,12 +174,12 @@ header {
 	background-color: #f1f1f1;
 }
 
-.bdy-container h1 .saldo span {
+.bdy-container .fixed-menu h1 .saldo span {
 	font-size: 9pt;
 	font-weight: normal;
 }
 
-.bdy-container h1 div {
+.bdy-container .fixed-menu h1 div {
 
 }
 
@@ -190,7 +213,8 @@ header {
 .ver-cuenta {
 	border: 1px solid #eee;
 	background-color: #fff;
-	margin-top: 60px;
+	margin-top: 140px;
+	margin-bottom: 30px;
 }
 
 .ver-cuenta h2 {
@@ -422,7 +446,7 @@ header {
 	float: left;
 	position: absolute;
 	padding: 0;
-	top: 42px;
+	top: 53px;
 	left: 0px;
 }
 

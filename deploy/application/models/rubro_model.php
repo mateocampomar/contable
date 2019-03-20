@@ -77,8 +77,14 @@ class rubro_model extends MY_Model {
 	}	
 
 
-	public function getPersona()
+	public function getPersona( $filter=false )
 	{
+
+		if ( $filter )
+		{
+			$this->setSessionFiltros( 'id' );
+		}
+
 		$this->db->select('*');
 	
 		$this->db->from('rubro_persona');
@@ -88,6 +94,8 @@ class rubro_model extends MY_Model {
 		$this->db->order_by('nombre', 'ASC');
 
 		$query = $this->db->get();
+		
+		//echo $this->db->last_query() . ";----------------------------\n";
 		
 		return $query->result();
 	}
@@ -206,7 +214,7 @@ class rubro_model extends MY_Model {
 		return $result[0];
 	}
 
-	public function setSessionFiltros()
+	public function setSessionFiltros( $columnName='persona_id' )
 	{
 		$personasArray	= $this->getPersona();
 		
@@ -214,7 +222,7 @@ class rubro_model extends MY_Model {
 		{
 			if ( $this->session->userdata( 'filter_' . $personaObj->unique_name ) )
 			{
-				$this->db->where('persona_id != ' . $personaObj->id );
+				$this->db->where( $columnName . ' != ' . $personaObj->id );
 			}
 		}
 	}
@@ -257,7 +265,7 @@ class rubro_model extends MY_Model {
 
 		$query = $this->db->get();
 
-		echo $this->db->last_query() . ";\n";
+		//echo $this->db->last_query() . ";\n";
 		
 		$result = $query->result();
 		
@@ -331,14 +339,18 @@ class rubro_model extends MY_Model {
 
 		*/
 	}
+
 	
 	public function getTotalesEntreFechas( $fecha_start, $fecha_end )
 	{
-		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM(debito) as total_debito, SUM(credito) as total_credito, SUM(credito) - SUM(debito) as total');
+		$this->setSessionFiltros();
+		
+		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM(debito) as total_debito, SUM(credito) as total_credito, SUM(credito) - SUM(debito) as total, rubro_persona.color_light, rubro_persona.color_dark');
 	
 		$this->db->from('movimientos_cuentas');
 		
-		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
+		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id',		'left');
+		$this->db->join('rubro_persona',	'rubro_cuenta.rubro_persona_id = rubro_persona.id',		'left');
 
 		if ( count($this->cuentasArray) > 1 )
 		{
@@ -365,7 +377,7 @@ class rubro_model extends MY_Model {
 
 		$query = $this->db->get();
 
-		echo $this->db->last_query() . ";\n";
+		//echo $this->db->last_query() . ";\n";
 		
 		$result = $query->result();
 		

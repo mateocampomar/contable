@@ -113,9 +113,12 @@ class cuenta_model extends MY_Model {
 		}
 	}
 	
-	public function getMovimientos( $cuentaId, $fecha=false )
+	public function getMovimientos( $cuentaId, $fecha=false, $filters=true )
 	{
-		$this->setSessionFiltros();
+		if ( $filters )
+		{
+			$this->setSessionFiltros();
+		}
 		
 		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id');
 	

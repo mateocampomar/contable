@@ -1,3 +1,26 @@
+ <?
+function color_luminance( $hex, $percent ) {
+	
+	// validate hex string
+	
+	$hex = preg_replace( '/[^0-9a-f]/i', '', $hex );
+	$new_hex = '#';
+	
+	if ( strlen( $hex ) < 6 ) {
+		$hex = $hex[0] + $hex[0] + $hex[1] + $hex[1] + $hex[2] + $hex[2];
+	}
+	
+	// convert to decimal and change luminosity
+	for ($i = 0; $i < 3; $i++) {
+		$dec = hexdec( substr( $hex, $i*2, 2 ) );
+		$dec = min( max( 0, $dec + $dec * $percent ), 255 ); 
+		$new_hex .= str_pad( dechex( $dec ) , 2, 0, STR_PAD_LEFT );
+	}		
+	
+	return $new_hex;
+}
+?>
+
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawChart);
@@ -5,12 +28,15 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
           [<?
-	          echo "'Fecha', 'Sin Rubro', 'Saldo'";
+	        echo "'Fecha', 'Sin Rubro', 'Saldo'";
 
-	          foreach ( $personasArray as $personaObj )
-	          {
-		          echo ", '" . $personaObj->nombre . "'";//, 'Matt', 'Comun'
-	          }	          
+			foreach ( $personasArray as $personaObj )
+			{
+				if ( !$this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+				{
+					echo ", '" . $personaObj->nombre . "'";   
+				}
+			}
 	          
 	          ?>],
           <?
@@ -29,16 +55,24 @@
 			          
 			          $saldoInicial			+= ($movimiento->credito - $movimiento->debito );
 			          
+			        //echo $saldoInicial . "\n";
+			          
 			          //print_r($movimiento);
 		          }
 		          
-		          // Lista cada uno de los saldos.
-		          foreach ( $personasArray as $personaObj )
-		          {
-				  		$toEcho .= ", " . round( $saldoPorPersonaArray[$personaObj->id], 2 );
-		          }
+		          //print_r($saldoPorPersonaArray);
 		          
-		          echo "['" . $fecha . "', " . round( $sinRubro, 2 ) . ", " . round( $saldoInicial, 2 ) . $toEcho . "],\n";
+		        // Lista cada uno de los saldos.
+		        foreach ( $personasArray as $personaObj )
+		        {
+					if ( !$this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+					{
+						$toEcho .= ", " . round( $saldoPorPersonaArray[$personaObj->id], 2 );
+					}
+		        }
+
+		          
+		        echo "['" . $fecha . "', " . round( $sinRubro, 2 ) . ", " . round( $saldoInicial, 2 ) . $toEcho . "],\n";
 	          }
 	       ?>
         ]);
@@ -72,7 +106,10 @@
 	          
 	        foreach ( $personasArray as $personaObj )
 		    {
-	          echo "'" . $personaObj->color . "', ";
+			    if ( !$this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+				{
+	        		echo "'" . $personaObj->color . "', ";
+	        	}
 	        }
 	          
 	      ?>]
@@ -172,7 +209,7 @@
 				
 				foreach ($todosLosRubros as $rubro )
 				{
-					echo ", '" . $rubro ."'";
+					echo ", '" . $rubro->nombre ."'";
 				}
 				echo "],\n";
 				
@@ -197,9 +234,42 @@
         ]);
 
         var options2 = {
-			chartArea:{left:100,top:100,width:'50%',height:'75%'},
+			chartArea:{
+				left:100,
+				top:100,
+				width:'50%',
+				height:'75%'
+			},
 			isStacked: true,
-			legend: { position: 'none' },
+			legend: {
+				position: 'none'
+			},
+			series: {
+				<?
+					$count = 0;
+					$colorArray = array();
+
+
+	      			foreach ($todosLosRubros as $rubro )
+					{
+						$color = $rubro->color_dark;
+						
+						if ( !isset( $colorArray[$color] ) )
+						{
+							$colorArray[$color] = color_luminance( $color, 0 );
+						}
+						else
+						{
+							$colorArray[$color] = color_luminance( $colorArray[$color], 0.1 );
+						}
+					
+						
+						echo $count . ": { color: '" . $colorArray[$color] . "' },\n";
+						
+						$count++;
+					}
+				?>
+			},
         };
 
         var chart = new google.charts.Bar(document.getElementById('rubro_por_mes'));
@@ -207,6 +277,8 @@
         chart.draw(data, google.charts.Bar.convertOptions(options2));
         
       }
+      			
+
 
     </script>
    
