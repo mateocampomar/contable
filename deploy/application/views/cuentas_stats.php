@@ -54,13 +54,7 @@ function color_luminance( $hex, $percent ) {
 
 			          
 			          $saldoInicial			+= ($movimiento->credito - $movimiento->debito );
-			          
-			        //echo $saldoInicial . "\n";
-			          
-			          //print_r($movimiento);
 		          }
-		          
-		          //print_r($saldoPorPersonaArray);
 		          
 		        // Lista cada uno de los saldos.
 		        foreach ( $personasArray as $personaObj )
@@ -253,6 +247,9 @@ function color_luminance( $hex, $percent ) {
 	      			foreach ($todosLosRubros as $rubro )
 					{
 						$color = $rubro->color_dark;
+
+						// Sin Rubrar
+						if ( !$color )	$color	= '#cc0000';
 						
 						if ( !isset( $colorArray[$color] ) )
 						{
@@ -262,6 +259,8 @@ function color_luminance( $hex, $percent ) {
 						{
 							$colorArray[$color] = color_luminance( $colorArray[$color], 0.1 );
 						}
+						
+						
 					
 						
 						echo $count . ": { color: '" . $colorArray[$color] . "' },\n";
@@ -285,9 +284,9 @@ function color_luminance( $hex, $percent ) {
 
 	<div class="bdy-container">
 		<?=$viewHeader?>
-		<div class="ver-cuenta">
+		<div class="ver-cuenta top">
 			<h2>Evolución del Saldo</h2>
-			<div id="curve_chart" style="height: 700px"></div>
+			<div id="curve_chart" style="height: 350px"></div>
 		</div>
 		<div class="ver-cuenta">
 			<h2>Gastos por Rubro</h2>

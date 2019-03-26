@@ -234,7 +234,7 @@ class cuenta_model extends MY_Model {
 	{
 		if ( !$fecha )
 		{
-			$this->db->select('*, cuentas_saldos_persona.saldo as saldo, rubro_persona.nombre as nombre');
+			$this->db->select('*, cuentas_saldos_persona.id as id, cuentas_saldos_persona.saldo as saldo, rubro_persona.nombre as nombre');
 	
 			$this->db->from('cuentas_saldos_persona');
 	

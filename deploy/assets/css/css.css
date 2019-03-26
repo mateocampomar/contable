@@ -17,7 +17,7 @@ header {
 	background-color: #669999;
 	position: absolute;
 	width: 100%;
-	z-index: 1000;
+	z-index: 100;
 }
 
 #page1 {
@@ -141,7 +141,7 @@ header {
 
 .bdy-container .fixed-menu {
 	position: fixed;
-	z-index: 999;
+	z-index: 99;
 	background-color: #f9f9f9;
 	width: 100%;
 	height: 120px;
@@ -166,11 +166,11 @@ header {
 
 .bdy-container .fixed-menu h1 .saldo {
 	position: absolute;
-	top: 10px;
+	top: 6px;
 	right: 10px;
 	font-size: 14pt;
 	border-radius: 5px;
-	padding: 3px 8px;
+	padding: 6px 8px;
 	background-color: #f1f1f1;
 }
 
@@ -184,10 +184,10 @@ header {
 }
 
 .cuenta-menu {
-	position: relative;
-	left: 2px;
-	top: 43px;
-	float: right;
+	height: 40px;
+	top: 73px;
+	right: 20px;
+	position: fixed;
 	list-style: none;
 }
 
@@ -213,8 +213,11 @@ header {
 .ver-cuenta {
 	border: 1px solid #eee;
 	background-color: #fff;
-	margin-top: 140px;
 	margin-bottom: 30px;
+}
+
+.ver-cuenta.top {
+	margin-top: 140px;
 }
 
 .ver-cuenta h2 {

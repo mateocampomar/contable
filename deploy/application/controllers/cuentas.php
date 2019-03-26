@@ -77,8 +77,8 @@ class Cuentas extends MY_Controller {
 
 		// Todo esto tiene que salir de config.
 		$date			= '2019-01-01';
-		$end_date		= '2019-03-07';
-		//$end_date 		= date('Y-m-d', time()); // [TODO] Esto tiene que ser el ultimo movimiento que tenga la cuenta.
+		//$end_date		= '2019-03-07';
+		$end_date 		= date('Y-m-d', time()); // [TODO] Esto tiene que ser el ultimo movimiento que tenga la cuenta.
 
 		// [TODO] Esto tiene que ser una función.
 		foreach ( $cuentasArray as $cuentaId )
