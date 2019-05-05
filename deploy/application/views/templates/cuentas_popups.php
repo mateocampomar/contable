@@ -17,6 +17,15 @@
 	</div>
 </div>
 
+<div data-role="page" id="dialogPageFiltros">
+	<div role="main" class="ui-content">
+		<div class="filtros-container loading" id="filtros-container"></div>
+		<div class="todos-ningun"><a href="javascript:selectTodos();">Todos</a> | <a href="javascript:selectNinguno();">Ninguno</a></div>
+		<a href="javascript:sendFiltros();" data-role="button" data-theme="b">Filtrar</a>
+		<a href="javascript:refrescar();" data-role="button" data-theme="a" class="btn_not">Not!</a>
+	</div>
+</div>
+
 <div data-role="page" id="dialogPageTransfer">
 	<div role="main" class="ui-content">
 		<div class="transfer-container loading" id="transfer-container">

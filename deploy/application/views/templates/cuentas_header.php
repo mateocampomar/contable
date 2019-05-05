@@ -46,28 +46,55 @@
 	<script type="text/javascript">
 	
 	
-	
-			$(".filter_btn").dblclick(function()
-			{
-				alert('ok dbl');
-			});
-	
+			var DELAY = 500, clicks = 0, timer = null, thisObjPersona = null;
+
 			$(".filter_btn").click(function()
 			{
-				//alert();
-				$.ajax({
-					method: "POST",
-					url: "<?=base_url('index.php/filtros')?>/setPersona/" + $(this).attr('name'),
-				})
-				.done(function( msg ) {
+			        clicks++;
+			        
+			        thisObjPersona = $(this);
+			
+			        if(clicks === 1) {
+
+			            timer = setTimeout(function()
+			            {
+							$.ajax({
+								method: "POST",
+								url: "<?=base_url('index.php/filtros')?>/setPersona/" + thisObjPersona.attr('name'),
+							})
+							.done(function( msg ) {
+
+								var jsonObj = jQuery.parseJSON( msg );
 					
-					var jsonObj = jQuery.parseJSON( msg );
-		
-					if ( jsonObj.refresh == true )
-					{
-						refrescar();
-					}
-				});
+								if ( jsonObj.refresh == true )
+								{
+									refrescar();
+								}
+							});
+	
+							clicks = 0;
+			
+			            }, DELAY);
+			
+			        } else {
+			
+			            clearTimeout(timer);    //prevent single-click actio
+
+						$.ajax({
+							method: "POST",
+							url: "<?=base_url('index.php/filtros/selectRubros')?>/" + thisObjPersona.attr('name'),
+						})
+						.done(function( msg ) {
+							
+							var jsonObj = jQuery.parseJSON( msg );
+
+							$("#filtros-container").html( jsonObj.html );
+						});
+
+			            $("#dialogPageFiltros").click();
+
+			            clicks = 0;             //after action performed, reset counter
+			        }
 			});
 			
 			function refrescar()
@@ -77,9 +104,9 @@
 	
 	</script>
 	
-	
-	
-	
+	<div class="ui-content" style="display:none;">
+		<a href="#dialogPageFiltros" id="dialogPageFiltros" data-rel="dialog" data-transition="pop">ooooooooo</a>
+	</div>
 	<ul class="cuenta-menu">
 		<?
 			if ( !$multicuenta )

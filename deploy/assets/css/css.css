@@ -296,8 +296,22 @@ header {
 	background: #eee;
 }
 
-#dialogPageRubrado .rubrar-container {
+.rubrar-container {
 	height: 500px;
+}
+
+.filtros-container {
+	height: 400px;	
+}
+
+.todos-ningun {
+	text-align: right;
+	height: 30px;
+}
+
+.todos-ningun a {
+	font-weight: normal !important;
+	color: #999 !important;
 }
 
 #dialogPageRubrado .rubrar-container.loading {
