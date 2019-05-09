@@ -17,6 +17,9 @@
 	<body>
 		<div data-role="page" id="page1">
 			<header>
+				<ul>
+					<li><a href="<?=base_url('index.php/home/login')?>">Login</a></li>
+				</ul>
 			</header>
 			<div id="left_header">
 				<ol>

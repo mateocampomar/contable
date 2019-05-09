@@ -21,9 +21,14 @@
 
 	$(".cuenta").click(function()
 	{
-		$( this ).addClass('selectedCuenta');
-
-	
+		if ( $(this).hasClass( "selectedCuenta" ) )
+		{
+			$( this ).removeClass('selectedCuenta');
+		}
+		else
+		{
+			$( this ).addClass('selectedCuenta');
+		}
 	});
 	
 	function sendFiltros()
@@ -99,7 +104,7 @@ foreach ( $rubroArray as $personas )
 		<?
 		foreach ( $personas['cuentas'] as $cuentas )
 		{
-			$selectedCuenta = ( isset($sessionRubrosArray[$cuentas->rubro_id]) ) ? ' selectedCuenta' : '';
+			$selectedCuenta = ( isset($sessionRubrosArray[$cuentas->rubro_id]) && $sessionRubrosArray[$cuentas->rubro_id] ) ? ' selectedCuenta' : '';
 			
 			?><li class="cuenta<?=$selectedCuenta?>" data-cuentaid="<?=$cuentas->rubro_id?>"><?=$cuentas->nombre?></li><?
 		}

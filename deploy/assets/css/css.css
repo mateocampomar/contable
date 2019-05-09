@@ -214,6 +214,7 @@ header {
 	border: 1px solid #eee;
 	background-color: #fff;
 	margin-bottom: 30px;
+	margin-top: 145px;
 }
 
 .ver-cuenta.top {
@@ -471,6 +472,7 @@ header {
 	float: left;
 	padding: 3px 10px;
 	border-radius: 5px;
+	position: relative;
 }
 
 .saldos-menu li:hover {
@@ -478,15 +480,21 @@ header {
 	cursor: pointer;
 }
 
-.saldos-menu li img {
+.saldos-menu li img.thumb {
 	width: 30px;
 	height: 30px;
 	border: 3px solid #f9f9f9;;
 	border-radius: 25px;
 }
 
-.saldos-menu li img.border {
-
+.saldos-menu li img.filtro_some {
+	position: absolute;
+	border-radius: 4px;
+	top: 26px;
+	left: 5px;
+	width: 15px;
+	height: 15px;
+	z-index: 100;
 }
 
 .saldos-menu li span {

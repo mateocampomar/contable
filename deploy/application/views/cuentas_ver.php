@@ -38,6 +38,8 @@
 								<?									
 									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
 									{
+										echo $movimientosObj->rubro_id;
+										
 										?>
 										<span class="tag-rubro <?=$movimientosObj->color?>">
 											<a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">

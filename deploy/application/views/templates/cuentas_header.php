@@ -5,19 +5,37 @@
 		{
 			$style		= '';
 			$spanStyle	= '';
+			$filtro_icon = false;
 			
 			if ( round( $persona['saldo'], 2 ) )
 			{
 				$saldo_parts = explode( "," , formatNumberCustom( $persona['saldo'] ) );
 				
-				if ( $this->session->userdata( 'filter_' . $persona['unique_name'] ) )
+				if ( $this->session->userdata( 'filter_' . $persona['unique_name'] ) === 'some' )
+				{
+					$filtro_icon = true;
+				}
+				elseif ( $this->session->userdata( 'filter_' . $persona['unique_name'] ) )
 				{
 					$style		= 'filter: grayscale(100%);';
 					$spanStyle	= 'color: grey;';
 				}
 				
 				?>
-				<li class="filter_btn" name="<?=$persona['unique_name']?>"><img src="<? echo base_url( "assets/img/" . $persona['unique_name'] )?>.png" class="border" style="<?=$style?>border-color: <?=$persona['color']?>" /><span style="<?=$spanStyle?>"><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
+				<li class="filter_btn" name="<?=$persona['unique_name']?>">
+					<?
+						//echo $this->session->userdata( 'filter_' . $persona['unique_name'] ) . "--------";
+						
+						if ( $filtro_icon )
+						{
+							?><img src="<?=base_url( "assets/img/filtro_some" )?>.png" class="filtro_some" /><?
+						}
+					?>
+					<img src="<? echo base_url( "assets/img/" . $persona['unique_name'] )?>.png" class="thumb" style="<?=$style?>border-color: <?=$persona['color']?>" />
+					<span style="<?=$spanStyle?>">
+						<i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?>
+					</span>
+				</li>
 				<?
 			}
 		}
@@ -27,7 +45,7 @@
 			$saldo_parts = explode( "," , formatNumberCustom( $saldoSinRubrar ) );
 			
 			?>
-			<li class="filter_btn" name="sinrubrar"><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="border" style="border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
+			<li class="filter_btn" name="sinrubrar"><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="thumb" style="border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
 			<?
 		}
 	
@@ -37,7 +55,7 @@
 			$saldo_parts = explode( "," , formatNumberCustom( $checkSaldos ) );
 			
 			?>
-			<li><img src="<?=base_url( 'assets/img/icon_bug.png' )?>"/><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
+			<li><img src="<?=base_url( 'assets/img/icon_bug.png' )?>"  class="thumb" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
 			<?
 		}
 	?>
@@ -60,17 +78,17 @@
 			            {
 							$.ajax({
 								method: "POST",
-								url: "<?=base_url('index.php/filtros')?>/setPersona/" + thisObjPersona.attr('name'),
+								url: "<?=base_url('index.php/filtros/selectRubros')?>/" + thisObjPersona.attr('name'),
 							})
 							.done(function( msg ) {
-
+								
 								var jsonObj = jQuery.parseJSON( msg );
-					
-								if ( jsonObj.refresh == true )
-								{
-									refrescar();
-								}
+	
+								$("#filtros-container").html( jsonObj.html );
 							});
+	
+				            $("#dialogPageFiltros").click();
+
 	
 							clicks = 0;
 			
@@ -79,19 +97,21 @@
 			        } else {
 			
 			            clearTimeout(timer);    //prevent single-click actio
-
+			            
 						$.ajax({
 							method: "POST",
-							url: "<?=base_url('index.php/filtros/selectRubros')?>/" + thisObjPersona.attr('name'),
+							url: "<?=base_url('index.php/filtros')?>/setPersona/" + thisObjPersona.attr('name'),
 						})
 						.done(function( msg ) {
-							
-							var jsonObj = jQuery.parseJSON( msg );
 
-							$("#filtros-container").html( jsonObj.html );
+							var jsonObj = jQuery.parseJSON( msg );
+				
+							if ( jsonObj.refresh == true )
+							{
+								refrescar();
+							}
 						});
 
-			            $("#dialogPageFiltros").click();
 
 			            clicks = 0;             //after action performed, reset counter
 			        }
@@ -105,7 +125,7 @@
 	</script>
 	
 	<div class="ui-content" style="display:none;">
-		<a href="#dialogPageFiltros" id="dialogPageFiltros" data-rel="dialog" data-transition="pop">ooooooooo</a>
+		<a href="#dialogPageFiltros" id="dialogPageFiltros" data-rel="dialog" data-transition="pop"></a>
 	</div>
 	<ul class="cuenta-menu">
 		<?

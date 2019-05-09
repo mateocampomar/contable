@@ -25,12 +25,16 @@ class rubro_model extends MY_Model {
 		return $query->result();
 	}
 	
-	public function getRubros()
+	public function getRubros( $personaId=false )
 	{
 		$this->db->select('*');
-	
-		$this->db->from('rubro_cuenta');
 
+		$this->db->from('rubro_cuenta');
+		
+		if ( $personaId )
+		{
+			$this->db->where( 'rubro_persona_id', $personaId );
+		}
 		
 		// If
 		$this->db->where('status = ' . 1);
@@ -100,13 +104,14 @@ class rubro_model extends MY_Model {
 		return $query->result();
 	}
 
-	public function getUnaPersona( $personaId )
+	public function getUnaPersona( $personaId=false, $personaUniqueName=false )
 	{
 		$this->db->select('*');
 	
 		$this->db->from('rubro_persona');
 		
-		$this->db->where('id = ' . $personaId);
+		if ( $personaId )				$this->db->where('id = ' . $personaId);
+		if ( $personaUniqueName )		$this->db->where("unique_name =  '" . $personaUniqueName . "'" );
 		
 		$this->db->limit(1);
 

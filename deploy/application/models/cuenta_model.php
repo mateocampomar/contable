@@ -101,16 +101,41 @@ class cuenta_model extends MY_Model {
 	
 	public function setSessionFiltros()
 	{
-		$rubroModel		= new Rubro_model();
-		$personasArray	= $rubroModel->getPersona();
+		//////////////
+		// Personas //
+		//////////////
+
+		//$rubroModel		= new Rubro_model();
+		//$personasArray	= $rubroModel->getPersona();
 		
-		foreach( $personasArray as $personaObj )
+		//foreach( $personasArray as $personaObj )
+		//{
+		//	if ( $this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+		//	{
+		//		$this->db->where('persona_id != ' . $personaObj->id );
+		//	}
+		//}
+
+		////////////
+		// Rubros //
+		////////////
+
+		$where = "";
+		
+		print_r($this->session->userdata( "filter_rubros" ));
+
+		foreach ( $this->session->userdata( "filter_rubros" ) as $rubroId => $val )
 		{
-			if ( $this->session->userdata( 'filter_' . $personaObj->unique_name ) )
-			{
-				$this->db->where('persona_id != ' . $personaObj->id );
-			}
+			if ( $val )
+				$where .= '`rubro_id` = ' . $rubroId . " OR ";
 		}
+		
+		$where .= "`rubro_id` IS NULL";
+		//$where = substr( $where, 0, -4 );
+	
+		$this->db->where("(" . $where . ")");
+
+		return true;
 	}
 	
 	public function getMovimientos( $cuentaId, $fecha=false, $filters=true )
@@ -156,7 +181,7 @@ class cuenta_model extends MY_Model {
 
 		$query = $this->db->get();
 		
-		//echo $this->db->last_query();
+		echo $this->db->last_query();
 		
 		return $query->result();
 	}
