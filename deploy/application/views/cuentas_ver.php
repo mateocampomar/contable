@@ -1,6 +1,6 @@
 	<div class="bdy-container">
 		<?=$viewHeader?>
-		<div class="ver-cuenta">
+		<div class="ver-cuenta top">
 			<table border="0" cellpadding="0" cellspacing="1" class="tabla">
 				<tr class="header">
 					<td align="center">Fecha</td>
@@ -37,9 +37,7 @@
 							<td>
 								<?									
 									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
-									{
-										echo $movimientosObj->rubro_id;
-										
+									{										
 										?>
 										<span class="tag-rubro <?=$movimientosObj->color?>">
 											<a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">

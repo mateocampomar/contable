@@ -119,7 +119,9 @@ class rubro_model extends MY_Model {
 		
 		$result = $query->result();
 		
-		return $result[0];
+		if ( isset($result[0]) )		return $result[0];
+
+		return false;
 	}
 	
 	public function setRubrado( $movimientoId, $personaId, $rubroId, $concepto=false )
@@ -221,22 +223,35 @@ class rubro_model extends MY_Model {
 
 	public function setSessionFiltros( $columnName='persona_id' )
 	{
-		$personasArray	= $this->getPersona();
-		
-		foreach( $personasArray as $personaObj )
+		$where = "";
+
+		//////////////
+		//  Rubros  //
+		//////////////
+		foreach ( $this->session->userdata( "filter_rubros" ) as $rubroId => $val )
 		{
-			if ( $this->session->userdata( 'filter_' . $personaObj->unique_name ) )
-			{
-				$this->db->where( $columnName . ' != ' . $personaObj->id );
-			}
+			if ( $val )
+				$where .= '`rubro_id` = ' . $rubroId . " OR ";
 		}
+		
+		//////////////
+		// Personas //
+		//////////////
+		if ( $this->session->userdata( 'filter_sinrubrar' ) == false )		$where .= "`rubro_id` IS NULL";
+		else																$where  = substr( $where, 0, -4 );
+
+
+
+		$this->db->where("(" . $where . ")");
+
+		return true;
 	}
 	
 	public function getTotalesPorRubro( $cuentaId )
 	{
 		$this->setSessionFiltros();
 
-		$this->db->select('*, SUM(credito) - SUM(debito) as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre');
+		$this->db->select('rubro_id, persona_id, SUM(credito) - SUM(debito) as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre, color_dark, color_light');
 
 		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
 		$this->db->join('rubro_persona',	'movimientos_cuentas.persona_id = rubro_persona.id', 'left');

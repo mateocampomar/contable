@@ -24,8 +24,6 @@
 				?>
 				<li class="filter_btn" name="<?=$persona['unique_name']?>">
 					<?
-						//echo $this->session->userdata( 'filter_' . $persona['unique_name'] ) . "--------";
-						
 						if ( $filtro_icon )
 						{
 							?><img src="<?=base_url( "assets/img/filtro_some" )?>.png" class="filtro_some" /><?
@@ -43,9 +41,17 @@
 		if ( $saldoSinRubrar )
 		{
 			$saldo_parts = explode( "," , formatNumberCustom( $saldoSinRubrar ) );
+
+			$style		= '';
+			$spanStyle	= '';
+			if ( $this->session->userdata( 'filter_sinrubrar' ) )
+			{
+				$style		= 'filter: grayscale(100%);';
+				$spanStyle	= 'color: grey;';
+			}
 			
 			?>
-			<li class="filter_btn" name="sinrubrar"><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="thumb" style="border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
+			<li class="filter_btn" name="sinrubrar"><img src="<?=base_url( 'assets/img/icon_interrogacion.png' )?>" class="thumb" style="<?=$style?>border-color:#e10000;" /><span><i><?=$monedaSimbolo?> </i><?=$saldo_parts[0] . "<i>," . $saldo_parts[1] . "</i>"?></span></li>
 			<?
 		}
 	

@@ -121,18 +121,21 @@ class cuenta_model extends MY_Model {
 		////////////
 
 		$where = "";
-		
-		print_r($this->session->userdata( "filter_rubros" ));
 
 		foreach ( $this->session->userdata( "filter_rubros" ) as $rubroId => $val )
 		{
 			if ( $val )
 				$where .= '`rubro_id` = ' . $rubroId . " OR ";
 		}
-		
-		$where .= "`rubro_id` IS NULL";
-		//$where = substr( $where, 0, -4 );
-	
+
+		//////////////
+		// Personas //
+		//////////////
+		if ( $this->session->userdata( 'filter_sinrubrar' ) == false )		$where .= "`rubro_id` IS NULL";
+		else																$where  = substr( $where, 0, -4 );
+
+
+
 		$this->db->where("(" . $where . ")");
 
 		return true;
@@ -181,7 +184,7 @@ class cuenta_model extends MY_Model {
 
 		$query = $this->db->get();
 		
-		echo $this->db->last_query();
+		//echo $this->db->last_query();
 		
 		return $query->result();
 	}

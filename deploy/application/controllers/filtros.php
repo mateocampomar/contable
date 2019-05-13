@@ -16,16 +16,17 @@ class Filtros extends MY_Controller {
 		{
 			$this->session->set_userdata($personaName, true);
 
-			$filtrosModel->setAllRubros( false, $personaObj );
+			if ( $personaObj )	$filtrosModel->setAllRubros( false, $personaObj );
 		}
 		else
 		{
 			$this->session->set_userdata($personaName, false);
 
-			$filtrosModel->setAllRubros( true, $personaObj );
+			if ( $personaObj )	$filtrosModel->setAllRubros( true, $personaObj );
 		}
 		
-		//print_r($this->session->userdata( "filter_rubros" ));
+		//echo $personaName;
+		//print_r($this->session->userdata( $personaName ));
 
 		$json['refresh'] = true;
 

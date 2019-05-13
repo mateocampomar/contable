@@ -20,6 +20,24 @@ header {
 	z-index: 100;
 }
 
+header ul {
+	list-style: none;
+	position: absolute;
+	right: 20px;
+	top: -8px;
+}
+
+header ul li {
+	float: right;
+	font-size: 9pt;
+	text-shadow: none;
+}
+
+header ul li a {
+	color: #fff !important;
+	font-weight: 100;
+}
+
 #page1 {
 	height: 100%;
 }
@@ -214,7 +232,6 @@ header {
 	border: 1px solid #eee;
 	background-color: #fff;
 	margin-bottom: 30px;
-	margin-top: 145px;
 }
 
 .ver-cuenta.top {

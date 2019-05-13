@@ -41,6 +41,10 @@ class filtros_model extends MY_Model {
 		{
 			$this->session->set_userdata( 'filter_' . $personaObj->unique_name, false);
 		}
+
+		// Sin Rubrar		
+		$this->session->set_userdata( 'filter_sinrubrar', false);
+
 		
 		// Por defecto prendo todos los rubros también.
 		$this->setAllRubros();

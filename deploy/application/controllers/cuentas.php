@@ -36,21 +36,6 @@ class Cuentas extends MY_Controller {
 			$this->load->view('templates/cuentas_popups',	$this->data);
 		$this->load->view('templates/html_close',		$this->data);
 	}
-
-	public function check( $cuentaId )
-	{
-		$cuentaModel	= new Cuenta_model();
-		$rubroModel		= new Rubro_model();
-		
-		$cuentaObj			= $cuentaModel->getCuenta( $cuentaId );
-		$movimientosArray	= $cuentaModel->getMovimientos( $cuentaId );
-
-
-		print_r($movimientosArray);
-
-
-		
-	}
 	
 	public function stats( $cuentas )
 	{
@@ -64,11 +49,9 @@ class Cuentas extends MY_Controller {
 		$rubroModel		= new Rubro_model();
 
 
-
 		/*/
 		 * Para Evolución de Saldo
 		/*/
-
 		$personasObj = $rubroModel->getPersona();
 
 		$saldosInicialPorPersonaArray	= array();
@@ -133,10 +116,15 @@ class Cuentas extends MY_Controller {
 		/*/
 		 * Para Totales por Rubro.
 		/*/
+		
+		
 		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentasArray );
-		
-		
+
 		$this->data['totalesPorRubro']		= $totalesPorRubro;
+		
+		//print_r($this->data['totalesPorRubro']);
+		//echo "-----------------------";
+		//die;
 		
 		/** Fin Totales por Rubro **/
 		
