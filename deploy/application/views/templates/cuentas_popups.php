@@ -17,6 +17,13 @@
 	</div>
 </div>
 
+<div data-role="page" id="dialogPagePagar">
+	<div role="main" class="ui-content">
+		<a href="javascript:pagar();" data-role="button" data-theme="b">Pagar Tarjeta</a>
+		<a href="javascript:refrescar();" data-role="button" data-theme="a" class="btn_not">Not!</a>
+	</div>
+</div>
+
 <div data-role="page" id="dialogPageFiltros">
 	<div role="main" class="ui-content">
 		<div class="filtros-container loading" id="filtros-container"></div>

@@ -90,7 +90,7 @@ function color_luminance( $hex, $percent ) {
 					color: '#999'
 				}
 			},
-			vAxis: {minValue: 0, textStyle: { fontSize:11 }},
+			vAxis: {minValue: 0, textStyle: { fontSize:11 }, viewWindowMode:'maximized' },
 			series: {
 				0: { lineWidth: 1, lineDashStyle: [5, 5] },
 				1: { lineWidth: 8, type:'area' },
@@ -102,7 +102,7 @@ function color_luminance( $hex, $percent ) {
 		    {
 			    if ( !$this->session->userdata( 'filter_' . $personaObj->unique_name ) )
 				{
-	        		echo "'" . $personaObj->color . "', ";
+	        		echo "'" . $personaObj->color_light . "', ";
 	        	}
 	        }
 	          

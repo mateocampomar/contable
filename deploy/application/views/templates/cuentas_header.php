@@ -154,6 +154,16 @@
 					</div>
 				</li>
 				<?
+				if ( $cuentaObj->type == 'tarjeta' )
+				{
+					?>
+					<li>
+						<div class="ui-content">
+							<a href="#dialogPagePagar"><img src="<?=base_url('assets/img/icon_pay.png')?>" /></a>
+						</div>
+					</li>
+					<?
+				}
 			}
 		?>
 		<li>

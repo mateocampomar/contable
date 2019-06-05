@@ -118,4 +118,25 @@ class Filtros extends MY_Controller {
 		
 		$this->load->view('_json',	$this->data);
 	}
+	
+	public function getFechas()
+	{
+		
+	}
+	
+	public function getFechaDesde()
+	{
+		
+	}
+	
+	public function getFechaHasta()
+	{
+		
+	}
+	
+	public function setFechas( $desde=false, $hasta=false )
+	{
+		if ( $desde )	$this->session->set_userdata( "fecha_desde", $desde);
+		if ( $hasta )	$this->session->set_userdata( "fecha_hasta", $hasta);
+	}
 }

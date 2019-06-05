@@ -39,8 +39,10 @@ class cuenta_model extends MY_Model {
 		return $result[0];
 	}
 
-	public function ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo, $saldosPersonaArray, $txt_otros=false )
-	{		
+	public function ingresarMovimiento( $cuentaId, $fecha, $concepto, $credito, $debito, $saldo, $saldosPersonaArray=false, $txt_otros=false, $rubroId=false, $personaId=false )
+	{
+		$rubroModel		= new Rubro_model();
+	
 		$data = array(
 			'cuentaId'		=> $cuentaId,
 			'fecha'			=> $fecha,
@@ -56,6 +58,25 @@ class cuenta_model extends MY_Model {
 			$data['txt_otros']	= $txt_otros;
 		}
 		
+		if ( $rubroId )
+		{
+			$data['persona_id']	= $personaId;
+			$data['rubro_id']	= $rubroId;
+		}
+
+		// Si no está el array con los sueldos entonces lo creo.
+		if ( !is_array($saldosPersonaArray) )
+		{
+			$saldosPersonaArray = array();
+
+			$personasArray	= $rubroModel->getPersona();
+
+			foreach ( $personasArray as $personaObj )
+			{
+				$saldosPersonaArray[ $personaObj->id ] = $this->getSaldoPersona( $cuentaId, $personaObj->id );
+			}
+		}
+
  
 		foreach ( $saldosPersonaArray as $saldosPersonaObj )
 		{
@@ -63,6 +84,7 @@ class cuenta_model extends MY_Model {
 
 			$data[ 'saldo_cta' . $saldosPersonaObj['persona_id'] ] = $saldosPersonaObj['saldo'];
 		}
+
 
 		if ( $this->db->insert('movimientos_cuentas', $data) )
 		{
@@ -317,6 +339,7 @@ class cuenta_model extends MY_Model {
 			return $result;
 		}
 	}
+
 
 	public function setSaldoPersona( $id, $saldo )
 	{

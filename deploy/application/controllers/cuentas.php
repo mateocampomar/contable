@@ -192,6 +192,11 @@ class Cuentas extends MY_Controller {
 		
 		$this->headerData['multicuenta']		= ( count( $cuentasArray ) > 1 ) ? true : false;
 		
+		if ( !$this->headerData['multicuenta'] )
+		{
+			$this->headerData['cuentaObj']				= $cuentaModel->getCuenta( $cuentasArray[0] );
+		}
+		
 		$this->headerData['checkSaldos']		= 0;
 
 		$this->headerData['txt_otros']			= array();
@@ -543,5 +548,127 @@ class Cuentas extends MY_Controller {
 		$this->data['json'] = $json;
 		
 		$this->load->view('_json',	$this->data);
+	}
+	
+	public function pagarTarjeta( $cuentaId, $personaDebito=4 )
+	{
+		$rubroModel		= new rubro_model();
+		$cuentaModel	= new cuenta_model();
+
+		
+		$cuentaObj		= $cuentaModel->getCuenta( $cuentaId );
+		$cuentaDebito	= $cuentaObj->cta_debito;
+
+
+		$cuentaDebitoObj	= $cuentaModel->getCuenta( $cuentaDebito );
+
+
+		foreach( $rubroModel->getPersona() as $personaObj )
+		{
+			// Que no sea la misma persona que paga.
+			if ( $personaDebito != $personaObj->id )
+			{
+				$saldoPersona		= $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
+				$saldoPersonaDebito = $cuentaModel->getSaldoPersona( $cuentaId, $personaDebito );
+
+				if ( $saldoPersona->saldo > 0  )
+				{
+					$creditoDebito	= 0;
+					$debitoDebito	= $saldoPersona->saldo;
+					$debitoCredito	= 0;
+					$creditoCredito	= $saldoPersona->saldo;
+
+					$saldo			= $cuentaObj->saldo - $saldoPersona->saldo;
+					$saldoDebito	= $cuentaDebitoObj->saldo - $saldoPersona->saldo;
+				}
+				else
+				{
+					$creditoDebito	= 0;
+					$debitoDebito	= -$saldoPersona->saldo;
+					$debitoCredito	= 0;
+					$creditoCredito	= -$saldoPersona->saldo;
+
+					$saldo			= $cuentaObj->saldo + $saldoPersona->saldo;
+					$saldoDebito	= $cuentaDebitoObj->saldo + $saldoPersona->saldo;
+				}
+
+				// Débito en la persona que envía
+				$cuentaModel->ingresarMovimiento(
+													$cuentaId,
+													date('Y-m-d', time()),
+													'Pago de Tarjeta',
+													$debitoCredito,
+													$debitoDebito,
+													$saldo,
+													false,
+													false,
+													15,											// Tarejetas
+													$personaDebito								// Laburo
+											);
+
+				$cuentaModel->setSaldoPersona( $saldoPersonaDebito->id, $saldoPersonaDebito->saldo + $debitoCredito - $debitoDebito );
+
+
+				// Crédito en la persona que Recibe.
+				$cuentaModel->ingresarMovimiento(
+													$cuentaId,
+													date('Y-m-d', time()),
+													'Pago de Tarjeta',
+													$creditoCredito,
+													$creditoDebito,
+													$cuentaObj->saldo,
+													false,
+													false,
+													$personaObj->rubro_tarjeta,
+													$personaObj->id
+											);
+
+				$cuentaModel->setSaldoPersona( $saldoPersona->id, $saldoPersona->saldo + $creditoCredito - $creditoDebito );
+
+
+				///////////////////////////////
+				// CUENTA DEBITO / DE RETIRO //
+				///////////////////////////////
+
+				// Débito en la persona que envía
+				$cuentaModel->ingresarMovimiento(
+													$cuentaDebito,
+													date('Y-m-d', time()),
+													'Pago de Tarjeta',
+													$debitoCredito,
+													$debitoDebito,
+													$saldoDebito,
+													false,
+													false,
+													$personaObj->rubro_tarjeta,
+													$personaObj->id
+											);
+
+				$cuentaModel->setSaldoPersona(
+												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaObj->id )->id,
+												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaObj->id )->saldo + $debitoCredito - $debitoDebito
+											);
+
+
+				// Crédito en la persona que Recibe.
+				$cuentaModel->ingresarMovimiento(
+													$cuentaDebito,
+													date('Y-m-d', time()),
+													'Pago de Tarjeta',
+													$creditoCredito,
+													$creditoDebito,
+													$cuentaDebitoObj->saldo,
+													false,
+													false,
+													15,											// Tarejetas
+													$personaDebito								// Laburo
+											);
+
+				$cuentaModel->setSaldoPersona(
+												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaDebito )->id,
+												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaDebito )->saldo + $creditoCredito - $creditoDebito
+											);
+			}
+		}
 	}
 }

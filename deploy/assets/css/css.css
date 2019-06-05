@@ -240,7 +240,7 @@ header ul li a {
 
 .ver-cuenta h2 {
 	margin: 25px 20px;
-	margin-bottom: 25px;
+	margin-bottom: 0px;
 	border-bottom: 1px solid #eee;
 	padding: 0;
 	padding-bottom: 5px;
