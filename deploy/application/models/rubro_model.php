@@ -292,7 +292,7 @@ class rubro_model extends MY_Model {
 		return $result;
 	}
 	
-	public function rubradoAutomatico( $concepto )
+	public function rubradoAutomatico( $concepto, $txt_otros=false )
 	{
 		$concepto = trim($concepto);
 		
@@ -349,6 +349,11 @@ class rubro_model extends MY_Model {
 		if ( $concepto == 'DEP 24 HORAS 008859062' )
 		{
 			return array(	"persona_id"	=> 4,	"rubro_id"		=> 23, "concepto" => $concepto . " (Devoto San Quintín)" );
+		}
+
+		if ( $concepto == 'RECIBO DE PAGO' && $txt_otros == '...' )
+		{
+			return array(	"persona_id"	=> 4,	"rubro_id"		=> 15, "concepto" => $concepto );
 		}
 		
 		

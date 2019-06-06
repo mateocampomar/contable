@@ -154,7 +154,7 @@
 					</div>
 				</li>
 				<?
-				if ( $cuentaObj->type == 'tarjeta' )
+				if ( false && $cuentaObj->type == 'tarjeta' )
 				{
 					?>
 					<li>

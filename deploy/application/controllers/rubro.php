@@ -5,6 +5,8 @@ class Rubro extends MY_Controller {
 	public function ver( $rubros )
 	{
 		$rubrosArray	= $rubros;
+		
+		$rubroModel		= new Rubro_model();
 		//$rubrosArray 	= explode("-", $rubros);
 
 		//if ( count($rubrosArray) == 1 )		$rub;
@@ -49,10 +51,6 @@ class Rubro extends MY_Controller {
 
 
 		print_r( $this->data );
-
-
-
-
 
 
 		

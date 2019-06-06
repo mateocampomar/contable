@@ -319,13 +319,13 @@ class Cuentas extends MY_Controller {
 					// Cuenta Id
 					$cuentaId = ( isset( $rowArray['cuenta_id'] ) ) ? $rowArray['cuenta_id'] : $cuentaId;
 
-					// Listo todas las cuentas y pongo los saldos en cero.
+					// Listo todas las Personas y seteo los subsaldos.
 					foreach ( $personasArray as $personaObj )
 					{
 						$saldosPersonaArray[ $personaObj->id ] = $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
 					}
 					
-
+					// Saldo de la cuenta, si es que lo trae.
 					$saldo = $rowArray['saldo'];
 					if ( $saldo === null )
 					{
@@ -334,13 +334,17 @@ class Cuentas extends MY_Controller {
 						$saldo = $cuentaObj->saldo + $rowArray['credito'] - $rowArray['debito'];
 					}
 					
+					//
+					// Txt Otros
+					//
 					if ( !isset($rowArray['txt_otros']) )
 					{
 						$rowArray['txt_otros'] = NULL;
 					}
 
-
+					//
 					// Ingresar Movimiento.
+					//
 					$movimiento = $cuentaModel->ingresarMovimiento( $cuentaId, $rowArray['fecha'], $rowArray['concepto'], $rowArray['credito'], $rowArray['debito'], $saldo, $saldosPersonaArray, $rowArray['txt_otros']);
 	
 					if ( !$movimiento )
@@ -351,16 +355,25 @@ class Cuentas extends MY_Controller {
 						break;
 					}
 					
+					//
 					// Rubrado Automático
+					//
 					$rubroModel		= new Rubro_model();
 					
-					$rubroArray = $rubroModel->rubradoAutomatico( $rowArray['concepto'] );
+					$rubroArray = $rubroModel->rubradoAutomatico( $rowArray['concepto'], $rowArray['txt_otros'] );
 					
 					if ( $rubroArray )
 					{
 						$rubrado = $rubroModel->setRubrado( $movimiento, $rubroArray['persona_id'], $rubroArray['rubro_id'], ( isset( $rubroArray['concepto'] ) ) ? $rubroArray['concepto'] : false );
 					}
 
+					//
+					// Pagar Tarjeta
+					//
+					if ( $rowArray['concepto'] == 'RECIBO DE PAGO' && $rowArray['txt_otros'] == '...' )
+					{
+						$cuentaModel->pagarTarjeta( $cuentaId );
+					}
 				}
 
 				$json['okTxt']		= 'Nuevos movimientos ingresados ok';
@@ -550,125 +563,10 @@ class Cuentas extends MY_Controller {
 		$this->load->view('_json',	$this->data);
 	}
 	
-	public function pagarTarjeta( $cuentaId, $personaDebito=4 )
+	public function pagarTarjeta( $cuentaId )
 	{
-		$rubroModel		= new rubro_model();
-		$cuentaModel	= new cuenta_model();
-
+		$cuentaModel	= new Cuenta_model();
 		
-		$cuentaObj		= $cuentaModel->getCuenta( $cuentaId );
-		$cuentaDebito	= $cuentaObj->cta_debito;
-
-
-		$cuentaDebitoObj	= $cuentaModel->getCuenta( $cuentaDebito );
-
-
-		foreach( $rubroModel->getPersona() as $personaObj )
-		{
-			// Que no sea la misma persona que paga.
-			if ( $personaDebito != $personaObj->id )
-			{
-				$saldoPersona		= $cuentaModel->getSaldoPersona( $cuentaId, $personaObj->id );
-				$saldoPersonaDebito = $cuentaModel->getSaldoPersona( $cuentaId, $personaDebito );
-
-				if ( $saldoPersona->saldo > 0  )
-				{
-					$creditoDebito	= 0;
-					$debitoDebito	= $saldoPersona->saldo;
-					$debitoCredito	= 0;
-					$creditoCredito	= $saldoPersona->saldo;
-
-					$saldo			= $cuentaObj->saldo - $saldoPersona->saldo;
-					$saldoDebito	= $cuentaDebitoObj->saldo - $saldoPersona->saldo;
-				}
-				else
-				{
-					$creditoDebito	= 0;
-					$debitoDebito	= -$saldoPersona->saldo;
-					$debitoCredito	= 0;
-					$creditoCredito	= -$saldoPersona->saldo;
-
-					$saldo			= $cuentaObj->saldo + $saldoPersona->saldo;
-					$saldoDebito	= $cuentaDebitoObj->saldo + $saldoPersona->saldo;
-				}
-
-				// Débito en la persona que envía
-				$cuentaModel->ingresarMovimiento(
-													$cuentaId,
-													date('Y-m-d', time()),
-													'Pago de Tarjeta',
-													$debitoCredito,
-													$debitoDebito,
-													$saldo,
-													false,
-													false,
-													15,											// Tarejetas
-													$personaDebito								// Laburo
-											);
-
-				$cuentaModel->setSaldoPersona( $saldoPersonaDebito->id, $saldoPersonaDebito->saldo + $debitoCredito - $debitoDebito );
-
-
-				// Crédito en la persona que Recibe.
-				$cuentaModel->ingresarMovimiento(
-													$cuentaId,
-													date('Y-m-d', time()),
-													'Pago de Tarjeta',
-													$creditoCredito,
-													$creditoDebito,
-													$cuentaObj->saldo,
-													false,
-													false,
-													$personaObj->rubro_tarjeta,
-													$personaObj->id
-											);
-
-				$cuentaModel->setSaldoPersona( $saldoPersona->id, $saldoPersona->saldo + $creditoCredito - $creditoDebito );
-
-
-				///////////////////////////////
-				// CUENTA DEBITO / DE RETIRO //
-				///////////////////////////////
-
-				// Débito en la persona que envía
-				$cuentaModel->ingresarMovimiento(
-													$cuentaDebito,
-													date('Y-m-d', time()),
-													'Pago de Tarjeta',
-													$debitoCredito,
-													$debitoDebito,
-													$saldoDebito,
-													false,
-													false,
-													$personaObj->rubro_tarjeta,
-													$personaObj->id
-											);
-
-				$cuentaModel->setSaldoPersona(
-												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaObj->id )->id,
-												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaObj->id )->saldo + $debitoCredito - $debitoDebito
-											);
-
-
-				// Crédito en la persona que Recibe.
-				$cuentaModel->ingresarMovimiento(
-													$cuentaDebito,
-													date('Y-m-d', time()),
-													'Pago de Tarjeta',
-													$creditoCredito,
-													$creditoDebito,
-													$cuentaDebitoObj->saldo,
-													false,
-													false,
-													15,											// Tarejetas
-													$personaDebito								// Laburo
-											);
-
-				$cuentaModel->setSaldoPersona(
-												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaDebito )->id,
-												$cuentaModel->getSaldoPersona( $cuentaDebito, $personaDebito )->saldo + $creditoCredito - $creditoDebito
-											);
-			}
-		}
+		$cuentaModel->pagarTarjeta( $cuentaId );
 	}
 }
