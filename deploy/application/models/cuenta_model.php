@@ -162,6 +162,32 @@ class cuenta_model extends MY_Model {
 
 		return true;
 	}
+
+	public function getMovimientosByRubro( $rubroId )
+	{
+		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id, cuentas.nombre as cuenta_nombre, rubro_cuenta.nombre as nombre');
+	
+		$this->db->from('movimientos_cuentas');
+
+		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left' );
+		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left' );
+		$this->db->join('cuentas',	'movimientos_cuentas.cuentaId = cuentas.id', 'left' );
+		
+		if ( true )
+		{
+			$this->db->where('movimientos_cuentas.rubro_id = ' . $rubroId );
+		}
+
+		$this->db->where('movimientos_cuentas.status = ' . 1);
+		
+		$this->db->order_by('movimientos_cuentas.id', 'ASC');
+
+		$query = $this->db->get();
+		
+		//echo $this->db->last_query();
+		
+		return $query->result();
+	}
 	
 	public function getMovimientos( $cuentaId, $fecha=false, $filters=true )
 	{

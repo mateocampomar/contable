@@ -193,10 +193,10 @@ function color_luminance( $hex, $percent ) {
 
     
     
-      google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawChart2);
+    google.charts.load('current', {'packages':['bar']});
+    google.charts.setOnLoadCallback(drawChart2);
 
-      function drawChart2() {
+    function drawChart2() {
         var data = google.visualization.arrayToDataTable([
 	        <?
 				echo "['Mes'";

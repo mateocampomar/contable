@@ -366,10 +366,8 @@ class rubro_model extends MY_Model {
 	}
 
 	
-	public function getTotalesEntreFechas( $fecha_start, $fecha_end )
+	public function getTotalesEntreFechas( $fecha_start, $fecha_end, $rubroId=false )
 	{
-		$this->setSessionFiltros();
-		
 		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM(debito) as total_debito, SUM(credito) as total_credito, SUM(credito) - SUM(debito) as total, rubro_persona.color_light, rubro_persona.color_dark');
 	
 		$this->db->from('movimientos_cuentas');
@@ -379,6 +377,8 @@ class rubro_model extends MY_Model {
 
 		if ( count($this->cuentasArray) > 1 )
 		{
+			$this->setSessionFiltros();
+			
 			$where = "";
 
 			foreach( $this->cuentasArray as $cuentaIdParaWhere )
@@ -390,9 +390,15 @@ class rubro_model extends MY_Model {
 			
 			$this->db->where("(" . $where . ")");
 		}
+		elseif ( $this->cuentasArray )
+		{
+			$this->setSessionFiltros();
+
+			$this->db->where('cuentaId = ' . $this->cuentasArray[0] );
+		}
 		else
 		{
-			$this->db->where('cuentaId = ' . $this->cuentasArray[0] );
+			$this->db->where('rubro_id = ' . $rubroId );
 		}
 		
 		$this->db->where("fecha >= '" . $fecha_start . "'" );
@@ -403,6 +409,7 @@ class rubro_model extends MY_Model {
 		$query = $this->db->get();
 
 		//echo $this->db->last_query() . ";\n";
+		//die;
 		
 		$result = $query->result();
 		

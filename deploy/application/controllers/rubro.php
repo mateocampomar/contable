@@ -7,11 +7,7 @@ class Rubro extends MY_Controller {
 		$rubrosArray	= $rubros;
 		
 		$rubroModel		= new Rubro_model();
-		//$rubrosArray 	= explode("-", $rubros);
-
-		//if ( count($rubrosArray) == 1 )		$rub;
-		//}
-
+		$cuentaModel	= new Cuenta_model();
 
 
 		/*/
@@ -26,7 +22,7 @@ class Rubro extends MY_Controller {
 			$fecha					= date('Y') . '-' . sprintf('%02d', $mes);
 			$rubrosEntreFechasArray	= array();
 			
-			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31" ) as $rubrosEntreFechasObj )
+			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31", $rubrosArray[0] ) as $rubrosEntreFechasObj )
 			{
 				$rubrosEntreFechasArray[$rubrosEntreFechasObj->rubro_id] = $rubrosEntreFechasObj;
 			}
@@ -45,13 +41,15 @@ class Rubro extends MY_Controller {
 				$todosLosRubros[$rubrosObj->rubro_id] = $rubrosObj;
 			}
 		}
+		
+		$this->data['rubroObj']				= $rubroModel->getRubro( $rubrosArray[0] );
 
-		$this->data['rubrosPorMesArray']		= $rubrosPorMesArray;
-		$this->data['todosLosRubros']			= $todosLosRubros;
+		$this->data['rubrosPorMesArray']	= $rubrosPorMesArray;
+		$this->data['todosLosRubros']		= $todosLosRubros;
 
 
-		print_r( $this->data );
-
+		$movimientosByRubroArray	= $cuentaModel->getMovimientosByRubro( $rubrosArray );
+		$this->data['movimientosArray']	= $movimientosByRubroArray;
 
 		
 		$this->load->view('templates/html_open',		$this->data);
