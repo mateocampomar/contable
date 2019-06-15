@@ -40,10 +40,11 @@
 									{										
 										?>
 										<span class="tag-rubro <?=$movimientosObj->color?>">
-											<a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">
+											<a href="#" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>" class="rubradoLink">
 												<img src="<? echo base_url( "assets/img/" . $movimientosObj->unique_name )?>.png" /> <?=$movimientosObj->nombre?>
 											</a>
 										</span>
+										<a href="#dialogPageRubrado" id="movlink_<?=$movimientosObj->movimientos_cuentas_id?>" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>"></a>
 										<?
 									}
 									else

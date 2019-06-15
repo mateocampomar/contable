@@ -12,7 +12,9 @@
 		<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script>
 		
-		   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<script src="<?=base_url('assets/js/_js.js')?>"></script>
 	</head>
 	<body>
 		<div data-role="page" id="page1">

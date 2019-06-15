@@ -180,6 +180,7 @@ class cuenta_model extends MY_Model {
 
 		$this->db->where('movimientos_cuentas.status = ' . 1);
 		
+		$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
 		$this->db->order_by('movimientos_cuentas.id', 'ASC');
 
 		$query = $this->db->get();
@@ -228,6 +229,7 @@ class cuenta_model extends MY_Model {
 			$this->db->where("movimientos_cuentas.fecha = '" . $fecha . "'");
 		}
 		
+		$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
 		$this->db->order_by('movimientos_cuentas.id', 'ASC');
 
 		$query = $this->db->get();

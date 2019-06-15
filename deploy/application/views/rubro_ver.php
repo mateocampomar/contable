@@ -71,7 +71,42 @@
 	
 	        chart.draw(data, google.charts.Bar.convertOptions(options2));
 	        
-	    }
+	        
+	        
+	        //
+	        // Pie Chart
+	        //
+	        
+	        google.charts.load('current', {'packages':['corechart']});
+			      google.charts.setOnLoadCallback(drawChart);
+			
+			      function drawChart() {
+			
+			        var data = google.visualization.arrayToDataTable([
+			          ['Task', 'Hours per Day'],
+				        <?
+					        foreach( $pieChartArray as $key => $result )
+					        {
+						        echo "['" . $key . "', " . $result . "],\n";
+					        }
+						?>
+			        ]);
+			
+			        var options = {
+						legend: { position: 'none' },
+						chartArea:{left:30,top:20,width:'80%',height:'80%'},
+			            slices: {
+			              0: { color: '#ff6666' },
+			              1: { color: '#99cc99' }
+			            }
+			        };
+			
+			        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+			
+			        chart.draw(data, options);
+			      }
+	    	}
+
 	</script>
 	<div class="bdy-container">
 		<div class="fixed-menu">
@@ -81,7 +116,7 @@
 			</h1>
 		</div>
 		<div class="ver-cuenta top" style="float: right;">
-			<div id="" style="height: 310px; width: 280px;"></div>
+			<div id="piechart" style="height: 310px; width: 280px;"></div>
 		</div>
 		<div class="ver-cuenta top" style="height: 310px; margin-right: 300px;">
 			<div id="rubro_por_mes" style="height: 300px; margin: 10px;"></div>
@@ -93,6 +128,7 @@
 					<td><strong>Cuenta</strong></td>
 					<td>Movimiento</td>
 					<td>Rubro</td>
+					<td>Moneda</td>
 					<td align="right">Crédito</td>
 					<td align="right">Débito</td>
 				</tr>
@@ -109,7 +145,7 @@
 						?>
 						<tr class="<?=$trClass?>">
 							<td align="center"><?=$movimientosObj->fecha?></td>
-							<td><strong><a href=""><?=$movimientosObj->cuenta_nombre?></a></strong></td>
+							<td><strong><a href="<?=base_url( 'index.php/cuentas/ver/' . $movimientosObj->cuentaId )?>"><?=$movimientosObj->cuenta_nombre?></a></strong></td>
 							<td style="font-weight: bold;"><?=$movimientosObj->concepto?></td>
 							<td>
 								<?									
@@ -129,6 +165,7 @@
 									}
 								?>
 							</td>
+							<td align="center"><strong><?=$movimientosObj->moneda?></strong> <span style="font-size: smaller; color:#666;">(<?=$movimientosObj->tipo_cambio?>)</span></td>
 							<td align="right" style="color: green;"><?=formatNumberCustom( $movimientosObj->credito )?></td>
 							<td align="right" style="color: red;"><?=formatNumberCustom( $movimientosObj->debito )?></td>
 						</tr>

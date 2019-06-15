@@ -22,14 +22,13 @@ class Rubro extends MY_Controller {
 			$fecha					= date('Y') . '-' . sprintf('%02d', $mes);
 			$rubrosEntreFechasArray	= array();
 			
-			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31", $rubrosArray[0] ) as $rubrosEntreFechasObj )
+			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31", $rubrosArray ) as $rubrosEntreFechasObj )
 			{
 				$rubrosEntreFechasArray[$rubrosEntreFechasObj->rubro_id] = $rubrosEntreFechasObj;
 			}
 			
 			$rubrosPorMesArray[$fecha] = $rubrosEntreFechasArray;
 		}
-		
 		
 		
 		$todosLosRubros = array();
@@ -42,7 +41,9 @@ class Rubro extends MY_Controller {
 			}
 		}
 		
-		$this->data['rubroObj']				= $rubroModel->getRubro( $rubrosArray[0] );
+		$this->data['rubroObj']				= $rubroModel->getRubro( $rubrosArray );
+		
+		//print_r($this->data['rubroObj']);
 
 		$this->data['rubrosPorMesArray']	= $rubrosPorMesArray;
 		$this->data['todosLosRubros']		= $todosLosRubros;
@@ -50,6 +51,22 @@ class Rubro extends MY_Controller {
 
 		$movimientosByRubroArray	= $cuentaModel->getMovimientosByRubro( $rubrosArray );
 		$this->data['movimientosArray']	= $movimientosByRubroArray;
+		
+		//print_r($movimientosByRubroArray);
+		
+		
+		$cakeChartArray = array(
+					'negativo'	=> 0,
+					'positivo'	=> 0
+		);
+		foreach ($movimientosByRubroArray as $movimientoObj) {
+			$cakeChartArray['positivo'] += $movimientoObj->credito;
+			$cakeChartArray['negativo'] += $movimientoObj->debito;
+		}
+		
+		$this->data['pieChartArray']	= $cakeChartArray;
+		
+
 
 		
 		$this->load->view('templates/html_open',		$this->data);

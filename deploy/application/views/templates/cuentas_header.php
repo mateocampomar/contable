@@ -94,7 +94,6 @@
 							});
 	
 				            $("#dialogPageFiltros").click();
-
 	
 							clicks = 0;
 			
