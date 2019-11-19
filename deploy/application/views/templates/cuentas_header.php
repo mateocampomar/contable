@@ -167,7 +167,7 @@
 		?>
 		<li>
 			<div class="ui-content">
-				<a href="<?=base_url('index.php/cuentas/stats/' . implode( "-", $cuentasArray ) )?>"><img src="<?=base_url('assets/img/icon_stats.png')?>" /></a>
+				<a href="<?=base_url('index.php/cuentas/stats/' . implode( "-", $cuentasArray ) )?>" data-ajax="false"><img src="<?=base_url('assets/img/icon_stats.png')?>" /></a>
 			</div>
 		</li>
 	</ul>

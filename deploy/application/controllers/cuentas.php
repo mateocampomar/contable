@@ -8,8 +8,11 @@ class Cuentas extends MY_Controller {
 		// No es multicuenta	
 		$cuentaId = $cuentas;
 
+
 		// Para el menu
 		$this->renderMenu( $cuentasArray );
+
+		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
 		// Fin Menu
 
 		$cuentaModel	= new Cuenta_model();
@@ -28,6 +31,7 @@ class Cuentas extends MY_Controller {
 		{
 			$cuentaObj				= $cuentaModel->getCuenta( $cuentasArray[0] );
 			$this->data['cuentaObj']	= $cuentaObj;
+			
 		}
 		
 		$this->load->view('templates/html_open',		$this->data);
@@ -42,6 +46,8 @@ class Cuentas extends MY_Controller {
 		$cuentasArray 	= explode("-", $cuentas);
 
 		// Para el menu
+		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
+
 		$this->renderMenu( $cuentasArray );
 
 		// Models

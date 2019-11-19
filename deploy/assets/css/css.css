@@ -38,6 +38,15 @@ header ul li a {
 	font-weight: 100;
 }
 
+.form-login {
+	border: 1px solid #ccc;
+	width: 200px;
+	margin: 50px auto;
+	background-color: #fff;
+	padding: 30px;
+	border-radius: 10px;
+}
+
 #page1 {
 	height: 100%;
 }

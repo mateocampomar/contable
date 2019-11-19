@@ -281,7 +281,8 @@ function color_luminance( $hex, $percent ) {
 
     </script>
    
-
+<div data-role="page" id="page1">
+	<?=$viewLeft_menu?>
 	<div class="bdy-container">
 		<?=$viewHeader?>
 		<div class="ver-cuenta top">
