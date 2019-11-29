@@ -194,19 +194,24 @@
 	
 	            timer = setTimeout(function()
 	            {
-					window.location.href = "<?=base_url( 'index.php/rubro/ver' )?>/" + rubroId;
+		            if ( typeof rubroId !== 'undefined' )
+		            {
+						window.location.href = "<?=base_url( 'index.php/rubro/ver' )?>/" + rubroId;
+					}
+					else
+					{
+						alert('No hay Rubro asignado. Hacé doble click para Rubrar el movimiento.');
+					}
 	
 					clicks = 0;
 	
 	            }, DELAY);
 	
 	        } else {
-	
+		        
 	            clearTimeout(timer);
 
 	            $( '#movlink_' + $( this ).data('movimientoid') ).click();
-	            
-	            alert(movimientoId);
 
 				sendToRubrar( movimientoId );
 	

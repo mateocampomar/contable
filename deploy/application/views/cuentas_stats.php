@@ -263,7 +263,7 @@ function color_luminance( $hex, $percent ) {
 						
 					
 						
-						echo $count . ": { color: '" . $colorArray[$color] . "' },\n";
+						echo $count . ": { color: '" . $color . "' },\n";
 						
 						$count++;
 					}

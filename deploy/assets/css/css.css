@@ -324,7 +324,7 @@ header ul li a {
 }
 
 .rubrar-container {
-	height: 500px;
+	height: 540px;
 }
 
 .filtros-container {
@@ -567,4 +567,8 @@ header ul li a {
 	position: relative;
 	left: -3px;
 	top: 0px;
+}
+
+.ui-page-dialog-contain {
+	margin-top: 50px !important;
 }
