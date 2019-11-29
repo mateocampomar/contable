@@ -108,6 +108,8 @@
 	    	}
 
 	</script>
+<div data-role="page" id="page1">
+	<?=$viewLeft_menu?>
 	<div class="bdy-container">
 		<div class="fixed-menu">
 			<h1>

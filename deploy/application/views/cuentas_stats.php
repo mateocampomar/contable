@@ -206,18 +206,21 @@ function color_luminance( $hex, $percent ) {
 					echo ", '" . $rubro->nombre ."'";
 				}
 				echo "],\n";
+
 				
 				foreach ($rubrosPorMesArray as $mes => $rubrosArray )
 				{
+									//print_r($rubrosArray);
+					
 					echo "[";
 					echo "'" . $mes . "'";
 					
 					foreach ( $todosLosRubros as $rubroId => $rubro )
 					{
-						//print_r($rubrosArray[$rubroId]);
+						//print_r($rubro);
 						
-						if ( isset($rubrosArray[$rubroId]->total) ) 
-						{											echo "," . $rubrosArray[$rubroId]->total;	}
+						if ( isset($rubrosArray[$rubro->persona_id][$rubroId]->total) ) 
+						{											echo "," . $rubrosArray[$rubro->persona_id][$rubroId]->total;	}
 						else
 						{											echo ",0";									}
 					}
@@ -251,17 +254,14 @@ function color_luminance( $hex, $percent ) {
 						// Sin Rubrar
 						if ( !$color )	$color	= '#cc0000';
 						
-						if ( !isset( $colorArray[$color] ) )
-						{
-							$colorArray[$color] = color_luminance( $color, 0 );
-						}
-						else
-						{
-							$colorArray[$color] = color_luminance( $colorArray[$color], 0.1 );
-						}
-						
-						
-					
+						//if ( !isset( $colorArray[$color] ) )
+						//{
+						//	$colorArray[$color] = color_luminance( $color, 0 );
+						//}
+						//else
+						//{
+						//	$colorArray[$color] = color_luminance( $colorArray[$color], 0.1 );
+						//}
 						
 						echo $count . ": { color: '" . $color . "' },\n";
 						

@@ -9,6 +9,10 @@ class Rubro extends MY_Controller {
 		$rubroModel		= new Rubro_model();
 		$cuentaModel	= new Cuenta_model();
 
+		// Para el menu
+		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
+		// Fin Menu
+
 
 		/*/
 		 * Para Rubros por Mes
@@ -41,9 +45,9 @@ class Rubro extends MY_Controller {
 			}
 		}
 		
-		$this->data['rubroObj']				= $rubroModel->getRubro( $rubrosArray );
 		
-		//print_r($this->data['rubroObj']);
+		$this->data['rubroObj']				= $rubroModel->getRubro( $rubrosArray );
+
 
 		$this->data['rubrosPorMesArray']	= $rubrosPorMesArray;
 		$this->data['todosLosRubros']		= $todosLosRubros;

@@ -150,7 +150,7 @@ class Cuentas extends MY_Controller {
 			
 			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31" ) as $rubrosEntreFechasObj )
 			{
-				$rubrosEntreFechasArray[$rubrosEntreFechasObj->rubro_id] = $rubrosEntreFechasObj;
+				$rubrosEntreFechasArray[$rubrosEntreFechasObj->persona_id][$rubrosEntreFechasObj->rubro_id] = $rubrosEntreFechasObj;
 			}
 			
 			$rubrosPorMesArray[$fecha] = $rubrosEntreFechasArray;
@@ -162,11 +162,21 @@ class Cuentas extends MY_Controller {
 		
 		foreach ( $rubrosPorMesArray as $mesRubros )
 		{
-			foreach( $mesRubros as $rubrosObj )
-			{				
-				$todosLosRubros[$rubrosObj->rubro_id] = $rubrosObj;
+			foreach ( $mesRubros as $personaRubros )
+			{
+				foreach( $personaRubros as $rubrosObj )
+				{				
+					$todosLosRubros[$rubrosObj->rubro_id] = $rubrosObj;
+				}
 			}
 		}
+		
+		//foreach ($rubrosPorMesArray as $rubroPorMes )
+		//{
+		//	$rubrosPorMesArray
+		//}
+		
+		//print_r($rubrosPorMesArray);
 
 		$this->data['rubrosPorMesArray']		= $rubrosPorMesArray;
 		$this->data['todosLosRubros']			= $todosLosRubros;
