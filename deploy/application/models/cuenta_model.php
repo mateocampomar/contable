@@ -338,7 +338,7 @@ class cuenta_model extends MY_Model {
 			$this->db->where('cuentaId = ' . $cuentaId );
 			$this->db->where("fecha >= '" . $fecha . "'" );
 	
-			$this->db->order_by('id', 'ASC');
+			$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
 			
 			$this->db->limit(1);
 	
@@ -565,6 +565,5 @@ class cuenta_model extends MY_Model {
 											);
 			}
 		}
-
 	}
 }

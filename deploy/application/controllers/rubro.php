@@ -4,6 +4,12 @@ class Rubro extends MY_Controller {
 
 	public function ver( $rubros )
 	{
+		if(preg_match("/[a-z]/i", $rubros))
+		{
+			preg_match('#\[(.*?)\]#', $rubros, $match);
+			$rubros = $match[1];
+		}
+		
 		$rubrosArray	= $rubros;
 		
 		$rubroModel		= new Rubro_model();
