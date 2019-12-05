@@ -8,7 +8,7 @@ class My_Controller extends CI_Controller
         parent::__construct();
 
         // User Login Authentification
-        if ( $this->router->fetch_class() != 'home' && $this->session->userdata( 'login_user' ) != true )
+        if ( $this->router->fetch_class() != 'home' && $this->router->fetch_class() != '_api' && $this->session->userdata( 'login_user' ) != true )
         {
 			redirect('/home/index/', 'refresh');
 		}
