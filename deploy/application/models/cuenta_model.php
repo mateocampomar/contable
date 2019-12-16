@@ -20,7 +20,7 @@ class cuenta_model extends MY_Model {
 	}
 	
 	public function getCuenta( $cuentaId )
-	{
+	{		
 		$this->db->select('*');
 	
 		$this->db->from('cuentas');
@@ -190,17 +190,18 @@ class cuenta_model extends MY_Model {
 		return $query->result();
 	}
 	
-	public function getMovimientos( $cuentaId, $fecha=false, $filters=true )
+	public function getMovimientos( $cuentaId, $fecha=null, $filters=true )
 	{
 		if ( $filters )
 		{
 			$this->setSessionFiltros();
 		}
 		
-		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id');
+		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id, cuentas.nombre as cuenta_nombre');
 	
 		$this->db->from('movimientos_cuentas');
 
+		$this->db->join('cuentas', 'movimientos_cuentas.cuentaid = cuentas.id', 'left');
 		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left');
 		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
 		
@@ -227,6 +228,11 @@ class cuenta_model extends MY_Model {
 		if ( $fecha )
 		{
 			$this->db->where("movimientos_cuentas.fecha = '" . $fecha . "'");
+		}
+		else
+		{
+			$this->db->where("movimientos_cuentas.fecha >= '" . _CONFIG_START_DATE . "'");
+			$this->db->where("movimientos_cuentas.fecha < '" . _CONFIG_END_DATE . "'");
 		}
 		
 		$this->db->order_by('movimientos_cuentas.fecha', 'ASC');

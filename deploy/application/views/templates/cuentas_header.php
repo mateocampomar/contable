@@ -147,12 +147,15 @@
 				    	<a href="#dialogPage" data-rel="dialog" data-rel="back" data-transition="pop"><img src="<?=base_url('assets/img/icon_plus.png')?>" /></a>
 					</div>
 				</li>
-				<li>
-					<div class="ui-content">
-						<a href="<?=base_url('index.php/cuentas/ver/' . implode( "-", $cuentasArray ) )?>"><img src="<?=base_url('assets/img/icon_list.png')?>" /></a>
-					</div>
-				</li>
 				<?
+			}
+			?>
+			<li>
+				<div class="ui-content">
+					<a href="<?=base_url('index.php/cuentas/ver/' . implode( "-", $cuentasArray ) )?>"><img src="<?=base_url('assets/img/icon_list.png')?>" /></a>
+				</div>
+			</li>
+			<?
 				if ( false && $cuentaObj->type == 'tarjeta' )
 				{
 					?>
@@ -163,13 +166,12 @@
 					</li>
 					<?
 				}
-			}
-		?>
-		<li>
-			<div class="ui-content">
-				<a href="<?=base_url('index.php/cuentas/stats/' . implode( "-", $cuentasArray ) )?>" data-ajax="false"><img src="<?=base_url('assets/img/icon_stats.png')?>" /></a>
-			</div>
-		</li>
+			?>
+			<li>
+				<div class="ui-content">
+					<a href="<?=base_url('index.php/cuentas/stats/' . implode( "-", $cuentasArray ) )?>" data-ajax="false"><img src="<?=base_url('assets/img/icon_stats.png')?>" /></a>
+				</div>
+			</li>
 	</ul>
 	<?
 		$saldo_parts = explode( "," , formatNumberCustom( $saldoTotal ) );
