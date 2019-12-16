@@ -48,10 +48,14 @@
 						?>
 						<li class="total-moneda" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasList ) )?>'">
 							<div class="simbolo"><?=$key?>:</div>
-							<div><small><?=$cuenta->simbolo?> </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small>
+							<div><small><?=$cuenta->simbolo?> </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small></div>
 						</li>
 						<?
 					}
 					?>
+					<li class="total-moneda total-total" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasList ) )?>'">
+						<div class="simbolo">TOTAL <small>USD</small></div>
+						<div><small><?=$cuenta->simbolo?> </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small></div>
+					</li>
 				</ol>
 			</div>

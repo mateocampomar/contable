@@ -21,6 +21,8 @@ class My_Controller extends CI_Controller
 		$cuentaModel	= new Cuenta_model();
 		$rubroModel		= new Rubro_model();
 		
+		$saltoTotalDolares = 0;
+		
 	
 		$listCuentas = $cuentaModel->listCuentas();
 		foreach ( $listCuentas as $cuentaObj )
@@ -36,6 +38,8 @@ class My_Controller extends CI_Controller
 			$menuCuentas[$cuentaObj->moneda][]	= $cuentaObj;
 			
 			$menuCuentas[$cuentaObj->moneda]['saldoTotal']	+= $cuentaObj->saldo;
+			
+			print_r($cuentaObj);
 		}
 		
 		$this->data['menuCuentas']			= $menuCuentas;

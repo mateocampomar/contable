@@ -76,6 +76,17 @@ header ul li a {
 	position: relative;
 }
 
+#left_header ol li.total-total {
+	height: 60px !important;
+	background-color: #003300 !important;
+	color: #ccffcc;
+}
+
+#left_header ol li.total-total div {
+	position: relative;
+	top: 18px !important;
+}
+
 #left_header ol li.total-moneda, #left_header ol li.total-moneda:hover {
 	height: 44px;
 	background: green;
