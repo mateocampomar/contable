@@ -7,6 +7,12 @@
 				<tr class="header">
 					<td align="center">Fecha</td>
 					<?
+						if ( $multicuenta )
+						{
+							?><td><strong>Cuenta</strong></td><?
+						}
+					?>
+					<?
 					if ( count( $headerData['txt_otros'] ) )
 					{
 						?><td><?=implode(",", $headerData['txt_otros']) ?></td><?
@@ -16,7 +22,12 @@
 					<td>Rubro</td>
 					<td align="right">Crédito</td>
 					<td align="right">Débito</td>
-					<td align="right"><strong>Subtotal</strong></td>
+					<?
+						if ( !$multicuenta )
+						{
+							?><td align="right"><strong>Subtotal</strong></td><?
+						}
+					?>
 				</tr>
 				<?
 					$trClass = "dark";
@@ -28,7 +39,15 @@
 						
 						?>
 						<tr class="<?=$trClass?>">
-							<td align="center"><?=$movimientosObj->fecha?></td>
+							<td align="center"><?=fecha_format_SqltoPrint( $movimientosObj->fecha )?></td>
+							<?
+							if ( $multicuenta )
+							{
+								//print_r($movimientosObj);
+								
+								?><td><a href="<?=base_url( 'index.php/cuentas/ver/' . $movimientosObj->cuentaId )?>"><?=$movimientosObj->cuenta_nombre?></a></strong></td><?
+							}
+							?>
 							<?
 							if ( count( $headerData['txt_otros'] ) )
 							{
@@ -61,7 +80,12 @@
 							</td>
 							<td align="right" style="color: green;"><?=formatNumberCustom( $movimientosObj->credito )?></td>
 							<td align="right" style="color: red;"><?=formatNumberCustom( $movimientosObj->debito )?></td>
-							<td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo )?></strong></td>
+							<?
+								if ( !$multicuenta )
+								{
+									?><td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo )?></strong></td><?
+								}
+							?>
 						</tr>
 						<?
 					}

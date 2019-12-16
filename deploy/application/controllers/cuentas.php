@@ -5,8 +5,9 @@ class Cuentas extends MY_Controller {
 	public function ver( $cuentas )
 	{
 		$cuentasArray 	= explode("-", $cuentas);
+
 		// No es multicuenta	
-		$cuentaId = $cuentas;
+		//$cuentaId = $cuentas;
 
 
 		// Para el menu
@@ -19,7 +20,7 @@ class Cuentas extends MY_Controller {
 		//$rubroModel		= new Rubro_model();
 		
 		
-		$movimientosArray	= $cuentaModel->getMovimientos( $cuentaId );
+		$movimientosArray	= $cuentaModel->getMovimientos( $cuentasArray );
 		$this->data['movimientosArray']	= $movimientosArray;
 		
 		
@@ -65,9 +66,8 @@ class Cuentas extends MY_Controller {
 		$sinRubro						= 0;
 
 		// Todo esto tiene que salir de config.
-		$date			= '2019-11-01';
-		//$end_date		= '2019-03-07';
-		$end_date 		= date('Y-m-d', time()); // [TODO] Esto tiene que ser el ultimo movimiento que tenga la cuenta.
+		$date			= _CONFIG_START_DATE;
+		$end_date		= _CONFIG_END_DATE;
 
 		// [TODO] Esto tiene que ser una función.
 		foreach ( $cuentasArray as $cuentaId )

@@ -37,4 +37,13 @@ class Home extends MY_Controller {
 		
 		die;		
 	}
+	
+	public function dashboard()
+	{
+		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
+
+		$this->load->view('templates/html_open',		$this->data);
+		$this->load->view('dashboard',					$this->data);
+		$this->load->view('templates/html_close',		$this->data);
+	}
 }
