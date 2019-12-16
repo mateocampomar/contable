@@ -9,7 +9,8 @@
 					
 					foreach ($todosLosRubros as $rubro )
 					{
-						echo ", '" . $rubro->nombre ."'";
+						echo ", '" . $rubro->nombre ." (+)'";
+						echo ", '" . $rubro->nombre ." (-)'";
 					}
 					echo "],\n";
 					
@@ -23,9 +24,14 @@
 							//print_r($rubrosArray[$rubroId]);
 							
 							if ( isset($rubrosArray[$rubroId]->total) ) 
-							{											echo "," . $rubrosArray[$rubroId]->total;	}
+							{
+								echo "," . $rubrosArray[$rubroId]->total_credito;
+								echo ",-" . $rubrosArray[$rubroId]->total_debito;
+							}
 							else
-							{											echo ",0";									}
+							{
+								echo ",0,0";
+							}
 						}
 	
 						echo "],\n";
@@ -52,14 +58,11 @@
 	
 		      			foreach ($todosLosRubros as $rubro )
 						{
-							$color = $rubro->color_dark;
-	
-							// Sin Rubrar
-							if ( !$color )	$color	= '#cc0000';
+							echo $count . ": { color: '#99cc99' },\n";
 							
-							$colorArray[$color] = $color;
-
-							echo $count . ": { color: '" . $colorArray[$color] . "' },\n";
+							$count++;
+							
+							echo $count . ": { color: '#ff6666' },\n";
 							
 							$count++;
 						}
