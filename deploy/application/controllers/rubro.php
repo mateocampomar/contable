@@ -43,6 +43,9 @@ class Rubro extends MY_Controller {
 		
 		$todosLosRubros = array();
 		
+		//print_r($rubrosPorMesArray);
+		//die;
+		
 		foreach ( $rubrosPorMesArray as $mesRubros )
 		{
 			foreach( $mesRubros as $rubrosObj )
