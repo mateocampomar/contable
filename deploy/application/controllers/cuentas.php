@@ -3,11 +3,15 @@
 class Cuentas extends MY_Controller {
 	
 	protected $monedaReturn = null;
-	protected $cotizacion 	= 1;
+	protected $cotizacion;
+	protected $tipo_cambio	= 1;
 
 	public function ver( $cuentas, $monedaReturn=null )
 	{
 		$cuentasArray 	= explode("-", $cuentas);
+
+		/*** Models ***/
+		$cotizacionesModel	= new Cotizaciones_model();
 		
 		
 		// Defino si la moneda va a ser forzada.
@@ -18,10 +22,16 @@ class Cuentas extends MY_Controller {
 		//$cuentaId = $cuentas;
 
 
-		// Para el menu
+		/*** Para el menu ***/
+
+		// Busco la cotización de hoy para el encabezado de la cta.
+		if ( $monedaReturn )		$this->cotizacion	= $cotizacionesModel->hoy(); echo "hoy";
+
+		// Render del menu
 		$this->renderMenu( $cuentasArray );
 
 
+		/*** Left Menu ***/
 		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
 		// Fin Menu
 
@@ -74,7 +84,7 @@ class Cuentas extends MY_Controller {
 		//echo $cotizacionesModel->getByFecha( $date );
 		//die;
 		
-		$this->cotizacion	= $cotizacionesModel->getByFecha( $date );
+		//$this->cotizacion	= $cotizacionesModel->getByFecha( $date );
 		
 		print_r($this->cotizacion);
 		die;
@@ -190,9 +200,8 @@ class Cuentas extends MY_Controller {
 			
 			$rubrosPorMesArray[$fecha] = $rubrosEntreFechasArray;
 		}
-		
-		
-		
+
+
 		$todosLosRubros = array();
 		
 		foreach ( $rubrosPorMesArray as $mesRubros )
@@ -217,7 +226,6 @@ class Cuentas extends MY_Controller {
 		$this->data['todosLosRubros']			= $todosLosRubros;
 		
 		/** Fin Rubros por Mes **/
-		
 		
 
 		// Views
@@ -252,21 +260,26 @@ class Cuentas extends MY_Controller {
 
 		$this->headerData['txt_otros']			= array();
 
+		// Tipo de Cambio
+		$this->headerData['monedaReturn']		= $this->monedaReturn;
+		if ( $this->monedaReturn )
+		{
+			$monedaReturn = $this->monedaReturn;
+			$this->tipo_cambio = $this->cotizacion->$monedaReturn;
+			$this->headerData['tipo_cambio']		= $this->tipo_cambio;
+		}
+
 		foreach ( $cuentasArray as $cuentaId )
 		{
 			$cuentaObj				= $cuentaModel->getCuenta( $cuentaId );
 			$saldosPersonaObj		= $cuentaModel->getSaldosByCuenta( $cuentaId );
-			
-			//print_r($saldosPersonaObj);
 			
 			$this->headerData['cuentas_nombres'][$cuentaId]	= $cuentaObj->nombre;
 			
 			$this->headerData['moneda']			= $cuentaObj->moneda;
 			$this->headerData['monedaSimbolo']	= ($this->monedaReturn) ? $this->monedaReturn : $cuentaObj->simbolo;
 			
-			echo $cuentaObj->saldo ."/". $this->cotizacion;
-			
-			$this->headerData['saldoTotal']	+= $cuentaObj->saldo / $this->cotizacion;
+			$this->headerData['saldoTotal']	+= $cuentaObj->saldo / $this->tipo_cambio;
 			
 			$this->headerData['checkSaldos']+= $cuentaObj->saldo;
 			
@@ -276,7 +289,7 @@ class Cuentas extends MY_Controller {
 				{
 					$this->headerData['personas'][$persona->persona_id]	= array(
 																				"persona_id"	=> $persona->persona_id,
-																				"saldo"			=> $persona->saldo,
+																				"saldo"			=> $persona->saldo / $this->tipo_cambio,
 																				"unique_name"	=> $persona->unique_name,
 																				"color"			=> $persona->color,
 																				"nombre"		=> $persona->nombre

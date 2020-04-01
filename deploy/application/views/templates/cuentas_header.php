@@ -181,6 +181,9 @@
 	?>
 	<h1>
 		<div class="saldo" style="<?=$style?>"><span><?=$monedaSimbolo?></span> <?=( isset($saldo_parts[0]) && $saldo_parts[0] ) ? $saldo_parts[0] : '0'?><span>,<?=(isset($saldo_parts[1])) ? $saldo_parts[1] : '00'?></span></div>
-		<div><?=implode(", ", $cuentas_nombres)?> <span style="font-weight: normal;">[<?=$moneda?>]</span></div>
+		<div>
+			<?=implode(", ", $cuentas_nombres)?> 
+			<span style="font-weight: normal;">[<?=$moneda?>]</span></div>
+			<? if ($monedaReturn) echo '<span style="color:red;font-weight:normal;font-size:7pt;position:absolute;">La cuenta se muestra en ' . $monedaSimbolo . '</span>'; ?>
 	</h1>
 </div>

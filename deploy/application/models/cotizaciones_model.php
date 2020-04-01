@@ -32,6 +32,8 @@ class cotizaciones_model extends MY_Model {
 
 		$query = $this->db->get();
 		
+		//echo $this->db->last_query() . ";\n";
+		
 		$result = $query->result();
 		
 		return $result[0];
