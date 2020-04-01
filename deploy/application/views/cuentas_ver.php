@@ -26,6 +26,14 @@
 						if ( !$multicuenta )
 						{
 							?><td align="right"><strong>Subtotal</strong></td><?
+								
+							if ($monedaReturn)
+							{
+								?>
+								<td align="right">Tipo de</br>Cambio</td>
+								<td align="right">En dólares</td>
+								<?
+							}
 						}
 					?>
 				</tr>
@@ -42,9 +50,7 @@
 							<td align="center"><?=fecha_format_SqltoPrint( $movimientosObj->fecha )?></td>
 							<?
 							if ( $multicuenta )
-							{
-								//print_r($movimientosObj);
-								
+							{								
 								?><td><a href="<?=base_url( 'index.php/cuentas/ver/' . $movimientosObj->cuentaId )?>"><?=$movimientosObj->cuenta_nombre?></a></strong></td><?
 							}
 							?>
@@ -58,11 +64,11 @@
 							<td>
 								<?									
 									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
-									{										
+									{								
 										?>
-										<span class="tag-rubro <?=$movimientosObj->color?>">
+										<span class="tag-rubro <?=$movimientosObj->persona_color?>">
 											<a href="#" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>" class="rubradoLink">
-												<img src="<? echo base_url( "assets/img/" . $movimientosObj->unique_name )?>.png" /> <?=$movimientosObj->nombre?>
+												<img src="<? echo base_url( "assets/img/" . $movimientosObj->persona_unique_name )?>.png" /> <?=$movimientosObj->persona_nombre?>
 											</a>
 										</span>
 										<a href="#dialogPageRubrado" id="movlink_<?=$movimientosObj->movimientos_cuentas_id?>" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>"></a>
@@ -81,9 +87,17 @@
 							<td align="right" style="color: green;"><?=formatNumberCustom( $movimientosObj->credito )?></td>
 							<td align="right" style="color: red;"><?=formatNumberCustom( $movimientosObj->debito )?></td>
 							<?
-								if ( !$multicuenta )
+								if ( !$multicuenta )	// Si es una cuenta sola y no varias combianadas.
 								{
 									?><td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo )?></strong></td><?
+										
+									if ($monedaReturn)
+									{
+										?>
+										<td align="right"><?='<small class="tipo_cambio">' . formatNumberCustom($movimientosObj->tipo_cambio, 1) . '</small>'?></td>
+										<td align="right"><strong><?=formatNumberCustom($movimientosObj->tp_saldo)?></strong></td>
+										<?
+									}
 								}
 							?>
 						</tr>

@@ -304,6 +304,13 @@ header ul li a {
 	font-size: 8pt;
 }
 
+.ver-cuenta .tabla td small.tipo_cambio {
+	color: #333;
+	background: #eee;
+	border-radius: 3px;
+	padding: 2px 5px;
+}
+
 .ver-cuenta .tabla td .tag-rubro {
 	border: 0px solid #ccc;
 	border-radius: 3px;

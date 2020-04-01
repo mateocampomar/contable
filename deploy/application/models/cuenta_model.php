@@ -190,21 +190,44 @@ class cuenta_model extends MY_Model {
 		return $query->result();
 	}
 	
-	public function getMovimientos( $cuentaId, $fecha=null, $filters=true )
+	public function getMovimientos( $cuentaId, $fecha=null, $filters=true, $moneda='USD' )
 	{
 		if ( $filters )
 		{
 			$this->setSessionFiltros();
 		}
 		
-		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id, cuentas.nombre as cuenta_nombre');
+		// SELECT
+		$this->db->select('movimientos_cuentas.*');
+		$this->db->select('movimientos_cuentas.id as movimientos_cuentas_id');
+		$this->db->select('rubro_persona.color as persona_color, rubro_persona.unique_name as persona_unique_name, rubro_persona.nombre as persona_nombre');
+		//$this->db->select('cotizaciones.*');
+		//$this->db->select('cuentas.nombre as cuenta_nombre');
+		//$this->db->select('cotizaciones.' . $moneda . ' as prueba');
+		if ( $moneda )
+		{
+			$this->db->select('cotizaciones.' . $moneda . ' as tipo_cambio');
+			
+			$this->db->select('IF( cuentas.moneda <> "' . $moneda . '", (movimientos_cuentas.credito/cotizaciones.' . $moneda . '), movimientos_cuentas.credito ) AS `tp_credito`');
+			$this->db->select('IF( cuentas.moneda <> "' . $moneda . '", (movimientos_cuentas.debito/cotizaciones.' . $moneda . '), movimientos_cuentas.debito ) AS `tp_debito`');
+			$this->db->select('IF( cuentas.moneda <> "' . $moneda . '", (movimientos_cuentas.saldo/cotizaciones.' . $moneda . '), movimientos_cuentas.saldo ) AS `tp_saldo`');
+			//$this->db->select('movimientos_cuentas.debito / cotizaciones.' . $moneda . ' as debito');
+		}
 	
 		$this->db->from('movimientos_cuentas');
 
+		// JOIN
 		$this->db->join('cuentas', 'movimientos_cuentas.cuentaid = cuentas.id', 'left');
 		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left');
-		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
+		//$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
 		
+		if ( $moneda )
+		{
+			$this->db->join('cotizaciones', 'movimientos_cuentas.fecha = cotizaciones.fecha', 'inner');
+		}
+			
+
+		// WHERE	
 		if ( is_array($cuentaId) )
 		{
 			$where = "";
@@ -235,13 +258,15 @@ class cuenta_model extends MY_Model {
 			$this->db->where("movimientos_cuentas.fecha < '" . _CONFIG_END_DATE . "'");
 		}
 		
+		
+		// ORDER
 		$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
 		$this->db->order_by('movimientos_cuentas.id', 'ASC');
 
+
+		// GET
 		$query = $this->db->get();
-		
-		//echo $this->db->last_query();
-		
+		//echo $this->db->last_query(); echo "\n\n";
 		return $query->result();
 	}
 
@@ -325,7 +350,7 @@ class cuenta_model extends MY_Model {
 			$this->db->join('rubro_persona', 'rubro_persona.id = cuentas_saldos_persona.persona_id');
 			$this->db->join('cuentas', 'cuentas.id = cuentas_saldos_persona.cuenta_id');
 			$this->db->join('moneda', 'moneda.moneda = cuentas.moneda');
-	
+
 			$this->db->where('cuenta_id = ' . $cuentaId );
 	
 			$query = $this->db->get();
@@ -334,24 +359,26 @@ class cuenta_model extends MY_Model {
 		}
 		else
 		{
-			$this->db->select('*');
+			$this->db->select('movimientos_cuentas.*');
 			
 			$this->db->from('movimientos_cuentas');
 			
+			$this->db->join('cuentas', 'movimientos_cuentas.cuentaId = cuentas.id');
+			
 			// Where
-			$this->db->where('status = ' . 1);
-			
-			$this->db->where('cuentaId = ' . $cuentaId );
-			$this->db->where("fecha >= '" . $fecha . "'" );
-	
+			$this->db->where('movimientos_cuentas.status = ' . 1);
+			$this->db->where('movimientos_cuentas.cuentaId = ' . $cuentaId );
+			$this->db->where("movimientos_cuentas.fecha >= '" . $fecha . "'" );
+
+			// Order
 			$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
-			
+
+			// Limit
 			$this->db->limit(1);
 	
 			// Ejecutar Query
 			$query = $this->db->get();
-			
-			//echo $this->db->last_query() . ";\n";
+			echo $this->db->last_query() . ";\n";
 			
 			$result = $query->result();
 			

@@ -1,10 +1,18 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Cuentas extends MY_Controller {
+	
+	protected $monedaReturn = null;
+	protected $cotizacion 	= 1;
 
-	public function ver( $cuentas )
+	public function ver( $cuentas, $monedaReturn=null )
 	{
 		$cuentasArray 	= explode("-", $cuentas);
+		
+		
+		// Defino si la moneda va a ser forzada.
+		$this->monedaReturn = $monedaReturn;
+		$this->data['monedaReturn'] = $this->monedaReturn;
 
 		// No es multicuenta	
 		//$cuentaId = $cuentas;
@@ -13,6 +21,7 @@ class Cuentas extends MY_Controller {
 		// Para el menu
 		$this->renderMenu( $cuentasArray );
 
+
 		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
 		// Fin Menu
 
@@ -20,7 +29,7 @@ class Cuentas extends MY_Controller {
 		//$rubroModel		= new Rubro_model();
 		
 		
-		$movimientosArray	= $cuentaModel->getMovimientos( $cuentasArray );
+		$movimientosArray	= $cuentaModel->getMovimientos( $cuentasArray, null, false, $this->monedaReturn );
 		$this->data['movimientosArray']	= $movimientosArray;
 		
 		
@@ -42,8 +51,12 @@ class Cuentas extends MY_Controller {
 		$this->load->view('templates/html_close',		$this->data);
 	}
 	
-	public function stats( $cuentas )
+	public function stats( $cuentas, $monedaReturn=null )
 	{
+		// entre Fechas
+		$date			= _CONFIG_START_DATE;
+		$end_date		= _CONFIG_END_DATE;
+
 		$cuentasArray 	= explode("-", $cuentas);
 
 		// Para el menu
@@ -52,8 +65,19 @@ class Cuentas extends MY_Controller {
 		$this->renderMenu( $cuentasArray );
 
 		// Models
-		$cuentaModel	= new Cuenta_model();
-		$rubroModel		= new Rubro_model();
+		$cuentaModel		= new Cuenta_model();
+		$rubroModel			= new Rubro_model();
+		$cotizacionesModel	= new Cotizaciones_model();
+
+		$this->monedaReturn = $monedaReturn;
+		
+		//echo $cotizacionesModel->getByFecha( $date );
+		//die;
+		
+		$this->cotizacion	= $cotizacionesModel->getByFecha( $date );
+		
+		print_r($this->cotizacion);
+		die;
 
 
 		/*/
@@ -65,17 +89,21 @@ class Cuentas extends MY_Controller {
 		$saldoInicial					= 0;
 		$sinRubro						= 0;
 
-		// Todo esto tiene que salir de config.
-		$date			= _CONFIG_START_DATE;
-		$end_date		= _CONFIG_END_DATE;
 
-		// [TODO] Esto tiene que ser una función.
+
+
+		// Busco los saldos iniciales de cada una de las cuentas.
 		foreach ( $cuentasArray as $cuentaId )
 		{
 			$saldos		= $cuentaModel->getSaldosByCuenta( $cuentaId, $date );
+
 			
-			$saldoInicial += $saldos['saldo'];
-			
+			// Cotiazaciones y Moneda
+			if ( $monedaReturn === null	)					$saldoInicial += $saldos['saldo'];
+			elseif ( $saldos['moneda'] == $monedaReturn )	$saldoInicial += $saldos['saldo'];
+			else											$saldoInicial += ( $saldos['saldo'] / $dolarDate->$monedaReturn );
+
+		
 			$sinRubro = $saldos['saldo'];
 
 
@@ -93,6 +121,10 @@ class Cuentas extends MY_Controller {
 				$sinRubro -= $saldos['saldo_cta' . $persona->id ];
 			} 
 		}
+		
+		print_r($saldos);
+		
+		print_r($saldosInicialPorPersonaArray);
 
 		
 		$saldosPorDia	= array();
@@ -100,7 +132,10 @@ class Cuentas extends MY_Controller {
 		// Para cada uno de los días del intervalo.
 		while ( strtotime( $date ) <= strtotime( $end_date ) )
 		{
-			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date, false );
+			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date, false, $this->monedaReturn );
+			
+			//print_r($movimientos);
+			//die;
 			
 			$movimientosPorDia[$date] = $movimientos;
 			
@@ -227,9 +262,11 @@ class Cuentas extends MY_Controller {
 			$this->headerData['cuentas_nombres'][$cuentaId]	= $cuentaObj->nombre;
 			
 			$this->headerData['moneda']			= $cuentaObj->moneda;
-			$this->headerData['monedaSimbolo']	= $cuentaObj->simbolo;
+			$this->headerData['monedaSimbolo']	= ($this->monedaReturn) ? $this->monedaReturn : $cuentaObj->simbolo;
 			
-			$this->headerData['saldoTotal']	+= $cuentaObj->saldo;
+			echo $cuentaObj->saldo ."/". $this->cotizacion;
+			
+			$this->headerData['saldoTotal']	+= $cuentaObj->saldo / $this->cotizacion;
 			
 			$this->headerData['checkSaldos']+= $cuentaObj->saldo;
 			

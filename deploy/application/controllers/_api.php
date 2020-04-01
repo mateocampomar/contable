@@ -7,8 +7,9 @@ class _api extends MY_Controller {
 		//echo $this->GetBCUUltimoCierre();
 		
 		$cotizacionesModel		= new Cotizaciones_model();
+		$dolar					= $this->GetCotizacion($this->GetBCUUltimoCierre(), 2225, 0);
 
-		if ( $cotizacionesModel->nueva( 'USD', $this->GetCotizacion($this->GetBCUUltimoCierre(), 2225, 0) ) )
+		if ( $cotizacionesModel->nueva( $dolar ) )
 		{
 			echo 'ok';
 			die;

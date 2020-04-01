@@ -18,22 +18,25 @@ class My_Controller extends CI_Controller
 	    $saldoSinRubrarArray	= array();
 		$menuCuentas			= array();
 		
-		$cuentaModel	= new Cuenta_model();
-		$rubroModel		= new Rubro_model();
-
+		$cuentaModel		= new Cuenta_model();
+		$rubroModel			= new Rubro_model();
+		$cotizacionesModel	= new Cotizaciones_model();
 		
-		$saltoTotalDolares = 0;
+		$saldoTotalDolares = 0;
 		
 	
 		// Manejo de Fechas
 		$_config_year = ( $this->session->userdata('config_year') ) ? $this->session->userdata('config_year') : date('Y');
 		define('_CONFIG_YEAR', $_config_year);
 
-		$_config_start_date		= _CONFIG_YEAR . '-01-01';
+		if ( _CONFIG_YEAR == 2019 )		$_config_start_date		= '2019-11-01';
+		else							$_config_start_date		= _CONFIG_YEAR . '-01-01';
 		define('_CONFIG_START_DATE', $_config_start_date);
 
 		$_config_end_date		= (_CONFIG_YEAR == date('Y', time() ) ) ? date('Y-m-d', time() ) : _CONFIG_YEAR . '-12-31';
 		define('_CONFIG_END_DATE', $_config_end_date);
+		
+		define('_DOLAR_HOY', $cotizacionesModel->hoy()->USD);
 
 
 		// Otros
@@ -52,9 +55,12 @@ class My_Controller extends CI_Controller
 			
 			$menuCuentas[$cuentaObj->moneda]['saldoTotal']	+= $cuentaObj->saldo;
 			
-			print_r($cuentaObj);
+			
+			if ( $cuentaObj->moneda == 'USD' )		$saldoTotalDolares += $cuentaObj->saldo;
+			else									$saldoTotalDolares += $cuentaObj->saldo / _DOLAR_HOY;
 		}
 		
+		$this->data['saldoTotalDolares']	= $saldoTotalDolares;
 		$this->data['menuCuentas']			= $menuCuentas;
 		$this->data['saldoSinRubrarArray']	= $saldoSinRubrarArray;
 		$this->data['listCuentas']			= $listCuentas;

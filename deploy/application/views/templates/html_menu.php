@@ -16,6 +16,7 @@
 				<ol>
 					<?
 					//print_r($saldoSinRubrarArray);
+					$cuentasListAll	= array();
 						
 					foreach( $menuCuentas as $key => $cuentasPorMoneda )
 					{
@@ -32,7 +33,8 @@
 							
 							$saldo_parts = explode( "," , number_format($cuenta->saldo, 2, "," , ".") );
 							
-							$cuentasList[]	= $cuenta->id;
+							$cuentasList[]		= $cuenta->id;
+							$cuentasListAll[]	= $cuenta->id;
 							
 							$sinRubrarAlert = ( $saldoSinRubrarArray[$cuenta->id]->total_credito || $saldoSinRubrarArray[$cuenta->id]->total_debito )	? true : false;
 							
@@ -61,10 +63,13 @@
 						</li>
 						<?
 					}
+					
+					$saldo_parts = explode( "," , formatNumberCustom( $saldoTotalDolares ) );
+					
 					?>
-					<li class="total-moneda total-total" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasList ) )?>'">
+					<li class="total-moneda total-total" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasListAll ) .'/USD' )?>'">
 						<div class="simbolo">TOTAL <small>USD</small></div>
-						<div><small><?=$cuenta->simbolo?> </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small></div>
+						<div><small>u$s </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small></div>
 					</li>
 				</ol>
 			</div>
