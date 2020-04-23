@@ -17,34 +17,130 @@
 	          
 	          ?>],
           <?
-	          foreach ( $movimientosPorDia as $fecha => $diaArray )
-	          {
-		          $toEcho				= "";
+	        
+	        // Cargo los saldos iniciales desde el controlador.  
+	        $saldoChart		= $saldo_inicial;
+			$sinRubroChart	= $saldo_sinRubro;
+			
+			//print_r($sinRubroChart);
+			
 
-				  // Suma los movimientos del día.
-		          foreach ( $diaArray as $movimiento )
-		          {
-			          if ( $movimiento->persona_id )
-					  		$saldoPorPersonaArray[$movimiento->persona_id]	+= ($movimiento->credito - $movimiento->debito );
-					  else
-					  	$sinRubro	+= ($movimiento->credito - $movimiento->debito );
+//foreach( $saldoInicial as $moneda => $saldo )
+//{
+  //if ( $moneda == $monedaReturn )	$saldo_Inicial += $saldo;
+  //else								$saldo_Inicial += $saldo / $cotizacionInicial->$monedaReturn;
 
-			          
-			          $saldoInicial			+= ($movimiento->credito - $movimiento->debito );
-		          }
-		          
-		        // Lista cada uno de los saldos.
-		        foreach ( $personasArray as $personaObj )
-		        {
-					if ( !$this->session->userdata( 'filter_' . $personaObj->unique_name ) )
-					{
-						$toEcho .= ", " . round( $saldoPorPersonaArray[$personaObj->id], 2 );
-					}
-		        }
+//}
+  
+//  print_r($movimientosPorDia);
 
-		          
-		        echo "['" . $fecha . "', " . round( $sinRubro, 2 ) . ", " . round( $saldoInicial, 2 ) . $toEcho . "],\n";
-	          }
+	$saldoPorPersonaArray = $saldo_inicialPorPersonaArray;
+  
+  // Recorro día a día
+  foreach ( $movimientosPorDia as $fecha => $diaArray )
+  {       
+      $toEcho				= "";
+
+	  // Recorro y sumo los movimientos del día.
+      foreach ( $diaArray['movimientos'] as $movimiento )
+      {
+          $saldoDelMovimiento = ($movimiento->credito - $movimiento->debito );
+  
+    
+          // Cambio de moneda si se pide en otra.
+          // El saldo se convierte a la moneda de monedaReturn;
+          //if ( $monedaReturn !=  $movimiento->moneda )
+          //{
+	      //    $saldoDelMovimiento = $saldoDelMovimiento / $diaArray['cotizacion']->$monedaReturn;
+	          
+	          //if ( !isset($saldoPorPersonaArray[$movimiento->persona_id][$monedaReturn]) )	$saldoPorPersonaArray[$movimiento->persona_id][$monedaReturn] = 0;
+	          
+	          //$saldo_personasModendaReturn[$movimiento->persona_id] =	$saldoPorPersonaArray[$movimiento->persona_id][$monedaReturn]
+	          //													+ ( $saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda] / $diaArray['cotizacion']->$monedaReturn );
+          //}
+          
+         // print_r( $saldoPorPersonaArray);
+          
+          // Adjudico el saldo a una persona o a Sin Rubro.
+          if ( $movimiento->persona_id )	$saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda]	+= $saldoDelMovimiento;
+		  else								$sinRubroChart[$movimiento->moneda]									+= $saldoDelMovimiento;
+
+          // Sumo todo para tener el saldo inicial.
+          $saldoChart[$movimiento->moneda]																		+= $saldoDelMovimiento;
+      }
+
+      
+      $saldoTotal_monedaReturn		= 0;
+	  $sinRubroTotal_mondeaReturn	= 0;
+      
+      foreach( $saldoChart as $moneda => $saldo )
+      {
+	      //echo $diaArray['cotizacion']->$moneda;
+	      //echo $moneda . "==" . $monedaReturn;
+
+	      if ( $moneda == $monedaReturn )
+	      {
+		      $saldoTotal_monedaReturn		+= $saldo;
+		      $sinRubroTotal_mondeaReturn	+= $sinRubroChart[$moneda];
+		  }
+	      else
+	      {
+		      $saldoTotal_monedaReturn		+= $saldo / $diaArray['cotizacion']->$monedaReturn;
+		      $sinRubroTotal_mondeaReturn	+= $sinRubroChart[$moneda] / $diaArray['cotizacion']->$monedaReturn;
+		  }
+	      
+	      //echo "\n" . $saldo . " saldo: " . $saldoTotalEnMonedaReturn . "\n";
+      }
+
+      
+      //-----------------------------------------
+      //print_r($diaArray['cotizacion']);
+      
+      //$saldoColumnChart	= 0;
+      
+		//foreach ($diaArray['cotizacion'] as $moneda => $cotizacion)
+		//{
+		//	if ( $moneda == 'id' || $moneda == 'timestamp' || $moneda == 'fecha' )	continue;
+		//
+		//	if ( $moneda != $monedaReturn )	$saldoColumnChart		+= $saldoChart[$moneda] / $diaArray['cotizacion']->$monedaReturn;
+		//	else								$saldoColumnChart	+= $saldoChart[$moneda];
+		//}
+      
+      //print_r($saldo_personasModendaReturn);
+      
+
+    
+    //print_r($saldoPorPersonaArray);
+    
+    foreach ( $personasArray as $personaObj )
+    {
+		if ( !$this->session->userdata( 'filter_' . $personaObj->unique_name ) )
+		{
+			// Lista cada uno de los saldos.
+			$saldoTotalPersona_monedaReturn = 0;
+			//if ( !isset($saldo_personasModendaReturn[$personaObj->id]) )	$saldo_personasModendaReturn[$personaObj->id] = array();
+			
+			//print_r($saldoPorPersonaArray[$personaObj->id]);
+			
+			if ( isset($saldoPorPersonaArray[$personaObj->id]) )
+			{				
+				foreach( $saldoPorPersonaArray[$personaObj->id] as $moneda => $saldo )
+				{
+				      if	( $moneda == $monedaReturn )	$saldoTotalPersona_monedaReturn	+= $saldo;
+				      else									$saldoTotalPersona_monedaReturn	+= $saldo / $diaArray['cotizacion']->$monedaReturn;
+				}
+			}
+			
+			$toEcho .= ", " . round( $saldoTotalPersona_monedaReturn, 2 );
+		}
+    }
+        
+    //print_r($saldoTotalPersona_monedaReturn);
+
+      
+    echo "['" . $fecha . "', " . round( $sinRubroTotal_mondeaReturn, 2 ) . ", " . round( $saldoTotal_monedaReturn, 2 ) . $toEcho . "],\n";
+
+  }
 	       ?>
         ]);
 
@@ -73,7 +169,7 @@
 				1: { lineWidth: 8, type:'area' },
 			},
           legend: { position: 'none' },
-          colors: ['red', '<?=( $saldoInicial >= 0 ) ? 'green' : '#C0392B'?>', <?
+          colors: ['red', '<?=( $saldoTotal_monedaReturn >= 0 ) ? 'green' : '#C0392B'?>', <?
 	          
 	        foreach ( $personasArray as $personaObj )
 		    {

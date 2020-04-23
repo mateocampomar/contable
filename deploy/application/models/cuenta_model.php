@@ -1,6 +1,16 @@
 <?php
 class cuenta_model extends MY_Model {
 	
+	public $monedaReturn = null;
+	
+	public function __construct( $moneda=null )
+	{
+		if ( $moneda )
+		{
+			$this->setMoneda( $moneda );
+		}
+	}
+	
 	public function listCuentas()
 	{
 		$this->db->select('*');
@@ -34,7 +44,29 @@ class cuenta_model extends MY_Model {
 
 		$query = $this->db->get();
 		
+		//echo $this->db->last_query(); echo "\n\n";
+		
 		$result = $query->result();
+
+		// Cotiazaciones y Moneda
+		if ( $this->monedaReturn )
+		{
+			$cotizacionesModel	= new Cotizaciones_model( $this->monedaReturn );
+			$cotizacionMoneda = $cotizacionesModel->hoy();
+
+			
+			foreach( $result as $key => $persona )
+			{
+				// Cotiazaciones y Moneda
+				if ( $persona->moneda != $this->monedaReturn )
+				{
+					$result[0]->saldo_original	= $result[0]->saldo;
+					$result[0]->saldo			= $result[0]->saldo / $cotizacionMoneda;
+					$result[0]->moneda_original	= $result[0]->moneda;
+					$result[0]->moneda			= $this->monedaReturn;
+				}
+			}
+		}
 		
 		return $result[0];
 	}
@@ -190,20 +222,23 @@ class cuenta_model extends MY_Model {
 		return $query->result();
 	}
 	
-	public function getMovimientos( $cuentaId, $fecha=null, $filters=true, $moneda='USD' )
+	public function getMovimientos( $cuentaId, $fecha=null, $filters=true, $moneda=true )
 	{
 		if ( $filters )
 		{
 			$this->setSessionFiltros();
 		}
 		
+		/** Moneda **/
+		if ( $moneda )		$moneda = $this->monedaReturn;
+		else				$moneda = false;
+
+		
 		// SELECT
 		$this->db->select('movimientos_cuentas.*');
 		$this->db->select('movimientos_cuentas.id as movimientos_cuentas_id');
+		$this->db->select('cuentas.moneda as moneda');
 		$this->db->select('rubro_persona.color as persona_color, rubro_persona.unique_name as persona_unique_name, rubro_persona.nombre as persona_nombre');
-		//$this->db->select('cotizaciones.*');
-		//$this->db->select('cuentas.nombre as cuenta_nombre');
-		//$this->db->select('cotizaciones.' . $moneda . ' as prueba');
 		if ( $moneda )
 		{
 			$this->db->select('cotizaciones.' . $moneda . ' as tipo_cambio');
@@ -266,7 +301,9 @@ class cuenta_model extends MY_Model {
 
 		// GET
 		$query = $this->db->get();
+
 		//echo $this->db->last_query(); echo "\n\n";
+	
 		return $query->result();
 	}
 
@@ -339,8 +376,9 @@ class cuenta_model extends MY_Model {
 		return false;
 	}
 
-	public function getSaldosByCuenta( $cuentaId, $fecha=false )
+	public function getSaldosByCuenta( $cuentaId, $fecha=false, $monedaReturn=null )
 	{
+		// Sin fecha. Va a traer el saldo de cada una de las personas al día de hoy.
 		if ( !$fecha )
 		{
 			$this->db->select('*, cuentas_saldos_persona.id as id, cuentas_saldos_persona.saldo as saldo, rubro_persona.nombre as nombre');
@@ -355,39 +393,80 @@ class cuenta_model extends MY_Model {
 	
 			$query = $this->db->get();
 	
-			return $query->result();
-		}
-		else
-		{
-			$this->db->select('movimientos_cuentas.*');
-			
-			$this->db->from('movimientos_cuentas');
-			
-			$this->db->join('cuentas', 'movimientos_cuentas.cuentaId = cuentas.id');
-			
-			// Where
-			$this->db->where('movimientos_cuentas.status = ' . 1);
-			$this->db->where('movimientos_cuentas.cuentaId = ' . $cuentaId );
-			$this->db->where("movimientos_cuentas.fecha >= '" . $fecha . "'" );
-
-			// Order
-			$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
-
-			// Limit
-			$this->db->limit(1);
-	
-			// Ejecutar Query
-			$query = $this->db->get();
-			echo $this->db->last_query() . ";\n";
-			
 			$result = $query->result();
 			
-			if ( !isset($result[0]) )
-				return false;
-			
-			$result = (array) $result[0];
+			//print_r($result);
 
+			// Cotiazaciones y Moneda
+			if ( $this->monedaReturn )
+			{
+				$cotizacionesModel	= new Cotizaciones_model( $this->monedaReturn );
+				$cotizacionMoneda = $cotizacionesModel->hoy();
+				
+				foreach( $result as $key => $persona )
+				{
+					// Cotiazaciones y Moneda
+					if ( $persona->moneda != $this->monedaReturn )
+					{
+						$result[$key]->saldo_original	= $persona->saldo;
+						$result[$key]->saldo			= $persona->saldo / $cotizacionMoneda;
+						$result[$key]->cotizacion		= $cotizacionMoneda;
+						$result[$key]->moneda_original	= $persona->moneda;
+						$result[$key]->moneda			= $this->monedaReturn;
+					}
+				}
+			}
 			
+			
+			return $result;
+		}
+
+
+		/** ELSE Resultado si no me pasaron fecha **/
+	
+		$this->db->select('movimientos_cuentas.*, cuentas.moneda as moneda');
+		
+		$this->db->from('movimientos_cuentas');
+		
+		$this->db->join('cuentas', 'movimientos_cuentas.cuentaId = cuentas.id');
+		
+		// Where
+		$this->db->where('movimientos_cuentas.status = ' . 1);
+		$this->db->where('movimientos_cuentas.cuentaId = ' . $cuentaId );
+		$this->db->where("movimientos_cuentas.fecha <= '" . $fecha . "'" );  // [TODO1] Acá hice el cambio. Funciona para el 2020 pero no para el 2019.
+
+		// Order
+		$this->db->order_by('movimientos_cuentas.fecha', 'DESC');
+		$this->db->order_by('movimientos_cuentas.id', 'DESC');
+
+		// Limit
+		$this->db->limit(1);
+
+		// Ejecutar Query
+		$query = $this->db->get();
+		
+		//echo $this->db->last_query() . ";\n";
+		
+		$result = $query->result();
+		
+		// Si no hay resultados.
+		if ( !isset($result[0]) )
+		{	
+			$result['moneda']	= $this->monedaReturn;
+			$result['saldo']	= 0;
+			$result['saldo_cta1']	= 0;
+			$result['saldo_cta2']	= 0;
+			$result['saldo_cta3']	= 0;
+			$result['saldo_cta4']	= 0;
+
+			return $result;
+		}
+
+		
+		$result = (array) $result[0];
+	
+		if ( false )
+		{
 			// Corrección de Saldo Persona
 			if ( $result['persona_id'] )
 			{
@@ -396,9 +475,28 @@ class cuenta_model extends MY_Model {
 			
 			// Corrección de Saldo.
 			$result['saldo'] = $result['saldo'] + $result['debito'] - $result['credito'];
-			
-			return $result;
 		}
+	
+	
+		// Cotiazaciones y Moneda
+		if ( $result['moneda'] != $this->monedaReturn )
+		{
+			$cotizacionesModel	= new Cotizaciones_model( $this->monedaReturn );
+			$cotizacionMoneda = $cotizacionesModel->getByFecha( $fecha );
+
+
+			$result['tc_saldo']		= $result['saldo'] / $cotizacionMoneda;
+			$result['tc_saldo_cta1']	= $result['saldo_cta1'] / $cotizacionMoneda;
+			$result['tc_saldo_cta2']	= $result['saldo_cta2'] / $cotizacionMoneda;
+			$result['tc_saldo_cta3']	= $result['saldo_cta3'] / $cotizacionMoneda;
+			$result['tc_saldo_cta4']	= $result['saldo_cta4'] / $cotizacionMoneda;
+			$result['tc_credito']		= $result['credito'] / $cotizacionMoneda;
+			$result['tc_debito']		= $result['debito'] / $cotizacionMoneda;
+
+			$result['tc_moneda']		= $this->monedaReturn;
+		}
+		
+		return $result;
 	}
 
 
@@ -598,5 +696,11 @@ class cuenta_model extends MY_Model {
 											);
 			}
 		}
+	}
+
+	
+	public function setMoneda( $monedaReturn )
+	{
+		$this->monedaReturn = $monedaReturn;
 	}
 }

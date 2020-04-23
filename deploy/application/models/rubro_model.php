@@ -370,7 +370,7 @@ class rubro_model extends MY_Model {
 	
 	public function getTotalesEntreFechas( $fecha_start, $fecha_end, $rubroId=false )
 	{
-		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM( (debito * tipo_cambio) ) as total_debito, SUM( (credito * tipo_cambio) ) as total_credito, SUM( (credito * tipo_cambio) ) - SUM( (debito * tipo_cambio) ) as total, movimientos_cuentas.persona_id as persona_id, rubro_persona.color_light, rubro_persona.color_dark');
+		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM( debito ) as total_debito, SUM( credito ) as total_credito, SUM( credito ) - SUM( debito ) as total, movimientos_cuentas.persona_id as persona_id, rubro_persona.color_light, rubro_persona.color_dark');
 	
 		$this->db->from('movimientos_cuentas');
 		

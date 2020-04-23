@@ -36,7 +36,7 @@ class My_Controller extends CI_Controller
 		$_config_end_date		= (_CONFIG_YEAR == date('Y', time() ) ) ? date('Y-m-d', time() ) : _CONFIG_YEAR . '-12-31';
 		define('_CONFIG_END_DATE', $_config_end_date);
 		
-		define('_DOLAR_HOY', $cotizacionesModel->hoy()->USD);
+		define('_DOLAR_HOY', $cotizacionesModel->hoy('USD'));
 
 
 		// Otros
