@@ -2,7 +2,19 @@
 	<?=$viewLeft_menu?>
 	<div class="bdy-container">
 		<?=$viewHeader?>
-		<div class="ver-cuenta top">
+		<br/><br/><br/><br/><br/><br/><br/>
+		<?
+		if ( count($cuentasArray) == 1 && isset($cuentaObj->moneda_original) )
+		{
+			?>
+			<div class="red-alert">
+				<span><strong>ATENCION:</strong> La cuenta es en <strong><?=$cuentaObj->moneda_original?></strong> (<?=formatNumberCustom($cuentaObj->saldo_original)?>) y está siendo mostrada en <strong><?=$cuentaObj->moneda?><strong>.</span>
+			</div>
+			<br/>
+			<?
+		}
+		?>
+		<div class="ver-cuenta">
 			<table border="0" cellpadding="0" cellspacing="1" class="tabla">
 				<tr class="header">
 					<td align="center">Fecha</td>
@@ -27,7 +39,7 @@
 						{
 							?><td align="right"><strong>Subtotal</strong></td><?
 								
-							if ($monedaReturn)
+							if ( isset( $cuentaObj->moneda_original ) )
 							{
 								?>
 								<td align="right">Tipo de</br>Cambio</td>
@@ -41,7 +53,9 @@
 					$trClass = "dark";
 					
 					foreach ( $movimientosArray as $movimientosObj )
-					{		
+					{
+						//print_r($movimientosObj);
+						
 						if ( $trClass == 'dark' )	$trClass = '';
 						else						$trClass = 'dark';
 						
@@ -91,7 +105,7 @@
 								{
 									?><td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo )?></strong></td><?
 										
-									if ($monedaReturn)
+									if ( isset( $cuentaObj->moneda_original ) )
 									{
 										?>
 										<td align="right"><?='<small class="tipo_cambio">' . formatNumberCustom($movimientosObj->tipo_cambio, 1) . '</small>'?></td>

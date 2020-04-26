@@ -11,6 +11,7 @@ class Cuentas extends MY_Controller {
 
 		/*** Models ***/
 		$cotizacionesModel	= new Cotizaciones_model( $monedaReturn );
+
 		
 		
 		// Defino si la moneda va a ser forzada.
@@ -31,7 +32,7 @@ class Cuentas extends MY_Controller {
 		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
 		// Fin Menu
 
-		$cuentaModel	= new Cuenta_model();
+		$cuentaModel	= new Cuenta_model( $monedaReturn );
 		//$rubroModel		= new Rubro_model();
 		
 		
@@ -40,12 +41,12 @@ class Cuentas extends MY_Controller {
 		
 		
 		$this->data['headerData']	= $this->headerData;
-		
+		$this->data['cuentasArray']	= $cuentasArray;
 		$this->data['multicuenta'] = $this->headerData['multicuenta'];
 		
 		if ( !$this->data['multicuenta'] )
 		{
-			$cuentaObj				= $cuentaModel->getCuenta( $cuentasArray[0] );
+			$cuentaObj					= $cuentaModel->getCuenta( $cuentasArray[0] );
 			$this->data['cuentaObj']	= $cuentaObj;
 			
 		}
@@ -109,6 +110,7 @@ class Cuentas extends MY_Controller {
 			$saldos		= $cuentaModel->getSaldosByCuenta( $cuentaId, $date );
 			
 			//print_r($saldos);
+			//print_r($saldos);
 
 
 			// Sumatoria del Saldo inicial de todas las cuentas.
@@ -150,26 +152,14 @@ class Cuentas extends MY_Controller {
 		{
 			$movimientos = $cuentaModel->getMovimientos( $cuentasArray, $date, false, false );
 			
-			$movimientosPorDia[$date]['movimientos'] = $movimientos;
+			//print_r($movimientos);
 			
-			//$movimientosPorDia[$date]['saldos']['personas']	= $saldosInicialPorPersonaArray;
-			//$movimientosPorDia[$date]['saldos']['inicial']	= $saldoInicial;
-			//$movimientosPorDia[$date]['saldos']['sinRubro']	= $sinRubro;
+			$movimientosPorDia[$date]['movimientos'] = $movimientos;
 			
 			$movimientosPorDia[$date]['cotizacion']	= $cotizacionesModel->getByFechaArray( $date );
 
-
 			$date = date ("Y-m-d", strtotime("+1 day", strtotime($date)));
 		}
-		
-		
-		//print_r($movimientosPorDia);
-		//die;
-		
-		//echo $cotizacionesModel->getByFechaArray( _CONFIG_START_DATE )->USD;
-		//echo $cotizacionesModel->hoy();
-		//print_r($saldosInicialPorPersonaArray);
-		//die;
 		
 
 		$this->data['monedaReturn']						= $this->monedaReturn;
@@ -186,15 +176,16 @@ class Cuentas extends MY_Controller {
 		/*/
 		 * Para Totales por Rubro.
 		/*/
+
+		$totalesPorRubro	= array();
 		
-		
-		$totalesPorRubro		= $rubroModel->getTotalesPorRubro( $cuentasArray );
+		if ( count( $cuentasArray ) > 1 || $monedaReturn )	$totalesPorRubro = $rubroModel->getTotalesPorRubroMoneda( $cuentasArray, $monedaReturn, $date, $end_date );
+		else												$totalesPorRubro = $rubroModel->getTotalesPorRubro( $cuentasArray, $date, $end_date );
+
+		//print_r($totalesPorRubro);
 
 		$this->data['totalesPorRubro']		= $totalesPorRubro;
-		
-		//print_r($this->data['totalesPorRubro']);
-		//echo "-----------------------";
-		//die;
+
 		
 		/** Fin Totales por Rubro **/
 		

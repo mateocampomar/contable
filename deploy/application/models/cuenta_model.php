@@ -433,11 +433,24 @@ class cuenta_model extends MY_Model {
 		// Where
 		$this->db->where('movimientos_cuentas.status = ' . 1);
 		$this->db->where('movimientos_cuentas.cuentaId = ' . $cuentaId );
-		$this->db->where("movimientos_cuentas.fecha <= '" . $fecha . "'" );  // [TODO1] Acá hice el cambio. Funciona para el 2020 pero no para el 2019.
+		
+		// Si el año es 2019 agarro el primer movimiento del año porque no hay movimiento anteriores.
+		if ( substr($fecha, 0, 4) == '2019' )
+		{
+			$this->db->where("movimientos_cuentas.fecha >= '" . $fecha . "'" );
 
-		// Order
-		$this->db->order_by('movimientos_cuentas.fecha', 'DESC');
-		$this->db->order_by('movimientos_cuentas.id', 'DESC');
+			// order
+			$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
+			$this->db->order_by('movimientos_cuentas.id', 'ASC');
+		}
+		else
+		{
+			$this->db->where("movimientos_cuentas.fecha <= '" . $fecha . "'" );
+
+			// order
+			$this->db->order_by('movimientos_cuentas.fecha', 'DESC');
+			$this->db->order_by('movimientos_cuentas.id', 'DESC');
+		}
 
 		// Limit
 		$this->db->limit(1);
@@ -465,7 +478,8 @@ class cuenta_model extends MY_Model {
 		
 		$result = (array) $result[0];
 	
-		if ( false )
+		// Si es el año 2019 tengo que corregir los saldos.
+		if ( substr($fecha, 0, 4) == '2019' )
 		{
 			// Corrección de Saldo Persona
 			if ( $result['persona_id'] )

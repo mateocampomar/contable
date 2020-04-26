@@ -21,96 +21,57 @@
 	        // Cargo los saldos iniciales desde el controlador.  
 	        $saldoChart		= $saldo_inicial;
 			$sinRubroChart	= $saldo_sinRubro;
-			
-			//print_r($sinRubroChart);
-			
 
-//foreach( $saldoInicial as $moneda => $saldo )
-//{
-  //if ( $moneda == $monedaReturn )	$saldo_Inicial += $saldo;
-  //else								$saldo_Inicial += $saldo / $cotizacionInicial->$monedaReturn;
+			$saldoPorPersonaArray = $saldo_inicialPorPersonaArray;
 
-//}
-  
-//  print_r($movimientosPorDia);
-
-	$saldoPorPersonaArray = $saldo_inicialPorPersonaArray;
-  
-  // Recorro día a día
-  foreach ( $movimientosPorDia as $fecha => $diaArray )
-  {       
-      $toEcho				= "";
-
-	  // Recorro y sumo los movimientos del día.
-      foreach ( $diaArray['movimientos'] as $movimiento )
-      {
-          $saldoDelMovimiento = ($movimiento->credito - $movimiento->debito );
-  
-    
-          // Cambio de moneda si se pide en otra.
-          // El saldo se convierte a la moneda de monedaReturn;
-          //if ( $monedaReturn !=  $movimiento->moneda )
-          //{
-	      //    $saldoDelMovimiento = $saldoDelMovimiento / $diaArray['cotizacion']->$monedaReturn;
-	          
-	          //if ( !isset($saldoPorPersonaArray[$movimiento->persona_id][$monedaReturn]) )	$saldoPorPersonaArray[$movimiento->persona_id][$monedaReturn] = 0;
-	          
-	          //$saldo_personasModendaReturn[$movimiento->persona_id] =	$saldoPorPersonaArray[$movimiento->persona_id][$monedaReturn]
-	          //													+ ( $saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda] / $diaArray['cotizacion']->$monedaReturn );
-          //}
-          
-         // print_r( $saldoPorPersonaArray);
-          
-          // Adjudico el saldo a una persona o a Sin Rubro.
-          if ( $movimiento->persona_id )	$saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda]	+= $saldoDelMovimiento;
-		  else								$sinRubroChart[$movimiento->moneda]									+= $saldoDelMovimiento;
-
-          // Sumo todo para tener el saldo inicial.
-          $saldoChart[$movimiento->moneda]																		+= $saldoDelMovimiento;
-      }
-
-      
-      $saldoTotal_monedaReturn		= 0;
-	  $sinRubroTotal_mondeaReturn	= 0;
-      
-      foreach( $saldoChart as $moneda => $saldo )
-      {
-	      //echo $diaArray['cotizacion']->$moneda;
-	      //echo $moneda . "==" . $monedaReturn;
-
-	      if ( $moneda == $monedaReturn )
-	      {
-		      $saldoTotal_monedaReturn		+= $saldo;
-		      $sinRubroTotal_mondeaReturn	+= $sinRubroChart[$moneda];
-		  }
-	      else
-	      {
-		      $saldoTotal_monedaReturn		+= $saldo / $diaArray['cotizacion']->$monedaReturn;
-		      $sinRubroTotal_mondeaReturn	+= $sinRubroChart[$moneda] / $diaArray['cotizacion']->$monedaReturn;
-		  }
-	      
-	      //echo "\n" . $saldo . " saldo: " . $saldoTotalEnMonedaReturn . "\n";
-      }
-
-      
-      //-----------------------------------------
-      //print_r($diaArray['cotizacion']);
-      
-      //$saldoColumnChart	= 0;
-      
-		//foreach ($diaArray['cotizacion'] as $moneda => $cotizacion)
-		//{
-		//	if ( $moneda == 'id' || $moneda == 'timestamp' || $moneda == 'fecha' )	continue;
-		//
-		//	if ( $moneda != $monedaReturn )	$saldoColumnChart		+= $saldoChart[$moneda] / $diaArray['cotizacion']->$monedaReturn;
-		//	else								$saldoColumnChart	+= $saldoChart[$moneda];
-		//}
-      
-      //print_r($saldo_personasModendaReturn);
-      
-
-    
-    //print_r($saldoPorPersonaArray);
+		// Recorro día a día
+		foreach ( $movimientosPorDia as $fecha => $diaArray )
+		  {       
+		      $toEcho				= "";
+		
+			  // Recorro y sumo los movimientos del día.
+		      foreach ( $diaArray['movimientos'] as $movimiento )
+		      {
+		          $saldoDelMovimiento = ($movimiento->credito - $movimiento->debito );
+		          
+		          //print_r($movimiento);
+		          //die;
+		          
+		          // Adjudico el saldo a una persona o a Sin Rubro.
+		          if ( $movimiento->persona_id )
+		          {
+			          if ( isset($saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda] ))
+			      									$saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda]	+= $saldoDelMovimiento;
+			      	  else
+			      	  								$saldoPorPersonaArray[$movimiento->persona_id][$movimiento->moneda]  = $saldoDelMovimiento;
+			      }
+				  else								$sinRubroChart[$movimiento->moneda]									+= $saldoDelMovimiento;
+		
+		          // Sumo todo para tener el saldo inicial.
+		          if ( isset($saldoChart[$movimiento->moneda]) )
+		          									$saldoChart[$movimiento->moneda]									+= $saldoDelMovimiento;
+		          else
+		          									$saldoChart[$movimiento->moneda]									 = $saldoDelMovimiento;
+		      }
+		
+		      
+		      $saldoTotal_monedaReturn		= 0;
+			  $sinRubroTotal_mondeaReturn	= 0;
+		      
+		      foreach( $saldoChart as $moneda => $saldo )
+		      {
+		
+			      if ( $moneda == $monedaReturn )
+			      {
+				      $saldoTotal_monedaReturn		+= $saldo;
+				      $sinRubroTotal_mondeaReturn	+= $sinRubroChart[$moneda];
+				  }
+			      else
+			      {
+				      $saldoTotal_monedaReturn		+= $saldo / $diaArray['cotizacion']->$monedaReturn;
+				      $sinRubroTotal_mondeaReturn	+= ( isset($sinRubroChart[$moneda]) ) ? $sinRubroChart[$moneda] : 0 / $diaArray['cotizacion']->$monedaReturn;
+				  }
+		      }
     
     foreach ( $personasArray as $personaObj )
     {
@@ -118,9 +79,6 @@
 		{
 			// Lista cada uno de los saldos.
 			$saldoTotalPersona_monedaReturn = 0;
-			//if ( !isset($saldo_personasModendaReturn[$personaObj->id]) )	$saldo_personasModendaReturn[$personaObj->id] = array();
-			
-			//print_r($saldoPorPersonaArray[$personaObj->id]);
 			
 			if ( isset($saldoPorPersonaArray[$personaObj->id]) )
 			{				
@@ -134,8 +92,6 @@
 			$toEcho .= ", " . round( $saldoTotalPersona_monedaReturn, 2 );
 		}
     }
-        
-    //print_r($saldoTotalPersona_monedaReturn);
 
       
     echo "['" . $fecha . "', " . round( $sinRubroTotal_mondeaReturn, 2 ) . ", " . round( $saldoTotal_monedaReturn, 2 ) . $toEcho . "],\n";
@@ -187,101 +143,105 @@
         chart.draw(data, options);
       }
 
-	  // Por Rubro
-	google.charts.load('current', {packages: ['corechart', 'bar']});
-	google.charts.setOnLoadCallback(drawMultSeries);
 
-	function drawMultSeries() {
-      var data = google.visualization.arrayToDataTable([
-        ['Rubro', '', { role: 'style' }],
-        <?
-	        $lastPersona	= false;
-	        $primeraVez		= true;
-	        
-	        //print_r($totalesPorRubro);
-	        
-	        foreach( $totalesPorRubro as $row )
-	        {	        
-		        if ( $lastPersona != $row->persona_id )
+	/*** Por Rubro ***/
+	<?		
+	if ( count($totalesPorRubro) )
+	{
+		?>
+		google.charts.load('current', {packages: ['corechart', 'bar']});
+		google.charts.setOnLoadCallback(drawMultSeries);
+	
+		function drawMultSeries() {
+	      var data = google.visualization.arrayToDataTable([
+	        ['Rubro', '', { role: 'style' }],
+	        <?
+		        $lastPersona	= false;
+		        $primeraVez		= true;
+		        
+		        foreach( $totalesPorRubro as $row )
 		        {
-			        if ( !$primeraVez )
+			        $row = (object) $row;
+	
+	
+			        if ( $lastPersona != $row->persona_id )
 			        {
+				        if ( !$primeraVez )
+				        {
+					        echo "['', 0, ''],\n";
+				        }
+			  
+				  		echo "['-------> ". strtoupper( $row->persona_nombre ) . "', 0, ''],\n";
+				        
+				        $lastPersona	= $row->persona_id;
+				        $primeraVez		= false;
+			        }
+	
+			        $barColor = ( $row->total >= 0 ) ? $row->color_dark : $row->color_light;
+			        
+			        if ( $row->nombre )
+			        {
+			        	echo "['". $row->nombre." [" . $row->rubro_id . "]', " . round( $row->total, 2 ) . ", '" . $barColor . "'],\n";
+			        }
+			        else
+			        {
+				        echo "['Sin Rubro', " . $row->total . ", '#cc0000'],\n";
 				        echo "['', 0, ''],\n";
 			        }
-		  
-			  		echo "['-------> ". strtoupper( $row->persona_nombre ) . "', 0, ''],\n";
 			        
-			        $lastPersona	= $row->persona_id;
-			        $primeraVez		= false;
-		        }
-
-		        $barColor = ( $row->total >= 0 ) ? $row->color_dark : $row->color_light;
-		        
-		        if ( $row->nombre )
-		        {
-		        	echo "['". $row->nombre." [" . $row->rubro_id . "]', " . $row->total . ", '" . $barColor . "'],\n";
-		        }
-		        else
-		        {
-			        echo "['Sin Rubro', " . $row->total . ", '#cc0000'],\n";
-			        echo "['', 0, ''],\n";
-		        }
-		        
-
-		    }
-		?>
-      ]);
-
-      var options = {
-		chartArea: {
-			height: '100%',
-			width: '100%',
-			top: 25,
-			left: 150,
-			right: 50,
-			bottom: 50,
-		},
-		hAxis: {
-			textStyle: {
-				fontSize:11,
-				color: '#000'
+	
+			    }
+			?>
+	      ]);
+	
+	      var options = {
+			chartArea: {
+				height: '100%',
+				width: '100%',
+				top: 25,
+				left: 150,
+				right: 50,
+				bottom: 50,
+			},
+			hAxis: {
+				textStyle: {
+					fontSize:11,
+					color: '#000'
+				}
+			},
+	        vAxis: {
+				textStyle: {
+					fontSize:11,
+				}
+	        },
+	        legend: { position: 'none' }
+	      };
+	
+	      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+	      chart.draw(data, options);
+	
+			// The select handler. Call the chart's getSelection() method
+			function selectHandler() {
+				var selectedItem = chart.getSelection()[0];
+				if (selectedItem) {
+					var value = data.getValue(selectedItem.row, 0);
+					
+					window.location.replace("<?=base_url('index.php/rubro/ver')?>/" + value );
+				}
 			}
-		},
-        vAxis: {
-			textStyle: {
-				fontSize:11,
-			}
-        },
-        legend: { position: 'none' }
-      };
-
-      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
-      
-        //var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-
-		// The select handler. Call the chart's getSelection() method
-		function selectHandler() {
-			var selectedItem = chart.getSelection()[0];
-			if (selectedItem) {
-				var value = data.getValue(selectedItem.row, 0);
-				
-				window.location.replace("<?=base_url('index.php/rubro/ver')?>/" + value );
-			}
-		}
-		
-		// Listen for the 'select' event, and call my function selectHandler() when
-		// the user selects something on the chart.
-		google.visualization.events.addListener(chart, 'select', selectHandler);
-    }
-    
+			
+			// Listen for the 'select' event, and call my function selectHandler() when
+			// the user selects something on the chart.
+			google.visualization.events.addListener(chart, 'select', selectHandler);
+	    }
+	    <?
+	} ?>
+	
+	/*** Rubro Por Mes ***/
     <?
 	   // print_r($rubrosPorMesArray);
 	    
     ?>
-
-    
-    
     google.charts.load('current', {'packages':['bar']});
     google.charts.setOnLoadCallback(drawChart2);
 
@@ -374,16 +334,37 @@
 	<?=$viewLeft_menu?>
 	<div class="bdy-container">
 		<?=$viewHeader?>
-		<div class="ver-cuenta top">
-			<h2>Evolución del Saldo</h2>
+		<br/><br/><br/><br/><br/><br/><br/>
+		<?
+		if ( count($cuentasArray) == 1 && isset($cuentaObj->moneda_original) )
+		{
+			?>
+			<div class="red-alert">
+				<span><strong>ATENCION:</strong> La cuenta es en <strong><?=$cuentaObj->moneda_original?></strong> (<?=formatNumberCustom($cuentaObj->saldo_original)?>) y está siendo mostrada en <strong><?=$cuentaObj->moneda?><strong>.</span>
+			</div>
+			<br/>
+			<?
+		}
+		?>
+		<div class="ver-cuenta">
+			<h2>
+				Evolución del Saldo
+				<small>Período: <?=fecha_format_SqltoPrint(_CONFIG_START_DATE)?> al <?=fecha_format_SqltoPrint(_CONFIG_END_DATE)?></small>
+			</h2>
 			<div id="curve_chart" style="height: 350px"></div>
 		</div>
 		<div class="ver-cuenta">
-			<h2>Gastos por Rubro</h2>
-			<div id="chart_div" style="height: 700px"></div>
+			<h2>
+				Gastos por Rubro
+				<small>Período: <?=fecha_format_SqltoPrint(_CONFIG_START_DATE)?> al <?=fecha_format_SqltoPrint(_CONFIG_END_DATE)?></small>
+			</h2>
+			<div id="chart_div"<? if ( count($totalesPorRubro) ) echo ' style="height: 700px"'; ?>><center style="color:grey;font-size:9pt;margin: 50px;">- No hay movimientos para mostrar -</center></div>
 		</div>
 		<div class="ver-cuenta">
-			<h2>Rubros por mes</h2>
+			<h2>
+				Rubros por mes
+				<small>Período: <?=fecha_format_SqltoPrint(_CONFIG_START_DATE)?> a hoy</small>
+			</h2>
 			<div id="rubro_por_mes" style="height: 625px; margin: 50px;"></div>
 		</div>
 	</div>

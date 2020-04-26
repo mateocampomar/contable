@@ -124,7 +124,8 @@
 			
 			function refrescar()
 			{
-				window.location.replace("<?=base_url('index.php/cuentas/' . $this->router->fetch_method() . '/' . implode( "-", $cuentasArray ) )?>");
+				//window.location.replace("<?=base_url('index.php/cuentas/' . $this->router->fetch_method() . '/' . implode( "-", $cuentasArray ) ) . '/' . $monedaReturn?>");
+				window.location.replace("<?=current_url()?>");
 			}
 	
 	</script>
@@ -152,7 +153,7 @@
 			?>
 			<li>
 				<div class="ui-content">
-					<a href="<?=base_url('index.php/cuentas/ver/' . implode( "-", $cuentasArray ) )?>"><img src="<?=base_url('assets/img/icon_list.png')?>" /></a>
+					<a href="<?=base_url('index.php/cuentas/ver/' . implode( "-", $cuentasArray ) )?>/<?=$monedaReturn?>"><img src="<?=base_url('assets/img/icon_list.png')?>" /></a>
 				</div>
 			</li>
 			<?
@@ -169,7 +170,7 @@
 			?>
 			<li>
 				<div class="ui-content">
-					<a href="<?=base_url('index.php/cuentas/stats/' . implode( "-", $cuentasArray ) )?>" data-ajax="false"><img src="<?=base_url('assets/img/icon_stats.png')?>" /></a>
+					<a href="<?=base_url('index.php/cuentas/stats/' . implode( "-", $cuentasArray ) )?>/<?=$monedaReturn?>" data-ajax="false"><img src="<?=base_url('assets/img/icon_stats.png')?>" /></a>
 				</div>
 			</li>
 	</ul>
@@ -181,9 +182,9 @@
 	?>
 	<h1>
 		<div class="saldo" style="<?=$style?>"><span><?=$monedaSimbolo?></span> <?=( isset($saldo_parts[0]) && $saldo_parts[0] ) ? $saldo_parts[0] : '0'?><span>,<?=(isset($saldo_parts[1])) ? $saldo_parts[1] : '00'?></span></div>
-		<div>
+		<div style="float: left">
 			<?=implode(", ", $cuentas_nombres)?> 
-			<span style="font-weight: normal;">[<?=($monedaReturn) ? $monedaReturn : $moneda?>]</span></div>
-			<? if ( $monedaReturn != $cuentaObj->moneda ) echo '<span style="color:red;font-weight:normal;font-size:7pt;position:absolute;">La/s cuenta/s se muestran en ' . $monedaSimbolo . '</span>'; ?>
+			<span style="font-weight: normal;">[<?=($monedaReturn) ? $monedaReturn : $moneda?>]</span>
+		</div>
 	</h1>
 </div>

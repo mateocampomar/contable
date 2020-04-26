@@ -92,4 +92,9 @@ class cotizaciones_model extends MY_Model {
 
 		return $result[0];
 	}
+	
+	public function getMonedasDisponibles()
+	{
+		return	array('USD', 'UYU');
+	}
 }

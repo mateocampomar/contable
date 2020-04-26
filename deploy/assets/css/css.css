@@ -281,6 +281,16 @@ header ul li a {
 	font-size: 13pt;
 }
 
+.ver-cuenta h2 small {
+	font-size: 8pt;
+	color: #999999;
+	font-weight: normal;
+	font-style: italic;
+	position: relative;
+	top: 1px;
+	float: right;
+}
+
 .ver-cuenta .tabla {
 	border: 1px solid #eee;
 	width: 98%;
@@ -618,4 +628,19 @@ header ul li a {
 .config ul li {
 	padding: 20px 10px;
 	font-size: 9pt !important;
+}
+
+.red-alert {
+	text-align: center;
+	position: relative;
+	top: 9px;
+}
+
+.red-alert span {
+	background-color: #ffcccc;
+	border-radius: 4px;
+	color: #990000;
+	font-weight:normal;
+	font-size:8pt;
+	padding: 8px 20px;
 }

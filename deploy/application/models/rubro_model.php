@@ -249,7 +249,7 @@ class rubro_model extends MY_Model {
 		return true;
 	}
 	
-	public function getTotalesPorRubro( $cuentaId )
+	public function getTotalesPorRubro( $cuentaId, $date=null, $end_date=null )
 	{
 		$this->setSessionFiltros();
 
@@ -280,6 +280,9 @@ class rubro_model extends MY_Model {
 
 		$this->db->where('movimientos_cuentas.status = ' . 1);
 
+		if ( $date )		$this->db->where("movimientos_cuentas.fecha >= '" . _CONFIG_START_DATE . "'");
+		if ( $end_date )	$this->db->where("movimientos_cuentas.fecha < '" . _CONFIG_END_DATE . "'");
+
 		$this->db->group_by('rubro_id');
 		
 		$this->db->order_by('persona_id', 'ASC');
@@ -293,6 +296,108 @@ class rubro_model extends MY_Model {
 		
 		return $result;
 	}
+
+
+	public function getTotalesPorRubroMoneda( $cuentaId, $monedaReturn, $date=null, $end_date=null )
+	{
+		$this->setSessionFiltros();
+
+		$this->db->select('rubro_id, persona_id, credito - debito as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre, color_dark, color_light');
+		$this->db->select('cuentas.moneda as moneda');
+		$this->db->select('cotizaciones.' . $monedaReturn );
+
+		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
+		$this->db->join('rubro_persona',	'movimientos_cuentas.persona_id = rubro_persona.id', 'left');
+		$this->db->join('cuentas',			'movimientos_cuentas.cuentaid = cuentas.id', 'left');
+		$this->db->join('cotizaciones', 	'movimientos_cuentas.fecha = cotizaciones.fecha', 'left');
+	
+		$this->db->from('movimientos_cuentas');
+
+		if ( is_array($cuentaId) )
+		{
+			$where = "";
+
+			foreach( $cuentaId as $cuentaIdParaWhere )
+			{
+				$where .= 'cuentaId = ' . $cuentaIdParaWhere . " OR ";
+			}
+			
+			$where = substr( $where, 0, -4 );
+			
+			$this->db->where("(" . $where . ")");
+		}
+		else
+		{
+			$this->db->where('cuentaId = ' . $cuentaId );
+		}
+
+		if ( $date )		$this->db->where("movimientos_cuentas.fecha >= '" . _CONFIG_START_DATE . "'");
+		if ( $end_date )	$this->db->where("movimientos_cuentas.fecha < '" . _CONFIG_END_DATE . "'");	
+
+		$this->db->where('movimientos_cuentas.status = ' . 1);
+		
+		$this->db->order_by('persona_id', 'ASC');
+
+		$query = $this->db->get();
+
+		//echo $this->db->last_query() . ";\n";
+		
+		$sub_result = $query->result();
+		
+		//print_r($sub_result);
+		
+		$result = array();
+		
+		foreach( $sub_result as $movimientoObj )
+		{
+			if ( !isset($result[$movimientoObj->rubro_id]) )
+			{
+				$result[$movimientoObj->rubro_id] = (array) $movimientoObj;
+				$result[$movimientoObj->rubro_id]['total'] = 0;
+			}
+			
+			//echo $movimientoObj->$monedaReturn;
+
+
+			if ( $movimientoObj->moneda != $monedaReturn )
+			{
+				$division_tc = ( $movimientoObj->$monedaReturn == 'NULL' ) ? $movimientoObj->monedaReturn : 37.81;
+				
+				$result[$movimientoObj->rubro_id]['total'] += $movimientoObj->total / $division_tc;
+			}
+			else											$result[$movimientoObj->rubro_id]['total'] += $movimientoObj->total;
+			
+			
+			unset( $result[$movimientoObj->rubro_id]['USD'] );
+		}
+
+
+		function orden_total($a, $b)
+		{
+			$a = $a['total'];	$b = $b['total'];
+			
+			if ($a == $b)	return 0;
+
+			return ($a < $b) ? -1 : 1;
+		}
+
+		function orden_persona($a, $b)
+		{
+			$a = $a['persona_id'];	$b = $b['persona_id'];
+			
+			if ($a == $b)	return 0;
+
+			return ($a < $b) ? -1 : 1;
+		}
+		
+		usort( $result, "orden_total");
+		usort( $result, "orden_persona");
+
+		//print_r($result);
+		
+		return $result;
+	}
+
 	
 	public function rubradoAutomatico( $concepto, $txt_otros=false )
 	{

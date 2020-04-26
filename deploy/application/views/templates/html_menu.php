@@ -5,7 +5,7 @@
 					<li><a href="<?=base_url('index.php/config')?>" data-ajax="false">Config</a></li>
 					<li> | </li>
 					<li>
-						<select name="config_year" id="config_year" data-role="none" onchange="getConfigYear(this)">
+						<select name="config_year" id="config_year" data-role="none" onchange="getConfigYear(this, '<?=urlencode(current_url())?>')">
 						        <option value="2019"<?=(_CONFIG_YEAR == 2019) ? ' selected="selected"' : ''?>>2019</option>
 						        <option value="2020"<?=(_CONFIG_YEAR == 2020) ? ' selected="selected"' : ''?>>2020</option>
 						</select>
@@ -39,7 +39,7 @@
 							$sinRubrarAlert = ( $saldoSinRubrarArray[$cuenta->id]->total_credito || $saldoSinRubrarArray[$cuenta->id]->total_debito )	? true : false;
 							
 							?>
-							<li class="<?=$cssClass?>" onclick="window.location.href='<?=base_url( 'index.php/cuentas/ver/' . $cuenta->id )?>'">
+							<li class="<?=$cssClass?>" onclick="window.location.href='<?=base_url( 'index.php/cuentas/ver/' . $cuenta->id . '/' . $cuenta->moneda )?>'">
 								<?
 									if ( $sinRubrarAlert )
 									{
@@ -57,7 +57,7 @@
 						$saldo_parts = explode( "," , number_format($saldo, 2, "," , ".") );
 
 						?>
-						<li class="total-moneda" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasList ) )?>'">
+						<li class="total-moneda" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasList ) . '/' . $cuenta->moneda )?>'">
 							<div class="simbolo"><?=$key?>:</div>
 							<div><small><?=$cuenta->simbolo?> </small><?=$saldo_parts[0]?><small>,<?=$saldo_parts[1]?></small></div>
 						</li>
