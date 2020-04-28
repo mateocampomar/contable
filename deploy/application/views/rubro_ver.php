@@ -14,24 +14,32 @@
 					}
 					echo "],\n";
 					
-					foreach ($rubrosPorMesArray as $mes => $rubrosArray )
+					//print_r($rubrosPorMesArray);
+					
+					foreach ($rubrosPorMesArray as $mes => $personasArray )
 					{
+						//print_r($personasArray);
+						
 						echo "[";
 						echo "'" . $mes . "'";
-						
+
+						$totalCredito_rubro = 0;
+						$totalDebito_rubro	= 0;
+
+						foreach ( $personasArray as $rubroArray )
+						{
+							foreach ($rubroArray as $rubro )
+							{
+								$totalCredito_rubro += $rubro->total_credito;
+								$totalDebito_rubro	+= $rubro->total_debito;
+							}
+
+						}
+
 						foreach ( $todosLosRubros as $rubroId => $rubro )
 						{
-							//print_r($rubrosArray[$rubroId]);
-							
-							if ( isset($rubrosArray[$rubroId]->total) ) 
-							{
-								echo "," . $rubrosArray[$rubroId]->total_credito;
-								echo ",-" . $rubrosArray[$rubroId]->total_debito;
-							}
-							else
-							{
-								echo ",0,0";
-							}
+							echo "," . $totalCredito_rubro;
+							echo "," . $totalDebito_rubro;
 						}
 	
 						echo "],\n";
@@ -131,14 +139,20 @@
 				<tr class="header">
 					<td align="center">Fecha</td>
 					<td><strong>Cuenta</strong></td>
-					<td>Movimiento</td>
-					<td>Rubro</td>
-					<td>Moneda</td>
-					<td align="right">Crédito</td>
-					<td align="right">Débito</td>
+					<td>Concepto</td>
+					<td>Persona</td>
+					<td>Moneda Original</td>
+					<td align="right">Movimiento<br/><small style="font-weight: normal;">moneda original</small></td>
+					<td align="right">Acumulado<br/><small style="font-weight: normal;">moneda original</small></td>
+					<td style="background-color: white;" width="1"></td>
+					<td class="td-destacado" align="right">En <?=$monedaReturn?></td>
+					<td class="td-destacado" align="right" >Acumulado <?=$monedaReturn?></td>
 				</tr>
 				<?
 					$trClass = "dark";
+					
+					$acumulado		= 0;
+					$acumuladoTC	= 0;
 					
 					foreach ( $movimientosArray as $movimientosObj )
 					{	
@@ -147,19 +161,24 @@
 						if ( $trClass == 'dark' )	$trClass = '';
 						else						$trClass = 'dark';
 						
+						$diferenciaCreditoDebito  = $movimientosObj->credito - $movimientosObj->debito;
+						$diferenciaTC			  = $movimientosObj->tp_credito - $movimientosObj->tp_debito;
+						$acumulado				 += $diferenciaCreditoDebito;
+						$acumuladoTC			 += $diferenciaTC;
+						
 						?>
 						<tr class="<?=$trClass?>">
 							<td align="center"><?=$movimientosObj->fecha?></td>
-							<td><strong><a href="<?=base_url( 'index.php/cuentas/ver/' . $movimientosObj->cuentaId )?>"><?=$movimientosObj->cuenta_nombre?></a></strong></td>
+							<td><strong><a href="<?=base_url( 'index.php/cuentas/ver/' . $movimientosObj->cuentaId )?>/<?=$monedaReturn?>"><?=$movimientosObj->cuenta_nombre?></a></strong></td>
 							<td style="font-weight: bold;"><?=$movimientosObj->concepto?></td>
 							<td>
 								<?									
 									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
 									{										
 										?>
-										<span class="tag-rubro <?=$movimientosObj->color?>">
+										<span class="tag-rubro <?=$movimientosObj->persona_color?>">
 											<a href="#dialogPageRubrado" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" class="rubradoLink">
-												<img src="<? echo base_url( "assets/img/" . $movimientosObj->unique_name )?>.png" /> <?=$movimientosObj->nombre?>
+												<img src="<? echo base_url( "assets/img/" . $movimientosObj->persona_unique_name )?>.png" /> <?=$movimientosObj->persona_nombre?>
 											</a>
 										</span>
 										<?
@@ -170,9 +189,19 @@
 									}
 								?>
 							</td>
-							<td align="center"><strong><?=$movimientosObj->moneda?></strong> <span style="font-size: smaller; color:#666;">(<?=$movimientosObj->tipo_cambio?>)</span></td>
-							<td align="right" style="color: green;"><?=formatNumberCustom( $movimientosObj->credito )?></td>
-							<td align="right" style="color: red;"><?=formatNumberCustom( $movimientosObj->debito )?></td>
+							<td align="center"><strong><?=$movimientosObj->moneda?></strong></td>
+							<td align="right" style="color: <?=( $diferenciaCreditoDebito >= 0 ) ? "green" : "red"?>"><?=formatNumberCustom( $diferenciaCreditoDebito )?></td>
+							<td align="right" style="color: <?=( $acumulado >= 0 ) ? "green" : "red"?>"><?=formatNumberCustom( $acumulado )?></td>
+							<td align="center" style="background-color: white;"><?
+								
+								if ( $movimientosObj->moneda <> $monedaReturn )
+								{
+									?><small class="tipo_cambio"><?=$movimientosObj->tipo_cambio?></small><?
+								}
+								
+							?></td>
+							<td align="right" class="td-destacado" style="color: <?=( $diferenciaTC >= 0 ) ? "green" : "red"?>"><strong><?=formatNumberCustom( $diferenciaTC )?></strong></td>
+							<td align="right" class="td-destacado" style="color: <?=( $acumuladoTC >= 0 ) ? "green" : "red"?>"><strong><?=formatNumberCustom( $acumuladoTC )?></strong></td>
 						</tr>
 						<?
 					}

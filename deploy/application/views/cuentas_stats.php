@@ -156,40 +156,35 @@
 	      var data = google.visualization.arrayToDataTable([
 	        ['Rubro', '', { role: 'style' }],
 	        <?
-		        $lastPersona	= false;
+		        //$lastPersona	= false;
 		        $primeraVez		= true;
 		        
-		        foreach( $totalesPorRubro as $row )
+		        foreach( $totalesPorPersona as $totalesPorRubro )
 		        {
-			        $row = (object) $row;
+			        $totalesPorRubro = $totalesPorRubro;
+			        
+			        if ( $primeraVez )	$primeraVez = false;
+					else 					echo "['', 0, ''],\n";
 	
+					echo "['-------> ". strtoupper( $totalesPorRubro[0]['persona_nombre'] ) . "', 0, ''],\n";
+
 	
-			        if ( $lastPersona != $row->persona_id )
-			        {
-				        if ( !$primeraVez )
+					foreach( $totalesPorRubro as $row )
+					{
+						$row = (object) $row;
+						
+						$barColor = ( $row->total >= 0 ) ? $row->color_dark : $row->color_light;
+
+				        if ( $row->nombre )
 				        {
+				        	echo "['". $row->nombre." [" . $row->rubro_id . "]', " . round( $row->total, 2 ) . ", '" . $barColor . "'],\n";
+				        }
+				        else
+				        {
+					        echo "['Sin Rubro', " . $row->total . ", '#cc0000'],\n";
 					        echo "['', 0, ''],\n";
 				        }
-			  
-				  		echo "['-------> ". strtoupper( $row->persona_nombre ) . "', 0, ''],\n";
-				        
-				        $lastPersona	= $row->persona_id;
-				        $primeraVez		= false;
-			        }
-	
-			        $barColor = ( $row->total >= 0 ) ? $row->color_dark : $row->color_light;
-			        
-			        if ( $row->nombre )
-			        {
-			        	echo "['". $row->nombre." [" . $row->rubro_id . "]', " . round( $row->total, 2 ) . ", '" . $barColor . "'],\n";
-			        }
-			        else
-			        {
-				        echo "['Sin Rubro', " . $row->total . ", '#cc0000'],\n";
-				        echo "['', 0, ''],\n";
-			        }
-			        
-	
+					}
 			    }
 			?>
 	      ]);
@@ -226,7 +221,7 @@
 				if (selectedItem) {
 					var value = data.getValue(selectedItem.row, 0);
 					
-					window.location.replace("<?=base_url('index.php/rubro/ver')?>/" + value );
+					window.location.replace("<?=base_url('index.php/rubro/ver')?>/" + value + "/<?=$monedaReturn?>" );
 				}
 			}
 			
@@ -269,7 +264,7 @@
 						//print_r($rubro);
 						
 						if ( isset($rubrosArray[$rubro->persona_id][$rubroId]->total) ) 
-						{											echo "," . $rubrosArray[$rubro->persona_id][$rubroId]->total;	}
+						{											echo "," . round($rubrosArray[$rubro->persona_id][$rubroId]->total, 1);	}
 						else
 						{											echo ",0";									}
 					}

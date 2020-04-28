@@ -16,5 +16,5 @@ function fecha_format_SqltoPrint( $fecha )
 {
 	$fechaExp = explode('-', $fecha);
 	
-	return $fechaExp[2] . '-' . $fechaExp[1] . '-' . $fechaExp[0];
+	return $fechaExp[2] . '/' . $fechaExp[1] . '/' . $fechaExp[0];
 }

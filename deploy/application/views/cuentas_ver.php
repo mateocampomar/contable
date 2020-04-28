@@ -42,8 +42,9 @@
 							if ( isset( $cuentaObj->moneda_original ) )
 							{
 								?>
-								<td align="right">Tipo de</br>Cambio</td>
-								<td align="right">En dólares</td>
+								<td align="right" style="background-color: white"></td>
+								<td align="right" class="td-destacado">En <?=$monedaReturn?></td>
+								<td align="right" class="td-destacado">Saldo <?=$monedaReturn?></td>
 								<?
 							}
 						}
@@ -55,6 +56,7 @@
 					foreach ( $movimientosArray as $movimientosObj )
 					{
 						//print_r($movimientosObj);
+						//die;
 						
 						if ( $trClass == 'dark' )	$trClass = '';
 						else						$trClass = 'dark';
@@ -78,11 +80,11 @@
 							<td>
 								<?									
 									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
-									{								
+									{						
 										?>
-										<span class="tag-rubro <?=$movimientosObj->persona_color?>">
+										<span class="tag-rubro <?=$movimientosObj->persona_color?>" title="<?=$movimientosObj->persona_nombre?> > <?=$movimientosObj->rubro_nombre?>">
 											<a href="#" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>" class="rubradoLink">
-												<img src="<? echo base_url( "assets/img/" . $movimientosObj->persona_unique_name )?>.png" /> <?=$movimientosObj->persona_nombre?>
+												<img src="<? echo base_url( "assets/img/" . $movimientosObj->persona_unique_name )?>.png" /> <?=$movimientosObj->rubro_nombre?>
 											</a>
 										</span>
 										<a href="#dialogPageRubrado" id="movlink_<?=$movimientosObj->movimientos_cuentas_id?>" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>"></a>
@@ -107,9 +109,12 @@
 										
 									if ( isset( $cuentaObj->moneda_original ) )
 									{
+										$diferenciaCreditoDebito = $movimientosObj->tp_credito - $movimientosObj->tp_debito;
+										
 										?>
-										<td align="right"><?='<small class="tipo_cambio">' . formatNumberCustom($movimientosObj->tipo_cambio, 1) . '</small>'?></td>
-										<td align="right"><strong><?=formatNumberCustom($movimientosObj->tp_saldo)?></strong></td>
+										<td align="center" style="background-color: white"><?='<small class="tipo_cambio">' . formatNumberCustom($movimientosObj->tipo_cambio, 1) . '</small>'?></td>
+										<td align="right" class="td-destacado" style="color: <?=( $diferenciaCreditoDebito >= 0 ) ? "green" : "red"?>"><?=formatNumberCustom( $diferenciaCreditoDebito )?></td>
+										<td align="right" class="td-destacado"><strong><?=formatNumberCustom($movimientosObj->tp_saldo)?></strong></td>
 										<?
 									}
 								}

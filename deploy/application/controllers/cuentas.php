@@ -36,7 +36,7 @@ class Cuentas extends MY_Controller {
 		//$rubroModel		= new Rubro_model();
 		
 		
-		$movimientosArray	= $cuentaModel->getMovimientos( $cuentasArray, null, false );
+		$movimientosArray	= $cuentaModel->getMovimientos( $cuentasArray, null, true );
 		$this->data['movimientosArray']	= $movimientosArray;
 		
 		
@@ -61,8 +61,10 @@ class Cuentas extends MY_Controller {
 	public function stats( $cuentas, $monedaReturn=null )
 	{
 		// entre Fechas
-		$date			= _CONFIG_START_DATE;
+		$start_date		= _CONFIG_START_DATE;
 		$end_date		= _CONFIG_END_DATE;
+		
+		$date = $start_date;
 
 
 		/*** Models ***/
@@ -138,12 +140,6 @@ class Cuentas extends MY_Controller {
 			}
 		}
 
-
-		// print_r($saldosInicialPorPersonaArray);
-		// print_r($saldoInicial);
-		// print_r($sinRubro);
-		// die;
-
 		// Obtenido el saldo voy a buscar los movimientos 
 		$saldosPorDia	= array();
 		
@@ -170,26 +166,23 @@ class Cuentas extends MY_Controller {
 		$this->data['saldo_sinRubro']					= $sinRubro;
 		$this->data['movimientosPorDia']				= $movimientosPorDia;
 		
-		/** Fin Evolución de Saldo **/
-		
-		
+
+
 		/*/
 		 * Para Totales por Rubro.
 		/*/
 
 		$totalesPorRubro	= array();
 		
-		if ( count( $cuentasArray ) > 1 || $monedaReturn )	$totalesPorRubro = $rubroModel->getTotalesPorRubroMoneda( $cuentasArray, $monedaReturn, $date, $end_date );
-		else												$totalesPorRubro = $rubroModel->getTotalesPorRubro( $cuentasArray, $date, $end_date );
+		if ( count( $cuentasArray ) > 1 || $monedaReturn )	$totalesPorRubro = $rubroModel->getTotalesPorRubroMoneda( $cuentasArray, $monedaReturn, $start_date, $end_date );
+		else												$totalesPorRubro = $rubroModel->getTotalesPorRubro( $cuentasArray, $start_date, $end_date );
 
 		//print_r($totalesPorRubro);
 
 		$this->data['totalesPorRubro']		= $totalesPorRubro;
+		$this->data['totalesPorPersona']	= $rubroModel->totalesPorPersona( $totalesPorRubro );
 
-		
-		/** Fin Totales por Rubro **/
-		
-		
+
 		
 		/*/
 		 * Para Rubros por Mes
@@ -200,16 +193,26 @@ class Cuentas extends MY_Controller {
 		
 		for ($mes=1; $mes<=12; $mes++ )
 		{
-			$fecha					= date('Y') . '-' . sprintf('%02d', $mes);
+			$fecha					= _CONFIG_YEAR . '-' . sprintf('%02d', $mes);
 			$rubrosEntreFechasArray	= array();
+
+			$rubrosEntreFechas = $rubroModel->getTotalesPorRubroMoneda( $rubroModel->cuentasArray, $monedaReturn, $fecha . "-01", $fecha . "-31" );
 			
-			foreach ( $rubroModel->getTotalesEntreFechas( $fecha . "-01", $fecha . "-31" ) as $rubrosEntreFechasObj )
+			//echo $fecha . "\n\n\n";
+			//print_r($rubroModel->stats);
+
+			foreach ( $rubrosEntreFechas as $rubrosEntreFechasObj )
 			{
+				$rubrosEntreFechasObj = (object) $rubrosEntreFechasObj;
+
 				$rubrosEntreFechasArray[$rubrosEntreFechasObj->persona_id][$rubrosEntreFechasObj->rubro_id] = $rubrosEntreFechasObj;
 			}
-			
+
 			$rubrosPorMesArray[$fecha] = $rubrosEntreFechasArray;
 		}
+		
+		//print_r($rubrosPorMesArray);
+		//die;
 
 
 		$todosLosRubros = array();

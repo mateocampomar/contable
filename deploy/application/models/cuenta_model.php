@@ -195,6 +195,7 @@ class cuenta_model extends MY_Model {
 		return true;
 	}
 
+	/*
 	public function getMovimientosByRubro( $rubroId )
 	{
 		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id, cuentas.nombre as cuenta_nombre, rubro_cuenta.nombre as nombre');
@@ -221,12 +222,21 @@ class cuenta_model extends MY_Model {
 		
 		return $query->result();
 	}
+	*/
 	
+	/**
+	 *
+	 * [fecha] Se define una día y solo se pasan los movimientos de ese día.
+	 *
+	**/
 	public function getMovimientos( $cuentaId, $fecha=null, $filters=true, $moneda=true )
 	{
-		if ( $filters )
+		if ( $filters === true )		$this->setSessionFiltros();
+		elseif ( is_string($filters) )
 		{
-			$this->setSessionFiltros();
+			$customFiltro = explode(":", $filters);
+			
+			$this->db->where( $customFiltro[0] . " = '" . $customFiltro[1] . "'" );
 		}
 		
 		/** Moneda **/
@@ -238,6 +248,8 @@ class cuenta_model extends MY_Model {
 		$this->db->select('movimientos_cuentas.*');
 		$this->db->select('movimientos_cuentas.id as movimientos_cuentas_id');
 		$this->db->select('cuentas.moneda as moneda');
+		$this->db->select('cuentas.nombre as cuenta_nombre');
+		$this->db->select('rubro_cuenta.nombre as rubro_nombre');
 		$this->db->select('rubro_persona.color as persona_color, rubro_persona.unique_name as persona_unique_name, rubro_persona.nombre as persona_nombre');
 		if ( $moneda )
 		{
@@ -254,11 +266,11 @@ class cuenta_model extends MY_Model {
 		// JOIN
 		$this->db->join('cuentas', 'movimientos_cuentas.cuentaid = cuentas.id', 'left');
 		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left');
-		//$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
+		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
 		
 		if ( $moneda )
 		{
-			$this->db->join('cotizaciones', 'movimientos_cuentas.fecha = cotizaciones.fecha', 'inner');
+			$this->db->join('cotizaciones', 'movimientos_cuentas.fecha = cotizaciones.fecha', 'left');
 		}
 			
 
@@ -276,7 +288,7 @@ class cuenta_model extends MY_Model {
 			
 			$this->db->where("(" . $where . ")");
 		}
-		else
+		elseif ( $cuentaId )
 		{
 			$this->db->where('cuentaId = ' . $cuentaId );
 		}

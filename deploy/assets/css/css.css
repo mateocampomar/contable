@@ -314,6 +314,10 @@ header ul li a {
 	font-size: 8pt;
 }
 
+.ver-cuenta .tabla tr.header td.td-destacado {
+	background-color: #b8ccd1;
+}
+
 .ver-cuenta .tabla td small.tipo_cambio {
 	color: #333;
 	background: #eee;
@@ -363,6 +367,14 @@ header ul li a {
 
 .ver-cuenta .tabla tr.dark {
 	background: #eee;
+}
+
+.ver-cuenta .tabla tr .td-destacado {
+	background: #f6fdff;
+}
+
+.ver-cuenta .tabla tr.dark .td-destacado {
+	background: #dbecf1;
 }
 
 .rubrar-container {

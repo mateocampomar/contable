@@ -15,10 +15,13 @@ class Config extends MY_Controller {
 		$this->load->view('templates/html_close',		$this->data);
 	}
 	
-	public function set_config_year( $year )
+	public function set_config_year()
 	{
+		$year			= $this->input->post('config_year');
+		$redirectUrl	= $this->input->post('redirectUrl');
+
 		$this->session->set_userdata('config_year', $year);
 		
-		redirect('/home/dashboard/', 'location');
+		redirect( $redirectUrl, 'location');
 	}
 }

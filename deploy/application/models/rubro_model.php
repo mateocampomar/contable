@@ -2,6 +2,7 @@
 class rubro_model extends MY_Model {
 	
 	public $cuentasArray;
+	public $stats = array();
 	
 	public function getCuentas( $cuentaId=false )
 	{
@@ -296,14 +297,32 @@ class rubro_model extends MY_Model {
 		
 		return $result;
 	}
-
-
-	public function getTotalesPorRubroMoneda( $cuentaId, $monedaReturn, $date=null, $end_date=null )
+	
+	public function totalesPorPersona( $totalesPorRubro )
 	{
-		$this->setSessionFiltros();
+		$totalesPorPersona = array();
+		
+		foreach( $totalesPorRubro as $rubroArray )
+		{
+			if ( !isset($totalesPorPersona[$rubroArray['persona_id']]) )	$totalesPorPersona[$rubroArray['persona_id']] = array();
+			
+			if ( $rubroArray['total'] <> 0 )
+				$totalesPorPersona[$rubroArray['persona_id']][] = $rubroArray;
+		}
+		
+		return $totalesPorPersona;
+	}
+
+
+	public function getTotalesPorRubroMoneda( $cuentaId, $monedaReturn, $date=null, $end_date=null, $rubroId=null )
+	{
+		$date			= ($date) ? $date : _CONFIG_START_DATE;
+		$end_date		= ($end_date) ? $end_date : _CONFIG_END_DATE;
+
 
 		$this->db->select('rubro_id, persona_id, credito - debito as total, rubro_cuenta.nombre as nombre, rubro_persona.nombre as persona_nombre, color_dark, color_light');
 		$this->db->select('cuentas.moneda as moneda');
+		$this->db->select('movimientos_cuentas.credito as credito, movimientos_cuentas.debito as debito');
 		$this->db->select('cotizaciones.' . $monedaReturn );
 
 		$this->db->join('rubro_cuenta',		'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left');
@@ -326,13 +345,16 @@ class rubro_model extends MY_Model {
 			
 			$this->db->where("(" . $where . ")");
 		}
-		else
+		elseif ( $cuentaId )
 		{
 			$this->db->where('cuentaId = ' . $cuentaId );
 		}
+		
+		if ( $rubroId )		$this->db->where('movimientos_cuentas.rubro_id = ' . $rubroId );
+		else				$this->setSessionFiltros();
 
-		if ( $date )		$this->db->where("movimientos_cuentas.fecha >= '" . _CONFIG_START_DATE . "'");
-		if ( $end_date )	$this->db->where("movimientos_cuentas.fecha < '" . _CONFIG_END_DATE . "'");	
+		if ( $date )		$this->db->where("movimientos_cuentas.fecha >= '" . $date . "'");
+		if ( $end_date )	$this->db->where("movimientos_cuentas.fecha < '" . $end_date . "'");	
 
 		$this->db->where('movimientos_cuentas.status = ' . 1);
 		
@@ -340,58 +362,92 @@ class rubro_model extends MY_Model {
 
 		$query = $this->db->get();
 
-		//echo $this->db->last_query() . ";\n";
+		//echo $this->db->last_query() . ";\n\n\n";
 		
 		$sub_result = $query->result();
 		
 		//print_r($sub_result);
 		
 		$result = array();
+		$this->stats = array(
+							'total_total_pos'	=> 0,
+							'total_total_neg'	=> 0,
+							'total_total'		=> 0,
+							'rubro_max'			=> 0
+							);
 		
 		foreach( $sub_result as $movimientoObj )
 		{
+			
+			//print_r($movimientoObj);
+			
 			if ( !isset($result[$movimientoObj->rubro_id]) )
 			{
 				$result[$movimientoObj->rubro_id] = (array) $movimientoObj;
-				$result[$movimientoObj->rubro_id]['total'] = 0;
+
+				$result[$movimientoObj->rubro_id]['total']			= 0;
+				$result[$movimientoObj->rubro_id]['total_credito']	= 0;
+				$result[$movimientoObj->rubro_id]['total_debito']	= 0;
 			}
 			
 			//echo $movimientoObj->$monedaReturn;
+			$toSum = 0;
 
-
+			// Cotización si no es en la moneda.
 			if ( $movimientoObj->moneda != $monedaReturn )
 			{
-				$division_tc = ( $movimientoObj->$monedaReturn == 'NULL' ) ? $movimientoObj->monedaReturn : 37.81;
+				//$division_tc = ( $movimientoObj->$monedaReturn == 'NULL' ) ? $movimientoObj->$monedaReturn : 37.81;
 				
-				$result[$movimientoObj->rubro_id]['total'] += $movimientoObj->total / $division_tc;
+				$toSum = round( $movimientoObj->total / $movimientoObj->$monedaReturn , 2);
+				
+				//echo "- " . $movimientoObj->moneda . " a " . $monedaReturn . ": " . round( $movimientoObj->total , 2) . " /" .  round($movimientoObj->$monedaReturn,2) . " = " . $toSum . "\n\n";
 			}
-			else											$result[$movimientoObj->rubro_id]['total'] += $movimientoObj->total;
+			else
+			{
+				$toSum = round( $movimientoObj->total, 2);
+			}
 			
+			//$totalMovimientoAntes = $result[$movimientoObj->rubro_id]['total'];
+
+			$result[$movimientoObj->rubro_id]['total']			+= $toSum;
+			$result[$movimientoObj->rubro_id]['total_credito']	+= ( $toSum > 0 ) ? $toSum : 0;
+			$result[$movimientoObj->rubro_id]['total_debito']	+= ( $toSum < 0 ) ? $toSum : 0;;
 			
-			unset( $result[$movimientoObj->rubro_id]['USD'] );
+			//echo "+" . $toSum;
+			
+			// Stats
+			if ( $toSum > 0 )	$this->stats['total_total_pos'] += $toSum;
+			else				$this->stats['total_total_neg'] += $toSum;
+
+			$this->stats['total_total'] += $toSum;
+			
+			if ( $toSum > $this->stats['rubro_max'] )
+									$this->stats['rubro_max']	 = round( $toSum, 2 );
+
+			
+			//echo $movimientoObj->rubro_id . ": " . $totalMovimientoAntes . " + " . $toSum . " = " . $result[$movimientoObj->rubro_id]['total'] . "\n";
+		}
+		
+
+		foreach( $result as $rubro )
+		{
+			if ( $rubro['total'] > $this->stats['rubro_max'] )
+				$this->stats['rubro_max'] = round($rubro['total'], 2);
 		}
 
-
-		function orden_total($a, $b)
+		if ( !function_exists('orden_total') )
 		{
-			$a = $a['total'];	$b = $b['total'];
-			
-			if ($a == $b)	return 0;
-
-			return ($a < $b) ? -1 : 1;
-		}
-
-		function orden_persona($a, $b)
-		{
-			$a = $a['persona_id'];	$b = $b['persona_id'];
-			
-			if ($a == $b)	return 0;
-
-			return ($a < $b) ? -1 : 1;
+			function orden_total($a, $b)
+			{
+				$a = $a['total'];	$b = $b['total'];
+				
+				if ($a == $b)	return 0;
+	
+				return ($a < $b) ? -1 : 1;
+			}
 		}
 		
 		usort( $result, "orden_total");
-		usort( $result, "orden_persona");
 
 		//print_r($result);
 		
@@ -473,6 +529,7 @@ class rubro_model extends MY_Model {
 	}
 
 	
+	/*
 	public function getTotalesEntreFechas( $fecha_start, $fecha_end, $rubroId=false )
 	{
 		$this->db->select('rubro_cuenta.nombre as nombre, movimientos_cuentas.rubro_id as rubro_id, SUM( debito ) as total_debito, SUM( credito ) as total_credito, SUM( credito ) - SUM( debito ) as total, movimientos_cuentas.persona_id as persona_id, rubro_persona.color_light, rubro_persona.color_dark');
@@ -499,7 +556,7 @@ class rubro_model extends MY_Model {
 		}
 		elseif ( $this->cuentasArray )
 		{
-			$this->setSessionFiltros();
+			//$this->setSessionFiltros();
 
 			$this->db->where('cuentaId = ' . $this->cuentasArray[0] );
 		}
@@ -515,11 +572,12 @@ class rubro_model extends MY_Model {
 
 		$query = $this->db->get();
 
-		//echo $this->db->last_query() . ";\n";
+		echo $this->db->last_query() . ";\n";
 		//die;
 		
 		$result = $query->result();
 		
 		return $result;
 	}
+	*/
 }
