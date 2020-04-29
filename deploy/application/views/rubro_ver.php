@@ -125,7 +125,10 @@
 		<div class="fixed-menu">
 			<h1>
 				<div class="saldo">[Algún Dato del Rubro]</div>
-				<div><?=$rubroObj->nombre?></div>
+				<div>
+					<?=$rubroObj->nombre?> 
+					<a href="<?=substr( current_url(), 0, -4) . "/" . $opositMoneda?>" style="font-weight: normal;" title="click: swap moneda a <?=$opositMoneda?>">[<?=($monedaReturn)?>]</a>
+				</div>
 			</h1>
 		</div>
 		<div class="ver-cuenta top" style="float: right;">

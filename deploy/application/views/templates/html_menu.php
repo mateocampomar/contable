@@ -67,8 +67,10 @@
 						<?
 					}
 					
-					$saldo_parts = explode( "," , formatNumberCustom( $saldoTotalDolares ) );
-					
+					if ( $saldoTotalDolares )
+						$saldo_parts = explode( "," , formatNumberCustom( $saldoTotalDolares ) );
+					else
+						$saldo_parts[0] = 0; $saldo_parts[1] = '00';
 					?>
 					<li class="total-moneda total-total" onclick="window.location.href='<?=base_url( 'index.php/cuentas/stats/' . implode( "-", $cuentasListAll ) .'/USD' )?>'">
 						<div class="simbolo">TOTAL <small>USD</small></div>

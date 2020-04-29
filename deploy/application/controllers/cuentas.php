@@ -110,10 +110,8 @@ class Cuentas extends MY_Controller {
 		{
 			// Busco el saldo de la cuenta y de cada una de las personas.
 			$saldos		= $cuentaModel->getSaldosByCuenta( $cuentaId, $date );
-			
-			//print_r($saldos);
-			//print_r($saldos);
 
+			//print_r($saldos);
 
 			// Sumatoria del Saldo inicial de todas las cuentas.
 

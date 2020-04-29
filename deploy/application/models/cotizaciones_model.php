@@ -97,4 +97,10 @@ class cotizaciones_model extends MY_Model {
 	{
 		return	array('USD', 'UYU');
 	}
+	
+	public function opositMoneda( $monedaReturn )
+	{
+		if ( $monedaReturn == 'USD' )	return 'UYU';
+		else							return 'USD';
+	}
 }

@@ -30,7 +30,7 @@
 						?><td><?=implode(",", $headerData['txt_otros']) ?></td><?
 					}
 					?>
-					<td>Movimiento</td>
+					<td>Concepto</td>
 					<td>Rubro</td>
 					<td align="right">Crédito</td>
 					<td align="right">Débito</td>
@@ -58,12 +58,24 @@
 						//print_r($movimientosObj);
 						//die;
 						
-						if ( $trClass == 'dark' )	$trClass = '';
-						else						$trClass = 'dark';
+						// No muestro las líneas que están relacionadas a un pago de tarjeta y son de la persona LABURO.
+						if ( $movimientosObj->mov_relacionado && $movimientosObj->persona_id == 4 )	continue;
 						
+						
+						if ( !$movimientosObj->mov_relacionado )
+						{
+							if ( $trClass == 'dark' )	$trClass = '';
+							else						$trClass = 'dark';
+						}
+
+
 						?>
 						<tr class="<?=$trClass?>">
-							<td align="center"><?=fecha_format_SqltoPrint( $movimientosObj->fecha )?></td>
+							<td align="center">
+								<?
+									if (!$movimientosObj->mov_relacionado)		echo fecha_format_SqltoPrint( $movimientosObj->fecha );
+								?>
+							</td>
 							<?
 							if ( $multicuenta )
 							{								
@@ -76,7 +88,11 @@
 								?><td><?=$movimientosObj->txt_otros?></td><?
 							}
 							?>
-							<td style="font-weight: bold;"><?=$movimientosObj->concepto?></td>
+							<td style="font-weight: bold;">
+								<?
+								if (!$movimientosObj->mov_relacionado)			echo $movimientosObj->concepto;
+								?>
+							</td>
 							<td>
 								<?									
 									if ( $movimientosObj->persona_id && $movimientosObj->rubro_id )
@@ -84,7 +100,7 @@
 										?>
 										<span class="tag-rubro <?=$movimientosObj->persona_color?>" title="<?=$movimientosObj->persona_nombre?> > <?=$movimientosObj->rubro_nombre?>">
 											<a href="#" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>" class="rubradoLink">
-												<img src="<? echo base_url( "assets/img/" . $movimientosObj->persona_unique_name )?>.png" /> <?=$movimientosObj->rubro_nombre?>
+												<img src="<? echo base_url( "assets/img/" . $movimientosObj->persona_unique_name )?>.png" /> <?=(!$movimientosObj->mov_relacionado) ? $movimientosObj->rubro_nombre : ''?>
 											</a>
 										</span>
 										<a href="#dialogPageRubrado" id="movlink_<?=$movimientosObj->movimientos_cuentas_id?>" data-rel="dialog" data-rel="back" data-transition="pop" data-movimientoid="<?=$movimientosObj->movimientos_cuentas_id?>" data-rubroid="<?=$movimientosObj->rubro_id?>"></a>
@@ -100,12 +116,19 @@
 									}
 								?>
 							</td>
-							<td align="right" style="color: green;"><?=formatNumberCustom( $movimientosObj->credito )?></td>
-							<td align="right" style="color: red;"><?=formatNumberCustom( $movimientosObj->debito )?></td>
+							<td align="right" style="color: <?=(!$movimientosObj->mov_relacionado) ? 'green'	: 'grey; font-style: italic'?>;"><?=formatNumberCustom( $movimientosObj->credito )?></td>
+							<td align="right" style="color: <?=(!$movimientosObj->mov_relacionado) ? 'red'		: 'grey; font-style: italic'?>;"><?=formatNumberCustom( -$movimientosObj->debito )?></td>
 							<?
 								if ( !$multicuenta )	// Si es una cuenta sola y no varias combianadas.
 								{
-									?><td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo )?></strong></td><?
+									if ( !$movimientosObj->mov_relacionado )
+									{
+										?><td align="right"><strong><?=formatNumberCustom( $movimientosObj->saldo, 2, true )?></strong></td><?
+									}
+									else
+									{
+										echo "<td></td>";
+									}
 										
 									if ( isset( $cuentaObj->moneda_original ) )
 									{

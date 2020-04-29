@@ -1,13 +1,12 @@
 <?
 
-function formatNumberCustom( $number, $decimales=2 )
+function formatNumberCustom( $number, $decimales=2, $mostrarCeros=false )
 {
 	
-	if ( $number == '0.00' )	$output	= '';
-	else
-	{
-		$output = number_format($number, $decimales, ',', '.');
-	}
+	if ( $number == '0.00' && $mostrarCeros==false )	return '';
+
+
+	$output = number_format($number, $decimales, ',', '.');
 	
 	return $output;
 }

@@ -15,8 +15,9 @@ class Rubro extends MY_Controller {
 		
 		$rubrosArray	= $rubros;
 		
-		$rubroModel		= new Rubro_model();
-		$cuentaModel	= new Cuenta_model( $monedaReturn );
+		$rubroModel			= new Rubro_model();
+		$cuentaModel		= new Cuenta_model( $monedaReturn );
+		$cotizacionesModel	= new Cotizaciones_model();
 
 		// Para el menu
 		$this->data['viewLeft_menu'] = $this->load->view('templates/html_menu',		$this->data, true);
@@ -104,6 +105,7 @@ class Rubro extends MY_Controller {
 
 		/** View **/
 		$this->data['monedaReturn']		= $monedaReturn;
+		$this->data['opositMoneda']		= $cotizacionesModel->opositMoneda( $monedaReturn );
 		
 		$this->load->view('templates/html_open',		$this->data);
 		$this->load->view('rubro_ver',					$this->data);

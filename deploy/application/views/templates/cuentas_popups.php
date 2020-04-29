@@ -196,7 +196,7 @@
 	            {
 		            if ( typeof rubroId !== 'undefined' )
 		            {
-						window.location.href = "<?=base_url( 'index.php/rubro/ver' )?>/" + rubroId;
+						window.location.href = "<?=base_url( 'index.php/rubro/ver' )?>/" + rubroId + "/<?=$monedaReturn?>";
 					}
 					else
 					{

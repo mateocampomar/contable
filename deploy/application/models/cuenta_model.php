@@ -195,34 +195,6 @@ class cuenta_model extends MY_Model {
 		return true;
 	}
 
-	/*
-	public function getMovimientosByRubro( $rubroId )
-	{
-		$this->db->select('*, movimientos_cuentas.id as movimientos_cuentas_id, cuentas.nombre as cuenta_nombre, rubro_cuenta.nombre as nombre');
-	
-		$this->db->from('movimientos_cuentas');
-
-		$this->db->join('rubro_persona', 'rubro_persona.id = movimientos_cuentas.persona_id', 'left' );
-		$this->db->join('rubro_cuenta', 'rubro_cuenta.id = movimientos_cuentas.rubro_id', 'left' );
-		$this->db->join('cuentas',	'movimientos_cuentas.cuentaId = cuentas.id', 'left' );
-		
-		if ( true )
-		{
-			$this->db->where('movimientos_cuentas.rubro_id = ' . $rubroId );
-		}
-
-		$this->db->where('movimientos_cuentas.status = ' . 1);
-		
-		$this->db->order_by('movimientos_cuentas.fecha', 'ASC');
-		$this->db->order_by('movimientos_cuentas.id', 'ASC');
-
-		$query = $this->db->get();
-		
-		//echo $this->db->last_query();
-		
-		return $query->result();
-	}
-	*/
 	
 	/**
 	 *
@@ -302,7 +274,7 @@ class cuenta_model extends MY_Model {
 		else
 		{
 			$this->db->where("movimientos_cuentas.fecha >= '" . _CONFIG_START_DATE . "'");
-			$this->db->where("movimientos_cuentas.fecha < '" . _CONFIG_END_DATE . "'");
+			$this->db->where("movimientos_cuentas.fecha <= '" . _CONFIG_END_DATE . "'");
 		}
 		
 		
@@ -408,6 +380,8 @@ class cuenta_model extends MY_Model {
 			$result = $query->result();
 			
 			//print_r($result);
+			
+			//echo $this->db->last_query(); echo "\n\n";
 
 			// Cotiazaciones y Moneda
 			if ( $this->monedaReturn )
@@ -457,11 +431,11 @@ class cuenta_model extends MY_Model {
 		}
 		else
 		{
-			$this->db->where("movimientos_cuentas.fecha <= '" . $fecha . "'" );
+			$this->db->where("movimientos_cuentas.fecha < '" . $fecha . "'" );
 
 			// order
 			$this->db->order_by('movimientos_cuentas.fecha', 'DESC');
-			$this->db->order_by('movimientos_cuentas.id', 'DESC');
+			$this->db->order_by('movimientos_cuentas.id', 'ASC');
 		}
 
 		// Limit
@@ -470,9 +444,11 @@ class cuenta_model extends MY_Model {
 		// Ejecutar Query
 		$query = $this->db->get();
 		
-		//echo $this->db->last_query() . ";\n";
+		echo $this->db->last_query() . ";\n";
 		
 		$result = $query->result();
+		
+		//print_r($result);
 		
 		// Si no hay resultados.
 		if ( !isset($result[0]) )
@@ -489,11 +465,15 @@ class cuenta_model extends MY_Model {
 
 		
 		$result = (array) $result[0];
+		
+		print_r($result);
+		
+		//echo $fecha . " = " . substr($fecha, 0, 4);
 	
 		// Si es el año 2019 tengo que corregir los saldos.
-		if ( substr($fecha, 0, 4) == '2019' )
-		{
 			// Corrección de Saldo Persona
+		if ( substr($fecha, 0, 4) == 2019 )
+		{
 			if ( $result['persona_id'] )
 			{
 				$result['saldo_cta' . $result['persona_id'] ] = $result['saldo_cta' . $result['persona_id'] ] + $result['debito'] - $result['credito'];
@@ -502,6 +482,8 @@ class cuenta_model extends MY_Model {
 			// Corrección de Saldo.
 			$result['saldo'] = $result['saldo'] + $result['debito'] - $result['credito'];
 		}
+			
+		print_r($result);
 	
 	
 		// Cotiazaciones y Moneda
